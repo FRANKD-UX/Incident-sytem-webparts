@@ -1,0 +1,20 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
+  "id": "aad719db-4fa2-406e-9425-8794db76c9f7",
+  "alias": "AdminFiltersWebPart",
+  "componentType": "WebPart",
+  "version": "1.0.0",
+  "manifestVersion": 2,
+  "requiresCustomScript": false,
+  "supportedHosts": ["SharePointWebPart", "TeamsPersonalApp", "TeamsTab"],
+  "preconfiguredEntries": [
+    {
+      "groupId": "5c03119e-3074-46fd-976b-c60198311f70",
+      "group": { "default": "Incident Operations" },
+      "title": { "default": "Admin Filters" },
+      "description": { "default": "Advanced filter and administration workspace." },
+      "officeFabricIconFontName": "Filter",
+      "properties": { "useMockData": true }
+    }
+  ]
+}

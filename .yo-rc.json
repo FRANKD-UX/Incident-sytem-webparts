@@ -1,0 +1,12 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "version": "1.23.0",
+    "libraryName": "incident-system-webparts",
+    "libraryId": "aff1d9ac-543c-4c18-a39d-565c75c5a2c6",
+    "environment": "spo",
+    "packageManager": "npm",
+    "isCreatingSolution": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}

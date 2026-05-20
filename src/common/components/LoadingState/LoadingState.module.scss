@@ -1,0 +1,20 @@
+.state {
+  align-items: center;
+  color: var(--ops-muted);
+  display: flex;
+  gap: 10px;
+  min-height: 120px;
+}
+
+.spinner {
+  animation: spin 0.8s linear infinite;
+  border: 2px solid #d8dee8;
+  border-top-color: var(--ops-focus);
+  border-radius: 50%;
+  height: 16px;
+  width: 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

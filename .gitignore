@@ -1,0 +1,9 @@
+lib/
+dist/
+temp/
+release/
+sharepoint/
+solution/*.sppkg
+node_modules/
+*.log
+.rushstack/

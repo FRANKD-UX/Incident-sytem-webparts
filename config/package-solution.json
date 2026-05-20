@@ -1,0 +1,14 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "incident-system-operational-platform",
+    "id": "de57f8a1-22e7-465e-a9fb-b8cb6ddd4e23",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false
+  },
+  "paths": {
+    "zippedPackage": "solution/incident-system-operational-platform.sppkg"
+  }
+}
