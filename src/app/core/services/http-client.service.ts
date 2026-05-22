@@ -151,12 +151,18 @@ export class HttpClientService {
 
       if (Array.isArray(value)) {
         value.forEach((item) => {
-          httpParams = httpParams.append(key, this.serializeParamValue(item));
+          httpParams = httpParams.append(
+            key,
+            this.serializeParamValue(item as QueryParamPrimitive),
+          );
         });
         return;
       }
 
-      httpParams = httpParams.set(key, this.serializeParamValue(value));
+      httpParams = httpParams.set(
+        key,
+        this.serializeParamValue(value as QueryParamPrimitive),
+      );
     });
 
     return httpParams;

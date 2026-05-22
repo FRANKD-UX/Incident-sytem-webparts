@@ -10,7 +10,7 @@ import {
 import { inject } from "@angular/core";
 import { Observable, of, throwError } from "rxjs";
 import { environment } from "../../environments/environment";
-import { ApiError, ApiResponse } from "../shared/models/common.model";
+import { ApiError, ApiResponse, IncidentStatus } from "../shared/models/common.model";
 import { MockBackendError, MockBackendService } from "./mock-backend.service";
 
 export const mockBackendInterceptor: HttpInterceptorFn = (req, next) => {
@@ -155,7 +155,10 @@ function handleMockRequest(
       req,
       mockBackend.moveIncident(
         decodeURIComponent(moveMatch[1]),
-        (req.body as { targetDepartmentId?: string; targetStatus?: string }) ?? {},
+        (req.body as {
+          targetDepartmentId?: string;
+          targetStatus?: IncidentStatus;
+        }) ?? {},
       ),
       correlationId,
     );

@@ -2,8 +2,8 @@ import { Injectable, inject } from "@angular/core";
 import { Observable } from "rxjs";
 import { HttpClientService } from "../core/services/http-client.service";
 import { Department } from "../shared/models/user.model";
-import { DepartmentChain, Incident, IncidentStatus } from "../shared/models/incident.model";
-import { CommandResponse } from "../shared/models/common.model";
+import { DepartmentChain, Incident } from "../shared/models/incident.model";
+import { CommandResponse, IncidentStatus } from "../shared/models/common.model";
 
 export interface IncidentMovePayload {
   targetDepartmentId?: string;

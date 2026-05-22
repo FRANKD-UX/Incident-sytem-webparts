@@ -12,10 +12,7 @@ import { Incident } from "../../../shared/models/incident.model";
       @for (status of statuses; track status) {
         <section class="col">
           <h3>{{ status }}</h3>
-          @for (
-            incident of incidents.filter(i => i.status === status);
-            track incident.id
-          ) {
+          @for (incident of incidentsByStatus(status); track incident.id) {
             <article class="card">{{ incident.title }}</article>
           }
         </section>
@@ -46,12 +43,16 @@ import { Incident } from "../../../shared/models/incident.model";
 })
 export class BoardPageComponent implements OnInit {
   private readonly api = inject(IncidentApiService);
-  statuses = ["OPEN", "IN_PROGRESS", "ESCALATED"];
+  statuses = ["OPEN", "IN_PROGRESS", "ESCALATED"] as const;
   incidents: Incident[] = [];
 
   ngOnInit(): void {
     this.api
       .getIncidents()
       .subscribe({ next: (data) => (this.incidents = data) });
+  }
+
+  incidentsByStatus(status: Incident["status"]): Incident[] {
+    return this.incidents.filter((incident) => incident.status === status);
   }
 }
