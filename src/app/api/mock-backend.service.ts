@@ -696,7 +696,9 @@ export class MockBackendService {
     );
 
     if (!currentDepartment || !originDepartment) {
-      throw new Error("Department seed data is invalid.");
+      throw new Error(
+        `Department seed data is invalid for currentDepartmentId=${input.currentDepartmentId} and originDepartmentId=${input.originDepartmentId}.`,
+      );
     }
 
     const timestamp = input.createdAt ?? new Date().toISOString();

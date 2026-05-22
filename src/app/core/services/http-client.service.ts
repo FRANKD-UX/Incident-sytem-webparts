@@ -30,6 +30,8 @@ import {
 
 @Injectable({ providedIn: "root" })
 export class HttpClientService {
+  private static correlationSequence = 0;
+
   private readonly http = inject(HttpClient);
   private readonly baseUrl = environment.apiUrl;
   private readonly defaultTimeout = 30000;
@@ -108,7 +110,7 @@ export class HttpClientService {
     body?: unknown,
     options: RequestOptions = {},
   ): Observable<ApiResponse<T>> {
-    const hasJsonBody = body !== null && body !== undefined && !(body instanceof FormData);
+    const hasJsonBody = this.shouldSendJsonContentType(body);
 
     return this.http
       .request<ApiResponse<T>>(method, this.resolveUrl(endpoint), {
@@ -301,6 +303,20 @@ export class HttpClientService {
     }
   }
 
+  private shouldSendJsonContentType(body: unknown): boolean {
+    if (body === null || body === undefined || typeof body !== "object") {
+      return false;
+    }
+
+    return !(
+      body instanceof FormData ||
+      body instanceof Blob ||
+      body instanceof ArrayBuffer ||
+      ArrayBuffer.isView(body) ||
+      body instanceof URLSearchParams
+    );
+  }
+
   private resolveUrl(endpoint: string): string {
     if (/^https?:\/\//.test(endpoint)) {
       return endpoint;
@@ -315,6 +331,11 @@ export class HttpClientService {
   }
 
   private generateCorrelationId(): string {
-    return globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+    if (globalThis.crypto?.randomUUID) {
+      return globalThis.crypto.randomUUID();
+    }
+
+    HttpClientService.correlationSequence += 1;
+    return `${Date.now()}-${HttpClientService.correlationSequence}`;
   }
 }
