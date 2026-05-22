@@ -1,5 +1,5 @@
 import { Routes } from "@angular/router";
-import { authGuard } from "./core/auth/auth.guard";
+import { authGuard } from "./core/guards/auth.guard";
 
 export const routes: Routes = [
   { path: "", pathMatch: "full", redirectTo: "dashboard" },
@@ -33,6 +33,14 @@ export const routes: Routes = [
     loadComponent: () =>
       import("./features/administration/pages/admin-dashboard.component").then(
         (m) => m.AdminDashboardComponent,
+      ),
+  },
+  {
+    path: "administration/workflows",
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import("./features/administration/pages/workflow-config.component").then(
+        (m) => m.WorkflowConfigComponent,
       ),
   },
   { path: "**", redirectTo: "dashboard" },
