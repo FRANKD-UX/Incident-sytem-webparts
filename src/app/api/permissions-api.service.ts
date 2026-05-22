@@ -1,18 +1,13 @@
-import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
+import { Injectable, inject } from "@angular/core";
+import { Observable } from "rxjs";
+import { HttpClientService } from "../core/services/http-client.service";
 import { UserPermissions } from "../shared/models/user.model";
 
 @Injectable({ providedIn: "root" })
 export class PermissionsApiService {
+  private readonly http = inject(HttpClientService);
+
   getUserPermissions(): Observable<UserPermissions> {
-    return of({
-      userId: "1",
-      departmentId: "1",
-      departmentName: "Support",
-      role: "ADMIN",
-      permissions: [],
-      allowedIncidentTypes: [],
-      allowedActions: ["CREATE", "READ", "UPDATE", "DELETE"],
-    });
+    return this.http.get<UserPermissions>("/me/permissions");
   }
 }

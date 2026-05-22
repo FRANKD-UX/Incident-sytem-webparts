@@ -6,16 +6,18 @@ import { authInterceptor } from "../auth/auth.interceptor";
 import { errorInterceptor } from "../interceptors/error.interceptor";
 import { loadingInterceptor } from "../interceptors/loading.interceptor";
 import { loggingInterceptor } from "../interceptors/logging.interceptor";
+import { mockBackendInterceptor } from "../../api/mock-backend.interceptor";
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(
       withInterceptors([
+        loggingInterceptor,
+        loadingInterceptor,
         authInterceptor,
         errorInterceptor,
-        loadingInterceptor,
-        loggingInterceptor,
+        mockBackendInterceptor,
       ]),
     ),
   ],

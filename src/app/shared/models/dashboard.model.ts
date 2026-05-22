@@ -1,5 +1,6 @@
 import { Incident } from "./incident.model";
-import { Department, Priority } from "./user.model";
+import { Department } from "./user.model";
+import { Priority } from "./common.model";
 
 export interface DashboardSummary {
   kpis: DashboardKpi[];
@@ -45,4 +46,11 @@ export interface SlaCompliance {
   overall: number;
   byDepartment: { departmentId: string; compliance: number }[];
   byPriority: { priority: Priority; compliance: number }[];
+}
+
+export interface AdminDashboardStats {
+  incidentTypes: number;
+  workflows: number;
+  slaRules: number;
+  roles: number;
 }
