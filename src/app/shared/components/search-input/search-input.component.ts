@@ -70,7 +70,7 @@ export class SearchInputComponent implements OnInit, OnDestroy, OnChanges {
   currentValue = "";
 
   private readonly searchSubject = new Subject<string>();
-  private subscription?: Subscription;
+  private subscription = new Subscription();
 
   ngOnChanges(changes: SimpleChanges): void {
     if ("value" in changes) {
@@ -86,7 +86,7 @@ export class SearchInputComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy(): void {
-    this.subscription?.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   onInput(event: Event): void {

@@ -67,17 +67,18 @@ export class UserAvatarComponent {
     if (!avatar) {
       return null;
     }
-    if (avatar.startsWith("data:image/")) {
+    const normalized = avatar.trim();
+    if (normalized.startsWith("data:image/")) {
       return avatar;
     }
-    try {
-      const parsed = new URL(avatar, "http://localhost");
-      return parsed.protocol === "http:" || parsed.protocol === "https:"
-        ? avatar
-        : null;
-    } catch {
+    if (normalized.startsWith("//")) {
       return null;
     }
+    const scheme = normalized.match(/^([a-zA-Z][a-zA-Z\d+\-.]*):/);
+    if (!scheme) {
+      return normalized;
+    }
+    return scheme[1] === "http" || scheme[1] === "https" ? normalized : null;
   }
 
   get initials(): string {
