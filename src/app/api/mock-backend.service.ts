@@ -1,5 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpRequest } from "@angular/common/http";
+import { Observable, of } from "rxjs";
+import { delay } from "rxjs/operators";
 import {
   AdminDashboardStats,
   DashboardSummary,
@@ -10,7 +12,8 @@ import { Attachment } from "../shared/models/attachment.model";
 import { AuditEntry } from "../shared/models/audit.model";
 import { SlaState } from "../shared/models/sla.model";
 import { Escalation } from "../shared/models/escalation.model";
-import { Department, UserPermissions } from "../shared/models/user.model";
+import { Department, User, UserPermissions } from "../shared/models/user.model";
+import { PaginatedResponse } from "../shared/models/common.model";
 
 export class MockBackendError extends Error {
   constructor(
@@ -309,6 +312,26 @@ export class MockBackendService {
     permissions: [],
     allowedIncidentTypes: ["1"],
     allowedActions: ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE"],
+  };
+
+  private readonly currentUser: User = {
+    id: "1",
+    displayName: "Jane Smith",
+    email: "jane.smith@contoso.com",
+    department: { id: "1", name: "Support", code: "SUP", isActive: true },
+    role: {
+      id: "role-1",
+      name: "Incident Administrator",
+      departmentId: "1",
+      permissions: ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE"],
+    },
+    permissions: [
+      {
+        resource: "INCIDENTS",
+        actions: ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE"],
+        scope: "ALL",
+      },
+    ],
   };
 
   getDashboardSummary(): DashboardSummary {
@@ -663,6 +686,264 @@ export class MockBackendService {
 
   getUserPermissions(): UserPermissions {
     return this.clone(this.userPermissions);
+  }
+
+  getCurrentUser(): User {
+    return this.clone(this.currentUser);
+  }
+
+  validateAuthToken(token: string): { valid: boolean } {
+    return { valid: token.trim().length > 0 };
+  }
+
+  refreshAuthToken(_token: string): { token: string } {
+    return { token: `mock-refresh-token-${Date.now()}` };
+  }
+
+  getMockDashboardSummary(): Observable<DashboardSummary> {
+    const summary: DashboardSummary = {
+      kpis: [
+        {
+          id: "kpi-open",
+          label: "Open",
+          value: 47,
+          change: 12,
+          changeType: "INCREASE",
+          icon: "inbox",
+          color: "#6b7280",
+        },
+        {
+          id: "kpi-progress",
+          label: "In Progress",
+          value: 28,
+          change: -5,
+          changeType: "DECREASE",
+          icon: "sync",
+          color: "#3b82f6",
+        },
+        {
+          id: "kpi-escalated",
+          label: "Escalated",
+          value: 8,
+          change: 2,
+          changeType: "INCREASE",
+          icon: "priority_high",
+          color: "#ef4444",
+        },
+        {
+          id: "kpi-resolved",
+          label: "Resolved",
+          value: 15,
+          change: 25,
+          changeType: "INCREASE",
+          icon: "task_alt",
+          color: "#10b981",
+        },
+      ],
+      workloadByDepartment: [
+        {
+          department: this.departments[0],
+          openIncidents: 19,
+          inProgress: 11,
+          escalated: 2,
+          avgResolutionTime: 210,
+          slaCompliance: 88,
+        },
+        {
+          department: this.departments[1],
+          openIncidents: 16,
+          inProgress: 10,
+          escalated: 3,
+          avgResolutionTime: 180,
+          slaCompliance: 86,
+        },
+        {
+          department: this.departments[2],
+          openIncidents: 12,
+          inProgress: 7,
+          escalated: 3,
+          avgResolutionTime: 250,
+          slaCompliance: 81,
+        },
+      ],
+      trends: { daily: [], weekly: [], monthly: [] },
+      recentIncidents: [],
+      slaCompliance: {
+        overall: 85,
+        byDepartment: this.departments.map((department) => ({
+          departmentId: department.id,
+          compliance: department.id === "3" ? 80 : 87,
+        })),
+        byPriority: [
+          { priority: "CRITICAL", compliance: 70 },
+          { priority: "HIGH", compliance: 82 },
+          { priority: "MEDIUM", compliance: 91 },
+          { priority: "LOW", compliance: 96 },
+        ],
+      },
+    };
+
+    return this.withDelay(summary);
+  }
+
+  getMockIncidents(): Observable<PaginatedResponse<Incident>> {
+    const departmentSupport = this.departments[0];
+    const departmentOperations = this.departments[1];
+    const now = new Date().toISOString();
+    const incident: Incident = {
+      id: "INC-2024-001",
+      referenceNumber: "INC-2024-001",
+      title: "Network connectivity issue in Building A",
+      description: "Users report packet loss and intermittent access to services.",
+      type: {
+        id: "1",
+        name: "Network Incident",
+        code: "NET-INC",
+        description: "Network and connectivity related incident type",
+        departmentChain: this.departmentChains[0],
+        defaultChecklists: [],
+        slaRules: [],
+        escalationRules: [],
+        isActive: true,
+      },
+      priority: "HIGH",
+      status: "IN_PROGRESS",
+      currentDepartment: departmentOperations,
+      originDepartment: departmentSupport,
+      assignedTo: this.currentUser,
+      createdBy: this.currentUser,
+      createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+      updatedAt: now,
+      tags: ["network", "critical"],
+      customFields: {},
+    };
+
+    const response: PaginatedResponse<Incident> = {
+      data: [incident],
+      success: true,
+      message: "Mock incidents loaded.",
+      timestamp: now,
+      correlationId: `mock-${Date.now()}`,
+      pagination: {
+        currentPage: 1,
+        pageSize: 10,
+        totalItems: 1,
+        totalPages: 1,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      },
+    };
+
+    return this.withDelay(response);
+  }
+
+  getMockChecklist(_incidentId: string): Observable<Checklist> {
+    const checklist: Checklist = {
+      id: "CHK-2024-001",
+      incidentId: "INC-2024-001",
+      chainStepId: "STEP-OPS-1",
+      departmentId: "2",
+      status: "IN_PROGRESS",
+      items: [
+        {
+          id: "ITEM-1",
+          description: "Verify network equipment power and link status.",
+          isCompleted: true,
+          isRequired: true,
+          completedAt: new Date(Date.now() - 120 * 60_000).toISOString(),
+          completedBy: "Jane Smith",
+          order: 1,
+          category: "Verification",
+          evidenceRequired: false,
+        },
+        {
+          id: "ITEM-2",
+          description: "Check switch configuration for VLAN routing anomalies.",
+          isCompleted: false,
+          isRequired: true,
+          order: 2,
+          category: "Configuration",
+          evidenceRequired: true,
+          evidenceType: "ATTACHMENT",
+        },
+        {
+          id: "ITEM-3",
+          description: "Document findings and interim mitigation notes.",
+          isCompleted: false,
+          isRequired: true,
+          order: 3,
+          category: "Documentation",
+          evidenceRequired: true,
+          evidenceType: "NOTE",
+        },
+      ],
+    };
+
+    return this.withDelay(checklist);
+  }
+
+  getMockAttachments(_incidentId: string): Observable<Attachment[]> {
+    const attachments: Attachment[] = [
+      {
+        id: "ATT-2024-001",
+        incidentId: "INC-2024-001",
+        fileName: "network-diagram.pdf",
+        fileType: "application/pdf",
+        fileSize: 245760,
+        uploadedBy: "Jane Smith",
+        uploadedAt: new Date(Date.now() - 100 * 60_000).toISOString(),
+        category: "DOCUMENT",
+        isProofOfUptime: false,
+        url: "#",
+        metadata: {
+          uploadedFromDepartment: "Operations",
+          description: "Current Building A network topology diagram.",
+          tags: ["network", "diagram"],
+        },
+      },
+    ];
+
+    return this.withDelay(attachments);
+  }
+
+  getMockAuditTrail(_incidentId: string): Observable<AuditEntry[]> {
+    const audit: AuditEntry[] = [
+      {
+        id: "AUD-MOCK-001",
+        incidentId: "INC-2024-001",
+        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+        userId: "1",
+        userName: "Jane Smith",
+        departmentId: "1",
+        departmentName: "Support",
+        action: "CREATED",
+        details: "Incident created from support ticket escalation.",
+        metadata: {},
+        ipAddress: "127.0.0.1",
+      },
+      {
+        id: "AUD-MOCK-002",
+        incidentId: "INC-2024-001",
+        timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+        userId: "1",
+        userName: "Jane Smith",
+        departmentId: "2",
+        departmentName: "Operations",
+        action: "DEPARTMENT_TRANSITION",
+        fromState: "Support",
+        toState: "Operations",
+        details: "Transferred for network diagnostics and remediation.",
+        metadata: {},
+        ipAddress: "127.0.0.1",
+      },
+    ];
+
+    return this.withDelay(audit);
+  }
+
+  private withDelay<T>(value: T): Observable<T> {
+    const delayMs = 300 + Math.floor(Math.random() * 200);
+    return of(this.clone(value)).pipe(delay(delayMs));
   }
 
   private requireIncident(incidentId: string): Incident {

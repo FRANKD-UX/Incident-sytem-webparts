@@ -9,53 +9,80 @@ import { DashboardKpi } from "../../models/dashboard.model";
   template: `
     <article class="stat-card">
       <div
-        class="icon"
+        class="stat-card__icon"
         [style.background]="
           'linear-gradient(135deg,' + kpi.color + '22,' + kpi.color + '44)'
         "
       >
-        {{ kpi.icon }}
+        <span class="material-icons" [style.color]="kpi.color">{{ kpi.icon }}</span>
       </div>
-      <div>
-        <div class="label">{{ kpi.label }}</div>
-        <div class="value">{{ kpi.value }}</div>
-        <div class="change">{{ kpi.changeType }} {{ kpi.change }}%</div>
+      <div class="stat-card__content">
+        <div class="stat-card__label">{{ kpi.label }}</div>
+        <div class="stat-card__value">{{ kpi.value | number }}</div>
+        <div
+          *ngIf="kpi.change !== null && kpi.change !== undefined && kpi.change !== 0"
+          class="stat-card__change"
+          [class.positive]="kpi.change > 0"
+          [class.negative]="kpi.change < 0"
+        >
+          <span class="material-icons">{{
+            kpi.change > 0 ? "arrow_upward" : "arrow_downward"
+          }}</span>
+          <span>{{ kpi.change | number: "1.0-2" }}%</span>
+        </div>
       </div>
     </article>
   `,
   styles: [
     `
       .stat-card {
+        background: var(--bg-primary, #ffffff);
+        border: 1px solid var(--border-color, rgba(15, 23, 42, 0.12));
+        border-radius: 8px;
+        padding: 24px;
         display: flex;
         gap: 16px;
-        padding: 20px;
-        background: #fff;
-        border: 1px solid rgba(15, 23, 42, 0.08);
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+        transition: box-shadow 0.2s ease;
       }
-      .icon {
+      .stat-card:hover {
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      }
+      .stat-card__icon {
         width: 48px;
         height: 48px;
-        border-radius: 14px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .stat-card__content {
         display: grid;
-        place-items: center;
-        font-weight: 800;
+        gap: 4px;
       }
-      .label {
+      .stat-card__label {
         color: #5b6475;
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
+        font-size: 0.875rem;
       }
-      .value {
-        font-size: 28px;
-        font-weight: 800;
+      .stat-card__value {
+        font-size: 2rem;
+        font-weight: 600;
         color: #0f172a;
       }
-      .change {
+      .stat-card__change {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
         color: #5b6475;
-        font-size: 12px;
+        font-size: 0.875rem;
+      }
+      .stat-card__change .material-icons {
+        font-size: 1rem;
+      }
+      .stat-card__change.positive {
+        color: #10b981;
+      }
+      .stat-card__change.negative {
+        color: #ef4444;
       }
     `,
   ],

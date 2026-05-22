@@ -4,7 +4,7 @@ import { Component, Input } from "@angular/core";
   selector: "app-loading-state",
   standalone: true,
   template: `
-    <div class="loading-state">
+    <div class="loading-state" [class.loading-state--overlay]="overlay">
       <div class="spinner"></div>
       <p>{{ message }}</p>
     </div>
@@ -12,19 +12,27 @@ import { Component, Input } from "@angular/core";
   styles: [
     `
       .loading-state {
-        display: grid;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         gap: 12px;
-        place-items: center;
         padding: 32px;
         color: #5b6475;
       }
+      .loading-state--overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.75);
+        z-index: 10;
+        justify-content: center;
+      }
       .spinner {
-        width: 32px;
-        height: 32px;
-        border: 3px solid #dbeafe;
-        border-top-color: #1849ff;
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--border-color, #d1d5db);
+        border-top-color: #3b82f6;
         border-radius: 50%;
-        animation: spin 0.9s linear infinite;
+        animation: spin 0.8s linear infinite;
       }
       @keyframes spin {
         to {
@@ -36,4 +44,5 @@ import { Component, Input } from "@angular/core";
 })
 export class LoadingStateComponent {
   @Input() message = "Loading...";
+  @Input() overlay = false;
 }

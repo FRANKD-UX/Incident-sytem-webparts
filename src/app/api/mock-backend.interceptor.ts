@@ -185,6 +185,20 @@ function handleMockRequest(
     return ok(req, mockBackend.getUserPermissions(), correlationId);
   }
 
+  if (req.method === "GET" && pathname === "/api/me") {
+    return ok(req, mockBackend.getCurrentUser(), correlationId);
+  }
+
+  if (req.method === "POST" && pathname === "/api/auth/validate") {
+    const payload = (req.body as { token?: string } | null) ?? {};
+    return ok(req, mockBackend.validateAuthToken(payload.token ?? ""), correlationId);
+  }
+
+  if (req.method === "POST" && pathname === "/api/auth/refresh") {
+    const payload = (req.body as { token?: string } | null) ?? {};
+    return ok(req, mockBackend.refreshAuthToken(payload.token ?? ""), correlationId);
+  }
+
   return next(req);
 }
 
