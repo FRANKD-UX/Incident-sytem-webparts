@@ -6,156 +6,309 @@ import {
 } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import {
+  MonoTypeOperatorFunction,
   Observable,
+  TimeoutError,
   catchError,
-  mergeMap,
-  retryWhen,
+  identity,
+  map,
+  retry,
   throwError,
   timeout,
   timer,
 } from "rxjs";
 import { environment } from "../../../environments/environment";
-import { ApiError, ApiResponse } from "../../shared/models/common.model";
+import {
+  ApiError,
+  ApiResponse,
+  HttpMethod,
+  QueryParamPrimitive,
+  QueryParams,
+  RequestOptions,
+  RetryPolicy,
+} from "../../shared/models/common.model";
 
 @Injectable({ providedIn: "root" })
 export class HttpClientService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = environment.apiUrl;
   private readonly defaultTimeout = 30000;
-  private readonly maxRetries = 2;
+  private readonly defaultRetryPolicy: Required<RetryPolicy> = {
+    count: 2,
+    delayMs: 1000,
+    excludedStatusCodes: [400, 401, 403, 404, 409, 422],
+    includedMethods: ["GET", "PUT", "DELETE"],
+  };
 
-  get<T>(
+  get<T>(endpoint: string, options?: RequestOptions): Observable<T> {
+    return this.request<T>("GET", endpoint, undefined, options);
+  }
+
+  getResponse<T>(
     endpoint: string,
-    params?: Record<string, unknown>,
+    options?: RequestOptions,
   ): Observable<ApiResponse<T>> {
+    return this.requestResponse<T>("GET", endpoint, undefined, options);
+  }
+
+  post<T>(
+    endpoint: string,
+    body: unknown,
+    options?: RequestOptions,
+  ): Observable<T> {
+    return this.request<T>("POST", endpoint, body, options);
+  }
+
+  postResponse<T>(
+    endpoint: string,
+    body: unknown,
+    options?: RequestOptions,
+  ): Observable<ApiResponse<T>> {
+    return this.requestResponse<T>("POST", endpoint, body, options);
+  }
+
+  put<T>(
+    endpoint: string,
+    body: unknown,
+    options?: RequestOptions,
+  ): Observable<T> {
+    return this.request<T>("PUT", endpoint, body, options);
+  }
+
+  patch<T>(
+    endpoint: string,
+    body: unknown,
+    options?: RequestOptions,
+  ): Observable<T> {
+    return this.request<T>("PATCH", endpoint, body, options);
+  }
+
+  delete<T>(
+    endpoint: string,
+    options?: RequestOptions,
+    body?: unknown,
+  ): Observable<T> {
+    return this.request<T>("DELETE", endpoint, body, options);
+  }
+
+  private request<T>(
+    method: HttpMethod,
+    endpoint: string,
+    body?: unknown,
+    options?: RequestOptions,
+  ): Observable<T> {
+    return this.requestResponse<T>(method, endpoint, body, options).pipe(
+      map((response) => response.data),
+    );
+  }
+
+  private requestResponse<T>(
+    method: HttpMethod,
+    endpoint: string,
+    body?: unknown,
+    options: RequestOptions = {},
+  ): Observable<ApiResponse<T>> {
+    const hasJsonBody = body !== null && body !== undefined && !(body instanceof FormData);
+
     return this.http
-      .get<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, {
-        params: this.buildParams(params),
-        headers: this.getHeaders(),
+      .request<ApiResponse<T>>(method, this.resolveUrl(endpoint), {
+        body,
+        headers: this.getHeaders(options.headers, hasJsonBody),
+        params: this.buildParams(options.params),
+        withCredentials: options.withCredentials ?? false,
       })
       .pipe(
-        timeout(this.defaultTimeout),
-        retryWhen(this.retryStrategy()),
+        timeout(options.timeoutMs ?? this.defaultTimeout),
+        this.getRetryOperator<ApiResponse<T>>(method, options.retry),
         catchError((error) => this.handleError(error)),
       );
   }
 
-  getPaginated<T>(
-    endpoint: string,
-    params?: Record<string, unknown>,
-  ): Observable<ApiResponse<T>> {
-    return this.get<T>(endpoint, params);
-  }
-
-  post<T>(endpoint: string, body: unknown): Observable<ApiResponse<T>> {
-    return this.http
-      .post<
-        ApiResponse<T>
-      >(`${this.baseUrl}${endpoint}`, body, { headers: this.getHeaders() })
-      .pipe(
-        timeout(this.defaultTimeout),
-        catchError((error) => this.handleError(error)),
-      );
-  }
-
-  put<T>(endpoint: string, body: unknown): Observable<ApiResponse<T>> {
-    return this.http
-      .put<
-        ApiResponse<T>
-      >(`${this.baseUrl}${endpoint}`, body, { headers: this.getHeaders() })
-      .pipe(
-        timeout(this.defaultTimeout),
-        catchError((error) => this.handleError(error)),
-      );
-  }
-
-  patch<T>(endpoint: string, body: unknown): Observable<ApiResponse<T>> {
-    return this.http
-      .patch<
-        ApiResponse<T>
-      >(`${this.baseUrl}${endpoint}`, body, { headers: this.getHeaders() })
-      .pipe(
-        timeout(this.defaultTimeout),
-        catchError((error) => this.handleError(error)),
-      );
-  }
-
-  delete<T>(endpoint: string): Observable<ApiResponse<T>> {
-    return this.http
-      .delete<
-        ApiResponse<T>
-      >(`${this.baseUrl}${endpoint}`, { headers: this.getHeaders() })
-      .pipe(
-        timeout(this.defaultTimeout),
-        catchError((error) => this.handleError(error)),
-      );
-  }
-
-  private getHeaders(): HttpHeaders {
-    return new HttpHeaders({
-      "Content-Type": "application/json",
+  private getHeaders(
+    customHeaders?: Record<string, string>,
+    hasJsonBody = false,
+  ): HttpHeaders {
+    const headers: Record<string, string> = {
       Accept: "application/json",
       "X-Correlation-Id": this.generateCorrelationId(),
-    });
+      ...customHeaders,
+    };
+
+    if (hasJsonBody && !headers["Content-Type"]) {
+      headers["Content-Type"] = "application/json";
+    }
+
+    return new HttpHeaders(headers);
   }
 
-  private buildParams(params?: Record<string, unknown>): HttpParams {
+  private buildParams(params?: QueryParams): HttpParams {
     let httpParams = new HttpParams();
+
     Object.entries(params ?? {}).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) {
-        httpParams = httpParams.set(key, String(value));
+      if (value === null || value === undefined) {
+        return;
       }
+
+      if (Array.isArray(value)) {
+        value.forEach((item) => {
+          httpParams = httpParams.append(key, this.serializeParamValue(item));
+        });
+        return;
+      }
+
+      httpParams = httpParams.set(key, this.serializeParamValue(value));
     });
+
     return httpParams;
   }
 
-  private retryStrategy() {
-    return (errors: Observable<unknown>) =>
-      errors.pipe(
-        mergeMap((error: unknown, index: number) => {
-          const httpError = error as HttpErrorResponse;
-          if (
-            index < this.maxRetries &&
-            httpError.status !== 400 &&
-            httpError.status !== 401 &&
-            httpError.status !== 403
-          ) {
-            return timer((index + 1) * 1000);
-          }
+  private serializeParamValue(value: QueryParamPrimitive): string {
+    return value instanceof Date ? value.toISOString() : String(value);
+  }
+
+  private getRetryOperator<T>(
+    method: HttpMethod,
+    retryOption?: boolean | RetryPolicy,
+  ): MonoTypeOperatorFunction<T> {
+    if (retryOption === false) {
+      return identity;
+    }
+
+    const policy = {
+      ...this.defaultRetryPolicy,
+      ...(retryOption === true || retryOption === undefined ? {} : retryOption),
+    };
+
+    if (!policy.includedMethods.includes(method)) {
+      return identity;
+    }
+
+    return retry({
+      count: policy.count,
+      delay: (error, retryCount) => {
+        const status = this.extractStatusCode(error);
+        if (
+          policy.excludedStatusCodes.includes(status) ||
+          !this.isRetriableStatus(status)
+        ) {
           return throwError(() => error);
-        }),
-      );
+        }
+
+        return timer(retryCount * policy.delayMs);
+      },
+      resetOnSuccess: true,
+    });
+  }
+
+  private isRetriableStatus(status: number): boolean {
+    return status === 0 || status === 408 || status === 429 || status >= 500;
+  }
+
+  private extractStatusCode(error: unknown): number {
+    if (error instanceof HttpErrorResponse) {
+      return error.status;
+    }
+
+    return 0;
   }
 
   private handleError(error: unknown): Observable<never> {
-    const httpError = error as HttpErrorResponse;
-    const apiError: ApiError = {
-      code: "UNKNOWN_ERROR",
-      message: "An unexpected error occurred",
-      timestamp: new Date().toISOString(),
-      correlationId: "",
-    };
-
-    if (httpError?.error?.code) {
-      apiError.code = httpError.error.code;
-      apiError.message = httpError.error.message;
-      apiError.details = httpError.error.details;
-      apiError.correlationId = httpError.error.correlationId;
-    } else if (httpError?.status === 0) {
-      apiError.code = "NETWORK_ERROR";
-      apiError.message = "Network connectivity issue";
-    } else if (httpError?.status === 401) {
-      apiError.code = "AUTHENTICATION_ERROR";
-      apiError.message = "Authentication required";
-    } else if (httpError?.status === 403) {
-      apiError.code = "AUTHORIZATION_ERROR";
-      apiError.message = "Insufficient permissions";
+    if (error instanceof TimeoutError) {
+      return throwError(() => ({
+        code: "REQUEST_TIMEOUT",
+        message: "The request timed out before the backend responded.",
+        timestamp: new Date().toISOString(),
+        correlationId: this.generateCorrelationId(),
+      } satisfies ApiError));
     }
 
-    return throwError(() => apiError);
+    if (error instanceof HttpErrorResponse) {
+      const errorPayload = this.extractApiError(error);
+      return throwError(() => errorPayload);
+    }
+
+    return throwError(() => ({
+      code: "UNKNOWN_ERROR",
+      message: "An unexpected error occurred.",
+      timestamp: new Date().toISOString(),
+      correlationId: this.generateCorrelationId(),
+      details: error,
+    } satisfies ApiError));
+  }
+
+  private extractApiError(httpError: HttpErrorResponse): ApiError {
+    const errorBody =
+      typeof httpError.error === "object" && httpError.error !== null
+        ? (httpError.error as Partial<ApiError>)
+        : undefined;
+
+    return {
+      code: errorBody?.code ?? this.mapErrorCode(httpError.status),
+      message:
+        errorBody?.message ??
+        this.mapErrorMessage(httpError.status) ??
+        httpError.message,
+      details: errorBody?.details,
+      timestamp: errorBody?.timestamp ?? new Date().toISOString(),
+      correlationId:
+        errorBody?.correlationId ??
+        httpError.headers.get("X-Correlation-Id") ??
+        this.generateCorrelationId(),
+    };
+  }
+
+  private mapErrorCode(status: number): string {
+    switch (status) {
+      case 0:
+        return "NETWORK_ERROR";
+      case 400:
+        return "BAD_REQUEST";
+      case 401:
+        return "AUTHENTICATION_ERROR";
+      case 403:
+        return "AUTHORIZATION_ERROR";
+      case 404:
+        return "RESOURCE_NOT_FOUND";
+      case 409:
+        return "CONFLICT";
+      default:
+        return "UNKNOWN_ERROR";
+    }
+  }
+
+  private mapErrorMessage(status: number): string {
+    switch (status) {
+      case 0:
+        return "Unable to reach the incident platform backend.";
+      case 400:
+        return "The request payload was rejected by the backend.";
+      case 401:
+        return "Authentication is required to complete this request.";
+      case 403:
+        return "You do not have permission to perform this action.";
+      case 404:
+        return "The requested resource could not be found.";
+      case 409:
+        return "The backend rejected the change because the resource changed.";
+      default:
+        return "An unexpected backend error occurred.";
+    }
+  }
+
+  private resolveUrl(endpoint: string): string {
+    if (/^https?:\/\//.test(endpoint)) {
+      return endpoint;
+    }
+
+    const normalizedBase = this.baseUrl.endsWith("/")
+      ? this.baseUrl.slice(0, -1)
+      : this.baseUrl;
+    const normalizedEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+
+    return `${normalizedBase}${normalizedEndpoint}`;
   }
 
   private generateCorrelationId(): string {
-    return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+    return globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
   }
 }

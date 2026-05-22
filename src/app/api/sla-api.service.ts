@@ -1,13 +1,13 @@
 import { Injectable, inject } from "@angular/core";
 import { Observable } from "rxjs";
-import { MockBackendService } from "./mock-backend.service";
+import { HttpClientService } from "../core/services/http-client.service";
 import { SlaState } from "../shared/models/sla.model";
 
 @Injectable({ providedIn: "root" })
 export class SlaApiService {
-  private readonly mock = inject(MockBackendService);
+  private readonly http = inject(HttpClientService);
 
   getSlaState(incidentId: string): Observable<SlaState> {
-    return this.mock.getSlaState(incidentId);
+    return this.http.get<SlaState>(`/incidents/${incidentId}/sla`);
   }
 }

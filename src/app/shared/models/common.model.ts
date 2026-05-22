@@ -35,6 +35,36 @@ export interface UserAction {
   metadata?: Record<string, unknown>;
 }
 
+export type QueryParamPrimitive = string | number | boolean | Date;
+export type QueryParamValue =
+  | QueryParamPrimitive
+  | readonly QueryParamPrimitive[]
+  | null
+  | undefined;
+export type QueryParams = Record<string, QueryParamValue>;
+
+export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
+export interface RetryPolicy {
+  count?: number;
+  delayMs?: number;
+  excludedStatusCodes?: number[];
+  includedMethods?: HttpMethod[];
+}
+
+export interface RequestOptions {
+  params?: QueryParams;
+  headers?: Record<string, string>;
+  timeoutMs?: number;
+  retry?: boolean | RetryPolicy;
+  withCredentials?: boolean;
+}
+
+export interface CommandResponse {
+  acknowledged: boolean;
+  message?: string;
+}
+
 export type IncidentStatus =
   | "OPEN"
   | "IN_PROGRESS"

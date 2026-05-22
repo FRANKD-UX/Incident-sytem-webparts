@@ -1,25 +1,20 @@
 import { Injectable, inject } from "@angular/core";
 import { Observable } from "rxjs";
-import { DashboardSummary } from "../shared/models/dashboard.model";
-import { MockBackendService } from "./mock-backend.service";
+import { HttpClientService } from "../core/services/http-client.service";
+import {
+  AdminDashboardStats,
+  DashboardSummary,
+} from "../shared/models/dashboard.model";
 
 @Injectable({ providedIn: "root" })
 export class DashboardApiService {
-  private readonly mock = inject(MockBackendService);
+  private readonly http = inject(HttpClientService);
 
   getDashboardSummary(): Observable<DashboardSummary> {
-    return this.mock.getDashboardSummary();
+    return this.http.get<DashboardSummary>("/dashboard/summary");
   }
 
-  getAdminStats(): Observable<{
-    incidentTypes: number;
-    workflows: number;
-    slaRules: number;
-    roles: number;
-  }> {
-    return new Observable((observer) => {
-      observer.next({ incidentTypes: 8, workflows: 5, slaRules: 12, roles: 6 });
-      observer.complete();
-    });
+  getAdminStats(): Observable<AdminDashboardStats> {
+    return this.http.get<AdminDashboardStats>("/dashboard/admin-stats");
   }
 }

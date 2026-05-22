@@ -1,44 +1,50 @@
 import { Injectable, inject } from "@angular/core";
 import { Observable } from "rxjs";
-import { MockBackendService } from "./mock-backend.service";
+import { HttpClientService } from "../core/services/http-client.service";
 import { Attachment } from "../shared/models/attachment.model";
+import { CommandResponse } from "../shared/models/common.model";
+
+export interface AttachmentUpdatePayload {
+  category?: Attachment["category"];
+  isProofOfUptime?: boolean;
+  metadata?: Partial<Attachment["metadata"]>;
+}
 
 @Injectable({ providedIn: "root" })
 export class AttachmentApiService {
-  private readonly mock = inject(MockBackendService);
+  private readonly http = inject(HttpClientService);
 
   getAttachments(incidentId: string): Observable<Attachment[]> {
-    return this.mock.getAttachments(incidentId);
+    return this.http.get<Attachment[]>(`/incidents/${incidentId}/attachments`);
   }
 
   uploadAttachments(
-    _incidentId: string,
-    _formData: FormData,
-  ): Observable<unknown> {
-    return new Observable((observer) => {
-      observer.next({});
-      observer.complete();
-    });
+    incidentId: string,
+    formData: FormData,
+  ): Observable<Attachment[]> {
+    return this.http.post<Attachment[]>(
+      `/incidents/${incidentId}/attachments`,
+      formData,
+    );
   }
 
   deleteAttachment(
-    _incidentId: string,
-    _attachmentId: string,
-  ): Observable<unknown> {
-    return new Observable((observer) => {
-      observer.next({});
-      observer.complete();
-    });
+    incidentId: string,
+    attachmentId: string,
+  ): Observable<CommandResponse> {
+    return this.http.delete<CommandResponse>(
+      `/incidents/${incidentId}/attachments/${attachmentId}`,
+    );
   }
 
   updateAttachment(
-    _incidentId: string,
-    _attachmentId: string,
-    _updates: unknown,
-  ): Observable<unknown> {
-    return new Observable((observer) => {
-      observer.next({});
-      observer.complete();
-    });
+    incidentId: string,
+    attachmentId: string,
+    updates: AttachmentUpdatePayload,
+  ): Observable<Attachment> {
+    return this.http.patch<Attachment>(
+      `/incidents/${incidentId}/attachments/${attachmentId}`,
+      updates,
+    );
   }
 }
