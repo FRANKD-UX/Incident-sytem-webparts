@@ -1,0 +1,211 @@
+// src/app/features/incidents/components/incident-table/incident-table.component.ts
+
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Incident } from "../../../../shared/models/incident.model";
+import { StatusBadgeComponent } from "../../../../shared/components/status-badge/status-badge.component";
+import { PriorityBadgeComponent } from "../../../../shared/components/priority-badge/priority-badge.component";
+import { SlaIndicatorComponent } from "../../../../shared/components/sla-indicator/sla-indicator.component";
+import { UserAvatarComponent } from "../../../../shared/components/user-avatar/user-avatar.component";
+
+@Component({
+  selector: "app-incident-table",
+  standalone: true,
+  imports: [
+    CommonModule,
+    StatusBadgeComponent,
+    PriorityBadgeComponent,
+    SlaIndicatorComponent,
+    UserAvatarComponent,
+  ],
+  template: `
+    <div class="incident-table-container">
+      <table class="incident-table">
+        <thead>
+          <tr>
+            <th class="col-checkbox">
+              <input type="checkbox" (change)="toggleAllSelection($event)" />
+            </th>
+            <th class="col-ref" (click)="onSort('referenceNumber')">
+              ID
+              <span class="sort-icon">{{
+                getSortIcon("referenceNumber")
+              }}</span>
+            </th>
+            <th class="col-title" (click)="onSort('title')">
+              Title
+              <span class="sort-icon">{{ getSortIcon("title") }}</span>
+            </th>
+            <th class="col-status" (click)="onSort('status')">
+              Status
+              <span class="sort-icon">{{ getSortIcon("status") }}</span>
+            </th>
+            <th class="col-priority" (click)="onSort('priority')">
+              Priority
+              <span class="sort-icon">{{ getSortIcon("priority") }}</span>
+            </th>
+            <th class="col-department">Department</th>
+            <th class="col-assignee">Assignee</th>
+            <th class="col-sla">SLA</th>
+            <th class="col-created" (click)="onSort('createdAt')">
+              Created
+              <span class="sort-icon">{{ getSortIcon("createdAt") }}</span>
+            </th>
+            <th class="col-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (incident of incidents; track incident.id) {
+            <tr
+              class="incident-row"
+              [class.selected]="isSelected(incident.id)"
+              (click)="onRowClick(incident)"
+            >
+              <td class="col-checkbox" (click)="$event.stopPropagation()">
+                <input
+                  type="checkbox"
+                  [checked]="isSelected(incident.id)"
+                  (change)="toggleSelection(incident.id)"
+                />
+              </td>
+              <td class="col-ref">
+                <span class="ref-number">{{ incident.referenceNumber }}</span>
+              </td>
+              <td class="col-title">
+                <div class="incident-title">
+                  <span class="title-text">{{ incident.title }}</span>
+                  @if (incident.tags?.length) {
+                    <div class="tags">
+                      @for (tag of incident.tags.slice(0, 2); track tag) {
+                        <span class="tag">{{ tag }}</span>
+                      }
+                      @if (incident.tags.length > 2) {
+                        <span class="tag more"
+                          >+{{ incident.tags.length - 2 }}</span
+                        >
+                      }
+                    </div>
+                  }
+                </div>
+              </td>
+              <td class="col-status">
+                <app-status-badge [status]="incident.status" />
+              </td>
+              <td class="col-priority">
+                <app-priority-badge [priority]="incident.priority" />
+              </td>
+              <td class="col-department">
+                <div class="department-info">
+                  <span class="department-name">{{
+                    incident.currentDepartment.name
+                  }}</span>
+                  @if (
+                    incident.originDepartment.id !==
+                    incident.currentDepartment.id
+                  ) {
+                    <span
+                      class="origin-dept"
+                      title="Origin: {{ incident.originDepartment.name }}"
+                    >
+                      from {{ incident.originDepartment.code }}
+                    </span>
+                  }
+                </div>
+              </td>
+              <td class="col-assignee">
+                @if (incident.assignedTo) {
+                  <app-user-avatar [user]="incident.assignedTo" size="small" />
+                } @else {
+                  <span class="unassigned">Unassigned</span>
+                }
+              </td>
+              <td class="col-sla">
+                <app-sla-indicator
+                  [incidentId]="incident.id"
+                  [compact]="true"
+                />
+              </td>
+              <td class="col-created">
+                <div class="date-info">
+                  <span class="date">{{
+                    incident.createdAt | date: "MMM d, y"
+                  }}</span>
+                  <span class="time">{{
+                    incident.createdAt | date: "HH:mm"
+                  }}</span>
+                </div>
+              </td>
+              <td class="col-actions" (click)="$event.stopPropagation()">
+                <button
+                  class="btn-icon"
+                  (click)="openMenu(incident, $event)"
+                  title="More actions"
+                >
+                  <span class="material-icons">more_vert</span>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  `,
+  styleUrls: ["./incident-table.component.scss"],
+})
+export class IncidentTableComponent {
+  @Input({ required: true }) incidents: Incident[] = [];
+  @Input() loading = false;
+  @Input() sortColumn = "createdAt";
+  @Input() sortDirection: "asc" | "desc" = "desc";
+
+  @Output() sortChange = new EventEmitter<{
+    column: string;
+    direction: "asc" | "desc";
+  }>();
+  @Output() rowClick = new EventEmitter<Incident>();
+
+  selectedIncidents = new Set<string>();
+
+  isSelected(incidentId: string): boolean {
+    return this.selectedIncidents.has(incidentId);
+  }
+
+  toggleSelection(incidentId: string): void {
+    if (this.selectedIncidents.has(incidentId)) {
+      this.selectedIncidents.delete(incidentId);
+    } else {
+      this.selectedIncidents.add(incidentId);
+    }
+  }
+
+  toggleAllSelection(event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    if (checked) {
+      this.incidents.forEach((i) => this.selectedIncidents.add(i.id));
+    } else {
+      this.selectedIncidents.clear();
+    }
+  }
+
+  onRowClick(incident: Incident): void {
+    this.rowClick.emit(incident);
+  }
+
+  onSort(column: string): void {
+    const direction =
+      this.sortColumn === column && this.sortDirection === "asc"
+        ? "desc"
+        : "asc";
+    this.sortChange.emit({ column, direction });
+  }
+
+  getSortIcon(column: string): string {
+    if (this.sortColumn !== column) return "↕";
+    return this.sortDirection === "asc" ? "↑" : "↓";
+  }
+
+  openMenu(incident: Incident, event: Event): void {
+    // Context menu implementation
+    console.log("Open menu for", incident.id);
+  }
+}

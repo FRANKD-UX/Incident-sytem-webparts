@@ -1,0 +1,38 @@
+:host {
+  display: block;
+  height: 100vh;
+}
+
+.shell {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background: var(--app-bg);
+}
+
+.shell__main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+.shell__content {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  padding: 24px;
+  background: linear-gradient(180deg, #f8fafc 0%, #f4f6fb 100%);
+}
+
+@media (max-width: 900px) {
+  .shell {
+    flex-direction: column;
+  }
+
+  .shell__content {
+    padding: 16px;
+  }
+}

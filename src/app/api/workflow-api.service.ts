@@ -1,36 +1,27 @@
-import { Injectable, inject } from "@angular/core";
-import { Observable } from "rxjs";
-import { HttpClientService } from "../core/services/http-client.service";
-import { Department } from "../shared/models/user.model";
-import { DepartmentChain, Incident } from "../shared/models/incident.model";
-import { CommandResponse, IncidentStatus } from "../shared/models/common.model";
-
-export interface IncidentMovePayload {
-  targetDepartmentId?: string;
-  targetStatus?: IncidentStatus;
-  note?: string;
-}
+import { Injectable } from "@angular/core";
+import { Observable, of } from "rxjs";
+import { WorkflowStateService } from "./workflow-engine/workflow-state.service";
 
 @Injectable({ providedIn: "root" })
 export class WorkflowApiService {
-  private readonly http = inject(HttpClientService);
+  constructor(private readonly workflow: WorkflowStateService) {}
 
-  getDepartmentChains(): Observable<DepartmentChain[]> {
-    return this.http.get<DepartmentChain[]>("/workflows/chains");
+  getDepartmentChains(): Observable<any[]> {
+    return of([]); 
   }
 
-  getDepartments(): Observable<Department[]> {
-    return this.http.get<Department[]>("/departments");
+  getDepartments(): Observable<any[]> {
+    return of([]);
   }
 
-  deleteDepartmentChain(id: string): Observable<CommandResponse> {
-    return this.http.delete<CommandResponse>(`/workflows/chains/${id}`);
+  deleteDepartmentChain(id: string): Observable<any> {
+    return of({});
   }
 
   moveIncident(
     incidentId: string,
-    payload: IncidentMovePayload,
-  ): Observable<Incident> {
-    return this.http.post<Incident>(`/incidents/${incidentId}/move`, payload);
+    payload: { fromDepartmentCode: string; toDepartmentCode: string },
+  ): Observable<any> {
+    return of(this.workflow.moveIncident(incidentId, payload));
   }
 }

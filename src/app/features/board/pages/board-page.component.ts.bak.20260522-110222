@@ -1,0 +1,9 @@
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-board-page',
+  standalone: true,
+  template: `<p>Board works!</p>`,
+  styles: []
+})
+export class BoardPageComponent {}

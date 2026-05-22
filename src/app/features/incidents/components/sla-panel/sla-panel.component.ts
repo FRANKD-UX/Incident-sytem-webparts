@@ -1,195 +1,151 @@
+// src/app/features/incidents/components/sla-panel/sla-panel.component.ts
+
+import { Component, Input } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { SlaMetricState, SlaState } from "../../../../shared/models/sla.model";
+import {
+  SlaState,
+  SlaMetricState,
+  SlaBreach,
+} from "../../../../shared/models/sla.model";
+import { EmptyStateComponent } from "../../../../shared/components/empty-state/empty-state.component";
 
 @Component({
   selector: "app-sla-panel",
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, EmptyStateComponent],
   template: `
-    <section class="sla-panel">
-      @if (!slaState) {
-        <p>No SLA data available.</p>
-      } @else {
-        <div class="status-row">
-          <span class="status-badge" [ngClass]="formatStatus(slaState.overallStatus)">
-            {{ formatStatus(slaState.overallStatus) }}
-          </span>
-        </div>
+    <div class="sla-panel">
+      <div class="panel-header">
+        <h3>SLA Performance</h3>
+        @if (slaState) {
+          <div
+            class="overall-status"
+            [class]="'status-' + slaState.overallStatus.toLowerCase()"
+          >
+            <span class="status-dot"></span>
+            <span>{{ formatStatus(slaState.overallStatus) }}</span>
+          </div>
+        }
+      </div>
 
+      @if (!slaState) {
+        <app-empty-state
+          icon="timer"
+          title="No SLA data"
+          description="SLA tracking is not configured for this incident"
+        />
+      } @else {
+        <!-- Next Breach Warning -->
         @if (slaState.nextBreach) {
-          <div class="warning-banner">
+          <div class="breach-warning">
             <span class="material-icons">warning</span>
-            Next breach at {{ slaState.nextBreach | date: "MMM d, y h:mm a" }}
+            <div>
+              <strong>Approaching SLA Breach</strong>
+              <p>Next breach at {{ slaState.nextBreach | date: "medium" }}</p>
+            </div>
           </div>
         }
 
+        <!-- SLA Metrics -->
         <div class="metrics-grid">
           @for (metric of slaState.metrics; track metric.metric) {
-            <article class="metric-card" [class.status-breached]="metric.status === 'BREACHED'">
-              <h4>{{ formatMetric(metric.metric) }}</h4>
-              <div class="progress-bar">
-                <div
-                  [style.width.%]="getMetricProgress(metric)"
-                  [ngClass]="{
-                    breached: metric.status === 'BREACHED',
-                    approaching: metric.status === 'APPROACHING_BREACH',
-                    within: metric.status === 'WITHIN_SLA'
-                  }"
-                ></div>
+            <div
+              class="metric-card"
+              [class]="'status-' + metric.status.toLowerCase()"
+            >
+              <div class="metric-header">
+                <span class="metric-name">{{
+                  formatMetric(metric.metric)
+                }}</span>
+                <span class="metric-status">{{
+                  formatStatus(metric.status)
+                }}</span>
               </div>
-              <div class="metric-stats">
-                <span>Elapsed: {{ formatDuration(metric.elapsed) }}</span>
-                <span>Target: {{ formatDuration(metric.target) }}</span>
+
+              <div class="metric-progress">
+                <div class="progress-bar">
+                  <div
+                    class="progress-fill"
+                    [style.width]="getMetricProgress(metric) + '%'"
+                    [class]="getProgressClass(metric)"
+                  ></div>
+                </div>
+                <div class="progress-stats">
+                  <span>{{ formatDuration(metric.elapsed) }} elapsed</span>
+                  <span>{{ formatDuration(metric.target) }} target</span>
+                </div>
               </div>
-              <small>Deadline: {{ metric.deadline | date: "MMM d, y h:mm a" }}</small>
-            </article>
+
+              <div class="metric-deadline">
+                <span class="material-icons">schedule</span>
+                <span
+                  >Deadline:
+                  {{ metric.deadline | date: "MMM d, y HH:mm" }}</span
+                >
+              </div>
+            </div>
           }
         </div>
 
-        @if (slaState.breaches.length > 0) {
-          <section class="breaches">
-            <h4>Breaches</h4>
+        <!-- SLA Breaches -->
+        @if (slaState.breaches.length) {
+          <div class="breaches-section">
+            <h4>SLA Breaches</h4>
             @for (breach of slaState.breaches; track breach.id) {
-              <article class="breach-card">
-                <strong>{{ formatMetric(breach.metric) }}</strong>
-                <span>{{ breach.severity }}</span>
-                <small>{{ breach.breachedAt | date: "MMM d, y h:mm a" }}</small>
+              <div
+                class="breach-card"
+                [class]="'severity-' + breach.severity.toLowerCase()"
+              >
+                <div class="breach-header">
+                  <span class="material-icons">error</span>
+                  <div>
+                    <strong>{{ formatMetric(breach.metric) }}</strong>
+                    <p>Breached at {{ breach.breachedAt | date: "medium" }}</p>
+                  </div>
+                  <span class="severity-badge">{{ breach.severity }}</span>
+                </div>
                 @if (!breach.acknowledged) {
-                  <button type="button" (click)="acknowledge.emit(breach.id)">Acknowledge</button>
+                  <div class="breach-actions">
+                    <button class="btn btn-secondary btn-sm">
+                      Acknowledge
+                    </button>
+                  </div>
                 }
-              </article>
+              </div>
             }
-          </section>
+          </div>
         }
       }
-    </section>
+    </div>
   `,
-  styles: [
-    `
-      .sla-panel {
-        display: grid;
-        gap: 12px;
-      }
-      .status-row {
-        display: flex;
-      }
-      .status-badge {
-        border-radius: 999px;
-        padding: 4px 10px;
-        font-size: 0.75rem;
-        font-weight: 600;
-      }
-      .status-badge.WITHIN_SLA {
-        color: #10b981;
-        background: #ecfdf5;
-      }
-      .status-badge.APPROACHING_BREACH {
-        color: #f59e0b;
-        background: #fffbeb;
-      }
-      .status-badge.BREACHED {
-        color: #ef4444;
-        background: #fef2f2;
-      }
-      .warning-banner {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        border-radius: 8px;
-        padding: 8px 10px;
-        background: #fffbeb;
-        color: #b45309;
-      }
-      .metrics-grid {
-        display: grid;
-        gap: 12px;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      }
-      .metric-card {
-        padding: 16px;
-        border: 1px solid var(--border-color, #e5e7eb);
-        border-radius: 8px;
-        display: grid;
-        gap: 8px;
-      }
-      .metric-card.status-breached {
-        border-color: #ef4444;
-        background: #fef2f2;
-      }
-      .metric-card h4 {
-        margin: 0;
-      }
-      .progress-bar {
-        height: 8px;
-        background: var(--bg-tertiary, #e5e7eb);
-        border-radius: 4px;
-        overflow: hidden;
-      }
-      .progress-bar div {
-        height: 100%;
-      }
-      .progress-bar .breached {
-        background: #ef4444;
-      }
-      .progress-bar .approaching {
-        background: #f59e0b;
-      }
-      .progress-bar .within {
-        background: #10b981;
-      }
-      .metric-stats {
-        display: flex;
-        justify-content: space-between;
-        gap: 8px;
-        font-size: 0.85rem;
-      }
-      .breaches {
-        display: grid;
-        gap: 8px;
-      }
-      .breach-card {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        border: 1px solid var(--border-color, #e5e7eb);
-        border-radius: 8px;
-        padding: 10px;
-      }
-      .breach-card button {
-        margin-left: auto;
-        border: 0;
-        background: #ef4444;
-        color: white;
-        border-radius: 6px;
-        padding: 6px 10px;
-        cursor: pointer;
-      }
-    `,
-  ],
+  styleUrls: ["./sla-panel.component.scss"],
 })
 export class SlaPanelComponent {
   @Input() slaState: SlaState | null = null;
-  @Output() acknowledge = new EventEmitter<string>();
 
-  formatStatus(status: SlaState["overallStatus"]): string {
-    return status;
+  formatStatus(status: string): string {
+    return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
   }
 
-  formatMetric(metric: SlaMetricState["metric"]): string {
-    return metric.replace(/_/g, " ");
+  formatMetric(metric: string): string {
+    return metric.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
   }
 
   formatDuration(minutes: number): string {
+    if (minutes < 60) return `${minutes}m`;
     const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    return `${hours}h ${remainingMinutes}m`;
+    const mins = minutes % 60;
+    return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
   }
 
   getMetricProgress(metric: SlaMetricState): number {
-    if (metric.target <= 0) {
-      return 0;
-    }
+    if (metric.target === 0) return 100;
     return Math.min((metric.elapsed / metric.target) * 100, 100);
+  }
+
+  getProgressClass(metric: SlaMetricState): string {
+    if (metric.status === "BREACHED") return "breached";
+    if (metric.status === "APPROACHING_BREACH") return "approaching";
+    return "within";
   }
 }

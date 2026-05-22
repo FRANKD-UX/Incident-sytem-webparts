@@ -1,0 +1,135 @@
+// src/app/layout/side-nav/side-nav.component.ts
+
+import { Component, Input } from "@angular/core";
+import { RouterLink, RouterLinkActive } from "@angular/router";
+import { NgClass } from "@angular/common";
+
+interface NavItem {
+  label: string;
+  icon: string;
+  route: string;
+  badge?: number;
+  children?: NavItem[];
+}
+
+@Component({
+  selector: "app-side-nav",
+  standalone: true,
+  imports: [RouterLink, RouterLinkActive],
+  template: `
+    <nav class="side-nav" [class.collapsed]="collapsed">
+      <div class="side-nav__items">
+        @for (item of navItems; track item.route) {
+          @if (item.children) {
+            <div class="nav-group">
+              <button
+                class="nav-group__header"
+                [class.active]="isGroupActive(item)"
+                (click)="toggleGroup(item)"
+              >
+                <span class="material-icons">{{ item.icon }}</span>
+                @if (!collapsed) {
+                  <span class="nav-label">{{ item.label }}</span>
+                  <span class="material-icons chevron">
+                    {{ isGroupExpanded(item) ? "expand_less" : "expand_more" }}
+                  </span>
+                }
+              </button>
+              @if (!collapsed && isGroupExpanded(item)) {
+                <div class="nav-group__children">
+                  @for (child of item.children; track child.route) {
+                    <a
+                      [routerLink]="child.route"
+                      routerLinkActive="active"
+                      class="nav-item nav-item--child"
+                    >
+                      <span class="material-icons">{{ child.icon }}</span>
+                      <span class="nav-label">{{ child.label }}</span>
+                    </a>
+                  }
+                </div>
+              }
+            </div>
+          } @else {
+            <a
+              [routerLink]="item.route"
+              routerLinkActive="active"
+              class="nav-item"
+            >
+              <span class="material-icons">{{ item.icon }}</span>
+              @if (!collapsed) {
+                <span class="nav-label">{{ item.label }}</span>
+                @if (item.badge) {
+                  <span class="nav-badge">{{ item.badge }}</span>
+                }
+              }
+            </a>
+          }
+        }
+      </div>
+    </nav>
+  `,
+  styleUrls: ["./side-nav.component.scss"],
+})
+export class SideNavComponent {
+  @Input() collapsed = false;
+
+  expandedGroups = new Set<string>();
+
+  navItems: NavItem[] = [
+    { label: "Dashboard", icon: "dashboard", route: "/dashboard" },
+    {
+      label: "Incidents",
+      icon: "warning",
+      route: "/incidents",
+      children: [
+        { label: "All Incidents", icon: "list", route: "/incidents" },
+        { label: "Board View", icon: "view_kanban", route: "/board" },
+      ],
+    },
+    { label: "Board", icon: "view_kanban", route: "/board" },
+    {
+      label: "Administration",
+      icon: "settings",
+      route: "/administration",
+      children: [
+        {
+          label: "Overview",
+          icon: "admin_panel_settings",
+          route: "/administration",
+        },
+        {
+          label: "Incident Types",
+          icon: "category",
+          route: "/administration/incident-types",
+        },
+        {
+          label: "Workflows",
+          icon: "account_tree",
+          route: "/administration/workflows",
+        },
+        { label: "SLA Rules", icon: "timer", route: "/administration/sla" },
+      ],
+    },
+  ];
+
+  toggleGroup(item: NavItem): void {
+    if (this.expandedGroups.has(item.label)) {
+      this.expandedGroups.delete(item.label);
+    } else {
+      this.expandedGroups.add(item.label);
+    }
+  }
+
+  isGroupExpanded(item: NavItem): boolean {
+    return this.expandedGroups.has(item.label);
+  }
+
+  isGroupActive(item: NavItem): boolean {
+    return (
+      item.children?.some((child) =>
+        window.location.pathname.includes(child.route),
+      ) ?? false
+    );
+  }
+}

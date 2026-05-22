@@ -1,0 +1,294 @@
+// src/app/features/incidents/components/incident-drawer/incident-drawer.component.ts
+
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnChanges,
+  inject,
+  signal,
+  computed,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Incident, DepartmentChain, ChainStep } from "../../../../shared/models/incident.model";
+import { Checklist } from "../../../../shared/models/checklist.model";
+import { Attachment } from "../../../../shared/models/attachment.model";
+import { AuditEntry } from "../../../../shared/models/audit.model";
+import { Escalation } from "../../../../shared/models/escalation.model";
+import { SlaState } from "../../../../shared/models/sla.model";
+import { IncidentApiService } from "../../../../api/incident-api.service";
+import { ChecklistApiService } from "../../../../api/checklist-api.service";
+import { AttachmentApiService } from "../../../../api/attachment-api.service";
+import { AuditApiService } from "../../../../api/audit-api.service";
+import { EscalationApiService } from "../../../../api/escalation-api.service";
+import { SlaApiService } from "../../../../api/sla-api.service";
+import { IncidentSummaryComponent } from "../incident-summary/incident-summary.component";
+import { ChainProgressComponent } from "../chain-progress/chain-progress.component";
+import { ChecklistPanelComponent } from "../checklist-panel/checklist-panel.component";
+import { AttachmentsPanelComponent } from "../attachments-panel/attachments-panel.component";
+import { AuditTimelineComponent } from "../audit-timeline/audit-timeline.component";
+import { EscalationPanelComponent } from "../escalation-panel/escalation-panel.component";
+import { SlaPanelComponent } from "../sla-panel/sla-panel.component";
+import { LoadingStateComponent } from "../../../../shared/components/loading-state/loading-state.component";
+
+type DetailTab =
+  | "summary"
+  | "checklist"
+  | "attachments"
+  | "audit"
+  | "escalations"
+  | "sla";
+
+@Component({
+  selector: "app-incident-drawer",
+  standalone: true,
+  imports: [
+    CommonModule,
+    IncidentSummaryComponent,
+    ChainProgressComponent,
+    ChecklistPanelComponent,
+    AttachmentsPanelComponent,
+    AuditTimelineComponent,
+    EscalationPanelComponent,
+    SlaPanelComponent,
+    LoadingStateComponent,
+  ],
+  template: `
+    <div class="drawer-overlay" [class.open]="isOpen" (click)="close.emit()">
+      <div class="drawer" [class.open]="isOpen" (click)="$event.stopPropagation()">
+        <div class="drawer__header">
+          <div class="drawer__header-content">
+            <div class="incident-ref">
+              <span class="ref-badge">{{ incident?.referenceNumber }}</span>
+              <span class="status-badge" [class]="'status-' + incident?.status?.toLowerCase()">
+                {{ incident?.status }}
+              </span>
+            </div>
+            <h2>{{ incident?.title }}</h2>
+            @if (currentStep()) {
+              <div class="step-context">
+                <span class="step-label">Current department</span>
+                <strong>{{ currentStep()!.department.name }}</strong>
+                <span class="step-subtext">
+                  {{ currentStep()!.checklist.name }} · {{ currentStep()!.checklist.items.length }} items
+                </span>
+              </div>
+            }
+          </div>
+          <div class="drawer__header-actions">
+            <button class="btn-icon" (click)="refresh.emit()">
+              <span class="material-icons">refresh</span>
+            </button>
+            <button class="btn-icon" (click)="close.emit()">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="drawer__tabs">
+          @for (tab of tabs; track tab.id) {
+            <button
+              class="tab"
+              [class.active]="activeTab === tab.id"
+              (click)="setActiveTab(tab.id)"
+            >
+              <span class="material-icons">{{ tab.icon }}</span>
+              <span>{{ tab.label }}</span>
+              @if (tab.badge) {
+                <span class="tab-badge">{{ getBadgeCount(tab) }}</span>
+              }
+            </button>
+          }
+        </div>
+
+        <div class="drawer__content">
+          @if (loading()) {
+            <app-loading-state message="Loading incident details..." />
+          } @else {
+            @switch (activeTab) {
+              @case ("summary") {
+                <app-incident-summary [incident]="incident!" />
+                <div class="current-step-card" *ngIf="currentStep() as step">
+                  <div class="current-step-card__header">
+                    <span class="material-icons">account_tree</span>
+                    <div>
+                      <strong>{{ step.department.name }}</strong>
+                      <p>{{ step.checklist.name }}</p>
+                    </div>
+                  </div>
+                  <div class="current-step-card__body">
+                    <div><span>Expected actions:</span> {{ step.expectedActions.join(", ") || "None" }}</div>
+                    <div><span>SLA:</span> {{ step.sla.responseTime }}m response · {{ step.sla.resolutionTime }}m resolution</div>
+                  </div>
+                </div>
+                <app-chain-progress
+                  [chain]="chain()"
+                  [currentStepId]="incident?.currentDepartment?.id ?? ''"
+                />
+              }
+              @case ("checklist") {
+                <app-checklist-panel
+                  [incidentId]="incident!.id"
+                  [checklist]="checklist()"
+                  [departmentName]="currentStep()?.department.name ?? incident?.currentDepartment?.name ?? ''"
+                  [checklistName]="currentStep()?.checklist.name ?? ''"
+                  (checklistUpdated)="loadChecklist()"
+                />
+              }
+              @case ("attachments") {
+                <app-attachments-panel
+                  [incidentId]="incident!.id"
+                  [attachments]="attachments()"
+                  (attachmentsUpdated)="loadAttachments()"
+                />
+              }
+              @case ("audit") {
+                <app-audit-timeline [entries]="auditTrail()" />
+              }
+              @case ("escalations") {
+                <app-escalation-panel
+                  [incidentId]="incident!.id"
+                  [escalations]="escalations()"
+                />
+              }
+              @case ("sla") {
+                <app-sla-panel [slaState]="slaState()" />
+              }
+            }
+          }
+        </div>
+      </div>
+    </div>
+  `,
+  styleUrls: ["./incident-drawer.component.scss"],
+})
+export class IncidentDrawerComponent implements OnInit, OnChanges {
+  @Input({ required: true }) incident!: Incident | null;
+  @Input() isOpen = false;
+  @Output() close = new EventEmitter<void>();
+  @Output() refresh = new EventEmitter<void>();
+
+  private readonly incidentApi = inject(IncidentApiService);
+  private readonly checklistApi = inject(ChecklistApiService);
+  private readonly attachmentApi = inject(AttachmentApiService);
+  private readonly auditApi = inject(AuditApiService);
+  private readonly escalationApi = inject(EscalationApiService);
+  private readonly slaApi = inject(SlaApiService);
+
+  activeTab: DetailTab = "summary";
+  loading = signal(false);
+
+  chain = signal<DepartmentChain | null>(null);
+  checklist = signal<Checklist | null>(null);
+  attachments = signal<Attachment[]>([]);
+  auditTrail = signal<AuditEntry[]>([]);
+  escalations = signal<Escalation[]>([]);
+  slaState = signal<SlaState | null>(null);
+
+  currentStep = computed<ChainStep | null>(() => {
+    const chain = this.chain();
+    const incident = this.incident;
+    if (!chain || !incident) return null;
+
+    return (
+      chain.steps.find(
+        (step) => step.department.code === incident.currentDepartment.code,
+      ) ?? chain.steps[0] ?? null
+    );
+  });
+
+  tabs = [
+    { id: "summary" as DetailTab, label: "Summary", icon: "info", badge: false },
+    { id: "checklist" as DetailTab, label: "Checklist", icon: "checklist", badge: true },
+    { id: "attachments" as DetailTab, label: "Attachments", icon: "attach_file", badge: true },
+    { id: "audit" as DetailTab, label: "Audit Trail", icon: "timeline", badge: false },
+    { id: "escalations" as DetailTab, label: "Escalations", icon: "warning", badge: true },
+    { id: "sla" as DetailTab, label: "SLA", icon: "timer", badge: false },
+  ];
+
+  ngOnInit(): void {
+    if (this.incident) {
+      this.loadDetailData();
+    }
+  }
+
+  ngOnChanges(): void {
+    if (this.incident && this.isOpen) {
+      this.loadDetailData();
+    }
+  }
+
+  private loadDetailData(): void {
+    if (!this.incident) return;
+
+    this.loading.set(true);
+    this.loadChain();
+    this.loadChecklist();
+    this.loadAttachments();
+    this.loadAuditTrail();
+    this.loadEscalations();
+    this.loadSlaState();
+    this.loading.set(false);
+  }
+
+  private loadChain(): void {
+    this.incidentApi.getIncidentChain(this.incident!.id).subscribe({
+      next: (chain) => this.chain.set(chain),
+      error: (err) => console.error("Failed to load chain:", err),
+    });
+  }
+
+  loadChecklist(): void {
+    this.checklistApi.getChecklist(this.incident!.id).subscribe({
+      next: (checklist) => this.checklist.set(checklist),
+      error: (err) => console.error("Failed to load checklist:", err),
+    });
+  }
+
+  loadAttachments(): void {
+    this.attachmentApi.getAttachments(this.incident!.id).subscribe({
+      next: (attachments) => this.attachments.set(attachments),
+      error: (err) => console.error("Failed to load attachments:", err),
+    });
+  }
+
+  private loadAuditTrail(): void {
+    this.auditApi.getAuditTrail(this.incident!.id).subscribe({
+      next: (entries) => this.auditTrail.set(entries),
+      error: (err) => console.error("Failed to load audit trail:", err),
+    });
+  }
+
+  private loadEscalations(): void {
+    this.escalationApi.getEscalations(this.incident!.id).subscribe({
+      next: (escalations) => this.escalations.set(escalations),
+      error: (err) => console.error("Failed to load escalations:", err),
+    });
+  }
+
+  private loadSlaState(): void {
+    this.slaApi.getSlaState(this.incident!.id).subscribe({
+      next: (sla) => this.slaState.set(sla),
+      error: (err) => console.error("Failed to load SLA state:", err),
+    });
+  }
+
+  setActiveTab(tab: DetailTab): void {
+    this.activeTab = tab;
+  }
+
+  getBadgeCount(tab: any): number | null {
+    switch (tab.id) {
+      case "checklist":
+        return this.checklist()?.items?.length || null;
+      case "attachments":
+        return this.attachments()?.length || null;
+      case "escalations":
+        return this.escalations()?.filter((e) => e.status === "ACTIVE")?.length || null;
+      default:
+        return null;
+    }
+  }
+}

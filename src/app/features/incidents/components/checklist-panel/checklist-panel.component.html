@@ -1,0 +1,30 @@
+@Component({
+  selector: 'app-checklist-panel',
+  standalone: true,
+  imports: [CommonModule, FormsModule, LoadingStateComponent, EmptyStateComponent],
+  template: `
+    <div class="checklist-panel">
+      <div class="panel-header">
+        <h3>Checklist</h3>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width]="progressPercentage + '%'"></div>
+        </div>
+      </div>
+      <div class="checklist-items">
+        <div *ngFor="let item of checklist?.items" class="checklist-item">
+          <div class="item-header" (click)="toggleItem(item)">
+            <span class="item-checkbox">{{ item.isCompleted ? '✓' : '○' }}</span>
+            <span>{{ item.description }}</span>
+          </div>
+          <div *ngIf="!item.isCompleted && selectedItem?.id === item.id && item.evidenceRequired" class="evidence-section">
+            <div *ngIf="item.evidenceType === 'NOTE'">
+              <textarea [(ngModel)]="evidenceNotes[item.id]" placeholder="Enter notes..."></textarea>
+              <button (click)="completeItem(item)">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `,
+  styleUrls: ['./checklist-panel.component.scss']
+})

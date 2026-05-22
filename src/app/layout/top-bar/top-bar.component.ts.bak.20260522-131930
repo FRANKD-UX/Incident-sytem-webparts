@@ -1,0 +1,44 @@
+import { Component, EventEmitter, Output } from '@angular/core';
+
+@Component({
+  selector: 'app-top-bar',
+  standalone: true,
+  template: `
+    <header class="top-bar">
+      <div class="top-bar__left">
+        <button class="top-bar__menu-btn" (click)="toggleSidebar.emit()">
+          <span class="material-icons">menu</span>
+        </button>
+        <div class="top-bar__logo">
+          <span class="logo-icon">⚡</span>
+          <span class="logo-text">IncidentOps</span>
+        </div>
+      </div>
+      <div class="top-bar__center">
+        <div class="global-search">
+          <span class="material-icons">search</span>
+          <input type="text" placeholder="Search incidents, users, departments...">
+          <kbd>⌘K</kbd>
+        </div>
+      </div>
+      <div class="top-bar__right">
+        <button class="top-bar__action-btn">
+          <span class="material-icons">notifications</span>
+          <span class="notification-badge">3</span>
+        </button>
+        <button class="top-bar__action-btn">
+          <span class="material-icons">help_outline</span>
+        </button>
+        <div class="user-menu">
+          <div class="user-avatar">JD</div>
+          <span class="user-name">John Doe</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+      </div>
+    </header>
+  `,
+  styleUrls: ['./top-bar.component.scss']
+})
+export class TopBarComponent {
+  @Output() toggleSidebar = new EventEmitter<void>();
+}

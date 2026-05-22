@@ -1,0 +1,210 @@
+import { CommonModule } from "@angular/common";
+import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { ChecklistApiService } from "../../../../api/checklist-api.service";
+import {
+  Checklist,
+  ChecklistItem,
+  ChecklistItemUpdatePayload,
+} from "../../../../shared/models/checklist.model";
+
+@Component({
+  selector: "app-checklist-panel",
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
+    <div class="checklist-panel">
+      <div class="panel-header">
+        <div>
+          <h3>Checklist</h3>
+          <p class="panel-subtitle">
+            @if (departmentName) {
+              {{ departmentName }}
+            } @else {
+              Current department workflow gate
+            }
+          </p>
+        </div>
+
+        <div class="panel-progress">
+          <div class="progress-text">
+            <strong>{{ completedCount }}</strong>/<span>{{ totalCount }}</span>
+            completed
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="progressPercentage"></div>
+          </div>
+        </div>
+      </div>
+
+      @if (!checklist) {
+        <div class="empty-state">
+          <span class="material-icons">fact_check</span>
+          <h4>No checklist loaded</h4>
+          <p>This department step does not currently have an active checklist.</p>
+        </div>
+      } @else {
+        <div class="checklist-meta">
+          <div class="meta-card">
+            <span class="meta-label">Checklist</span>
+            <strong>{{ checklistIdLabel }}</strong>
+          </div>
+          <div class="meta-card">
+            <span class="meta-label">Status</span>
+            <strong>{{ checklist.status }}</strong>
+          </div>
+          <div class="meta-card">
+            <span class="meta-label">Required</span>
+            <strong>{{ requiredCount }}</strong>
+          </div>
+        </div>
+
+        <div class="checklist-items">
+          @for (item of checklist.items; track item.id) {
+            <div class="checklist-item" [class.completed]="item.isCompleted">
+              <div class="item-header">
+                <button
+                  class="item-toggle"
+                  type="button"
+                  (click)="toggleItem(item)"
+                  [disabled]="savingItemId === item.id"
+                >
+                  <span class="item-checkbox">
+                    {{ item.isCompleted ? "✓" : "○" }}
+                  </span>
+                </button>
+
+                <div class="item-body">
+                  <div class="item-title-row">
+                    <span class="item-title">{{ item.description }}</span>
+
+                    <span class="item-badges">
+                      @if (item.isRequired) {
+                        <span class="badge required">Required</span>
+                      }
+                      @if (item.evidenceRequired) {
+                        <span class="badge evidence">
+                          {{ item.evidenceType ?? "EVIDENCE" }}
+                        </span>
+                      }
+                    </span>
+                  </div>
+
+                  <div class="item-meta">
+                    <span>Category: {{ item.category }}</span>
+                    <span>Order: {{ item.order }}</span>
+                    @if (item.completedAt) {
+                      <span>Completed: {{ item.completedAt | date: "short" }}</span>
+                    }
+                  </div>
+
+                  @if (!item.isCompleted && item.evidenceRequired) {
+                    <div class="evidence-section">
+                      @if (item.evidenceType === "NOTE") {
+                        <textarea
+                          [(ngModel)]="evidenceNotes[item.id]"
+                          placeholder="Enter the department note required to complete this step..."
+                        ></textarea>
+                      } @else {
+                        <div class="evidence-hint">
+                          Evidence is required for this item. Attachments are handled in the Attachments tab.
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="item-footer">
+                @if (item.isCompleted) {
+                  <span class="status-pill done">Completed</span>
+                } @else {
+                  <span class="status-pill pending">Pending</span>
+                }
+
+                @if (!item.isCompleted) {
+                  <button
+                    class="btn btn-primary btn-sm"
+                    type="button"
+                    (click)="completeItem(item)"
+                    [disabled]="savingItemId === item.id"
+                  >
+                    {{ savingItemId === item.id ? "Saving..." : "Mark complete" }}
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  `,
+  styleUrls: ["./checklist-panel.component.scss"],
+})
+export class ChecklistPanelComponent {
+  @Input({ required: true }) incidentId!: string;
+  @Input() checklist: Checklist | null = null;
+  @Input() departmentName = "";
+  @Input() checklistName = "";
+  @Output() checklistUpdated = new EventEmitter<void>();
+
+  private readonly checklistApi = inject(ChecklistApiService);
+
+  evidenceNotes: Record<string, string> = {};
+  savingItemId: string | null = null;
+
+  get totalCount(): number {
+    return this.checklist?.items?.length ?? 0;
+  }
+
+  get completedCount(): number {
+    return this.checklist?.items?.filter((item) => item.isCompleted).length ?? 0;
+  }
+
+  get requiredCount(): number {
+    return this.checklist?.items?.filter((item) => item.isRequired).length ?? 0;
+  }
+
+  get progressPercentage(): number {
+    if (!this.totalCount) return 0;
+    return Math.round((this.completedCount / this.totalCount) * 100);
+  }
+
+  get checklistIdLabel(): string {
+    return this.checklistName || this.checklist?.id || "Checklist";
+  }
+
+  toggleItem(item: ChecklistItem): void {
+    if (item.isCompleted) {
+      return;
+    }
+
+    if (item.evidenceRequired && item.evidenceType === "NOTE" && !this.evidenceNotes[item.id]?.trim()) {
+      return;
+    }
+
+    this.completeItem(item);
+  }
+
+  completeItem(item: ChecklistItem): void {
+    if (!this.checklist) return;
+
+    this.savingItemId = item.id;
+
+    const payload: ChecklistItemUpdatePayload = {
+      isCompleted: true,
+      evidence: this.evidenceNotes[item.id]?.trim() || null,
+    };
+
+    this.checklistApi.updateChecklistItem(this.incidentId, item.id, payload).subscribe({
+      next: () => {
+        this.savingItemId = null;
+        this.checklistUpdated.emit();
+      },
+      error: (err) => {
+        console.error("Failed to update checklist item:", err);
+        this.savingItemId = null;
+      },
+    });
+  }
+}

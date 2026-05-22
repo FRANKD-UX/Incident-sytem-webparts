@@ -1,156 +1,149 @@
+// src/app/features/board/components/kanban-column/kanban-column.component.ts
+
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, Output, signal } from "@angular/core";
 import { Incident } from "../../../../shared/models/incident.model";
-import { IncidentStatus } from "../../../../shared/models/common.model";
-import { EmptyStateComponent } from "../../../../shared/components/empty-state/empty-state.component";
 import { KanbanCardComponent } from "../kanban-card/kanban-card.component";
 
-export interface KanbanColumn {
+interface KanbanColumn {
   id: string;
   title: string;
-  status: IncidentStatus;
+  departmentCode: string;
+  incidents: Incident[];
+  limit?: number;
   color: string;
   icon: string;
-  incidents: Incident[];
-}
-
-export interface IncidentMovedEvent {
-  incident: Incident;
-  fromColumnId: string;
-  toColumnId: string;
+  completed?: boolean;
 }
 
 @Component({
   selector: "app-kanban-column",
   standalone: true,
-  imports: [CommonModule, EmptyStateComponent, KanbanCardComponent],
+  imports: [CommonModule, KanbanCardComponent],
   template: `
-    <section class="kanban-column" [style.borderTopColor]="column.color">
-      <header class="column-header">
-        <div class="column-header__meta">
-          <span class="material-icons" [style.color]="column.color">{{ column.icon }}</span>
+    <div
+      class="kanban-column"
+      [attr.data-column-id]="column.departmentCode"
+      [style.borderTopColor]="column.color"
+      [class.drop-target]="isDropTarget"
+      [class.completed-column]="column.completed"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave()"
+      (drop)="onDrop($event)"
+    >
+      <div class="column-header">
+        <div class="column-title">
+          <span class="material-icons" [style.color]="column.color">{{
+            column.icon
+          }}</span>
           <h3>{{ column.title }}</h3>
+          <span class="count-badge" [style.background]="column.color">
+            {{ column.incidents.length }}
+          </span>
         </div>
-        <span class="count-badge" [style.background]="column.color">{{ column.incidents.length }}</span>
-      </header>
+        @if (column.limit) {
+          <div class="column-limit">
+            <span>{{ column.incidents.length }}/{{ column.limit }}</span>
+          </div>
+        }
+      </div>
 
-      <div
-        class="column-content"
-        (dragover)="onDragOver($event)"
-        (drop)="onDrop($event)"
-      >
+      <div class="column-content">
         @if (column.incidents.length === 0) {
-          <app-empty-state
-            icon="inventory_2"
-            title="No incidents"
-            description="Drop incidents here to move workflow status."
-          />
+          <div class="empty-column">
+            <span class="material-icons">inbox</span>
+            <p>No incidents</p>
+          </div>
         } @else {
           @for (incident of column.incidents; track incident.id) {
             <app-kanban-card
               [incident]="incident"
               [draggable]="canDrag"
-              (dragStart)="onCardDragStart($event)"
-              (click)="incidentClick.emit($event)"
+              (dragStart)="onCardDragStart($event, incident)"
+              (click)="incidentClick.emit(incident)"
             />
           }
         }
       </div>
 
-      <footer class="column-footer">Total: {{ column.incidents.length }}</footer>
-    </section>
+      @if (column.incidents.length > 0) {
+        <div class="column-footer">
+          <span class="total-incidents">
+            {{ column.incidents.length }} incident{{
+              column.incidents.length !== 1 ? "s" : ""
+            }}
+          </span>
+        </div>
+      }
+    </div>
   `,
-  styles: [
-    `
-      .kanban-column {
-        width: 300px;
-        background: var(--bg-secondary, #f8fafc);
-        border-top: 3px solid;
-        border-radius: 8px;
-        display: flex;
-        flex-direction: column;
-        max-height: 100%;
-        border: 1px solid var(--border-color, #e5e7eb);
-      }
-      .column-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 12px 12px 8px;
-      }
-      .column-header__meta {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .column-header__meta h3 {
-        margin: 0;
-        font-size: 0.95rem;
-      }
-      .count-badge {
-        padding: 2px 8px;
-        border-radius: 12px;
-        color: white;
-        font-size: 0.75rem;
-        font-weight: 600;
-      }
-      .column-content {
-        padding: 8px;
-        overflow-y: auto;
-        min-height: 120px;
-      }
-      .column-footer {
-        border-top: 1px solid var(--border-color, #e5e7eb);
-        padding: 8px 12px;
-        color: var(--text-secondary, #6b7280);
-        font-size: 0.8rem;
-      }
-    `,
-  ],
+  styleUrls: ["./kanban-column.component.scss"],
 })
 export class KanbanColumnComponent {
   @Input({ required: true }) column!: KanbanColumn;
   @Input() canDrag = false;
 
-  @Output() incidentMoved = new EventEmitter<IncidentMovedEvent>();
+  @Output() incidentMoved = new EventEmitter<{
+    incidentId: string;
+    fromDepartmentCode: string;
+    toDepartmentCode: string;
+  }>();
   @Output() incidentClick = new EventEmitter<Incident>();
 
-  readonly draggedIncident = signal<Incident | null>(null);
+  isDropTarget = false;
+  private draggedIncidentId: string | null = null;
+  private draggedFromDepartmentCode: string | null = null;
 
-  onCardDragStart(incident: Incident): void {
-    this.draggedIncident.set(incident);
+  onCardDragStart(event: DragEvent, incident: Incident): void {
+    this.draggedIncidentId = incident.id;
+    this.draggedFromDepartmentCode = incident.currentDepartment.code;
+
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", incident.id);
+      event.dataTransfer.setData("application/x-incident-id", incident.id);
+      event.dataTransfer.setData(
+        "application/x-source-department-code",
+        incident.currentDepartment.code,
+      );
+    }
   }
 
   onDragOver(event: DragEvent): void {
-    if (!this.canDrag) {
-      return;
-    }
     event.preventDefault();
+    this.isDropTarget = true;
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = "move";
+    }
+  }
+
+  onDragLeave(): void {
+    this.isDropTarget = false;
   }
 
   onDrop(event: DragEvent): void {
-    if (!this.canDrag) {
-      return;
-    }
-
     event.preventDefault();
-    const incident = this.draggedIncident();
-    if (!incident) {
-      return;
+    this.isDropTarget = false;
+
+    const incidentId =
+      event.dataTransfer?.getData("application/x-incident-id") ||
+      event.dataTransfer?.getData("text/plain") ||
+      this.draggedIncidentId;
+
+    const fromDepartmentCode =
+      event.dataTransfer?.getData("application/x-source-department-code") ||
+      this.draggedFromDepartmentCode ||
+      "";
+
+    if (incidentId && fromDepartmentCode && fromDepartmentCode !== this.column.departmentCode) {
+      this.incidentMoved.emit({
+        incidentId,
+        fromDepartmentCode,
+        toDepartmentCode: this.column.departmentCode,
+      });
     }
 
-    const fromColumnId = event.dataTransfer?.getData("text/plain") ?? "";
-    if (!fromColumnId || fromColumnId === this.column.id) {
-      this.draggedIncident.set(null);
-      return;
-    }
-
-    this.incidentMoved.emit({
-      incident,
-      fromColumnId,
-      toColumnId: this.column.id,
-    });
-
-    this.draggedIncident.set(null);
+    this.draggedIncidentId = null;
+    this.draggedFromDepartmentCode = null;
   }
 }

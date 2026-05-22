@@ -1,0 +1,24 @@
+import { Component } from '@angular/core';
+import { TopBarComponent } from '../top-bar/top-bar.component';
+import { SideNavComponent } from '../side-nav/side-nav.component';
+
+@Component({
+  selector: 'app-shell',
+  standalone: true,
+  imports: [TopBarComponent, SideNavComponent],
+  template: `
+    <div class="app-shell">
+      <app-top-bar (toggleSidebar)="sidebarCollapsed = !sidebarCollapsed" />
+      <div class="app-shell__body">
+        <app-side-nav [collapsed]="sidebarCollapsed" />
+        <main class="app-shell__content" [class.expanded]="sidebarCollapsed">
+          <ng-content />
+        </main>
+      </div>
+    </div>
+  `,
+  styleUrls: ['./app-shell.component.scss']
+})
+export class AppShellComponent {
+  sidebarCollapsed = false;
+}

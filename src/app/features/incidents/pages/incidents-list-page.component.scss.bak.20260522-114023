@@ -1,0 +1,37 @@
+.incidents-page {
+  display: grid;
+  gap: 16px;
+}
+
+.toolbar {
+  display: grid;
+  gap: 16px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pagination__meta {
+  color: var(--text-secondary);
+}
+
+.pagination__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.last-updated {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}

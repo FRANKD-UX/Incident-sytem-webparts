@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+.top-bar {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 16px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border-color);
+}

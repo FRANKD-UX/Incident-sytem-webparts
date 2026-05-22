@@ -1,187 +1,173 @@
-import { CommonModule } from "@angular/common";
-import { Component, OnInit, inject, signal } from "@angular/core";
-import { RouterLink } from "@angular/router";
-import { DashboardApiService } from "../../../api/dashboard-api.service";
-import { AdminDashboardStats } from "../../../shared/models/dashboard.model";
-import { HasPermissionDirective } from "../../../shared/directives/has-permission.directive";
+// src/app/features/administration/pages/admin-dashboard.component.ts
 
-interface AdminCard {
-  title: string;
-  description: string;
-  icon: string;
-  color: string;
-  route: string;
-  permission: string;
-  count: number;
-}
+import { Component, OnInit, inject, signal } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { RouterLink } from "@angular/router";
+import { PermissionsApiService } from "../../../api/permissions-api.service";
+import { DashboardApiService } from "../../../api/dashboard-api.service";
+import { StatCardComponent } from "../../../shared/components/stat-card/stat-card.component";
+import { LoadingStateComponent } from "../../../shared/components/loading-state/loading-state.component";
+import { HasPermissionDirective } from "../../../shared/directives/has-permission.directive";
 
 @Component({
   selector: "app-admin-dashboard",
   standalone: true,
-  imports: [CommonModule, RouterLink, HasPermissionDirective],
+  imports: [
+    CommonModule,
+    RouterLink,
+    StatCardComponent,
+    LoadingStateComponent,
+    HasPermissionDirective,
+  ],
   template: `
-    <section class="admin-dashboard">
-      <h1>Administration</h1>
+    <div class="admin-dashboard">
+      <div class="page-header">
+        <div>
+          <h1>Administration</h1>
+          <p class="subtitle">System configuration and management</p>
+        </div>
+      </div>
 
       @if (loading()) {
-        <p>Loading administration settings...</p>
+        <app-loading-state message="Loading configuration..." />
       } @else {
         <div class="admin-grid">
-          @for (card of cards(); track card.title) {
-            <a
-              *hasPermission="card.permission"
-              [routerLink]="card.route"
-              class="admin-card"
+          <!-- Incident Types Card -->
+          <a
+            routerLink="incident-types"
+            class="admin-card"
+            *hasPermission="'MANAGE_INCIDENT_TYPES'"
+          >
+            <div
+              class="admin-card__icon"
+              style="background: linear-gradient(135deg, #3b82f6, #2563eb)"
             >
-              <div
-                class="admin-card__icon"
-                [style.background]="
-                  'linear-gradient(135deg,' + card.color + ', ' + card.color + 'cc)'
-                "
+              <span class="material-icons">category</span>
+            </div>
+            <div class="admin-card__content">
+              <h3>Incident Types</h3>
+              <p>Configure incident types, categories, and default settings</p>
+              <span class="admin-card__count"
+                >{{ systemStats().incidentTypes }} configured</span
               >
-                <span class="material-icons">{{ card.icon }}</span>
-              </div>
-              <div class="admin-card__content">
-                <h3>{{ card.title }}</h3>
-                <p>{{ card.description }}</p>
-                <strong>{{ card.count }}</strong>
-              </div>
-              <span class="material-icons admin-card__chevron">chevron_right</span>
-            </a>
-          }
+            </div>
+            <span class="material-icons chevron">chevron_right</span>
+          </a>
+
+          <!-- Workflows Card -->
+          <a
+            routerLink="workflows"
+            class="admin-card"
+            *hasPermission="'MANAGE_WORKFLOWS'"
+          >
+            <div
+              class="admin-card__icon"
+              style="background: linear-gradient(135deg, #8b5cf6, #7c3aed)"
+            >
+              <span class="material-icons">account_tree</span>
+            </div>
+            <div class="admin-card__content">
+              <h3>Workflows</h3>
+              <p>Manage department chains, checklists, and transition rules</p>
+              <span class="admin-card__count"
+                >{{ systemStats().workflows }} active</span
+              >
+            </div>
+            <span class="material-icons chevron">chevron_right</span>
+          </a>
+
+          <!-- SLA Rules Card -->
+          <a routerLink="sla" class="admin-card" *hasPermission="'MANAGE_SLA'">
+            <div
+              class="admin-card__icon"
+              style="background: linear-gradient(135deg, #f59e0b, #d97706)"
+            >
+              <span class="material-icons">timer</span>
+            </div>
+            <div class="admin-card__content">
+              <h3>SLA Configuration</h3>
+              <p>Define response and resolution time targets</p>
+              <span class="admin-card__count"
+                >{{ systemStats().slaRules }} rules</span
+              >
+            </div>
+            <span class="material-icons chevron">chevron_right</span>
+          </a>
+
+          <!-- User Roles Card -->
+          <a
+            routerLink="roles"
+            class="admin-card"
+            *hasPermission="'MANAGE_ROLES'"
+          >
+            <div
+              class="admin-card__icon"
+              style="background: linear-gradient(135deg, #10b981, #059669)"
+            >
+              <span class="material-icons">shield</span>
+            </div>
+            <div class="admin-card__content">
+              <h3>Roles & Permissions</h3>
+              <p>Manage user roles, department access, and permissions</p>
+              <span class="admin-card__count"
+                >{{ systemStats().roles }} roles</span
+              >
+            </div>
+            <span class="material-icons chevron">chevron_right</span>
+          </a>
+
+          <!-- System Settings Card -->
+          <a
+            routerLink="settings"
+            class="admin-card"
+            *hasPermission="'MANAGE_SETTINGS'"
+          >
+            <div
+              class="admin-card__icon"
+              style="background: linear-gradient(135deg, #6b7280, #4b5563)"
+            >
+              <span class="material-icons">settings</span>
+            </div>
+            <div class="admin-card__content">
+              <h3>System Settings</h3>
+              <p>Global configuration, integrations, and maintenance</p>
+              <span class="admin-card__count">View settings</span>
+            </div>
+            <span class="material-icons chevron">chevron_right</span>
+          </a>
         </div>
       }
-    </section>
+    </div>
   `,
-  styles: [
-    `
-      .admin-dashboard {
-        display: grid;
-        gap: 16px;
-      }
-      .admin-dashboard h1 {
-        margin: 0;
-      }
-      .admin-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 16px;
-      }
-      .admin-card {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        padding: 24px;
-        background: var(--bg-primary, #ffffff);
-        border: 1px solid var(--border-color, #e5e7eb);
-        border-radius: 8px;
-        text-decoration: none;
-        color: inherit;
-        cursor: pointer;
-        transition: box-shadow 0.2s ease;
-      }
-      .admin-card:hover {
-        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-      }
-      .admin-card__icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-      }
-      .admin-card__icon .material-icons {
-        color: white;
-        font-size: 24px;
-      }
-      .admin-card__content {
-        display: grid;
-        gap: 4px;
-      }
-      .admin-card__content h3,
-      .admin-card__content p,
-      .admin-card__content strong {
-        margin: 0;
-      }
-      .admin-card__content p {
-        color: var(--text-secondary, #6b7280);
-      }
-      .admin-card__chevron {
-        margin-left: auto;
-        color: var(--text-secondary, #9ca3af);
-      }
-    `,
-  ],
+  styleUrls: ["./admin-dashboard.component.scss"],
 })
 export class AdminDashboardComponent implements OnInit {
   private readonly dashboardApi = inject(DashboardApiService);
+  private readonly permissionsApi = inject(PermissionsApiService);
 
-  readonly loading = signal(true);
-  readonly systemStats = signal<AdminDashboardStats>({
+  loading = signal(false);
+  systemStats = signal({
     incidentTypes: 0,
     workflows: 0,
     slaRules: 0,
     roles: 0,
   });
 
-  readonly cards = signal<AdminCard[]>([]);
-
   ngOnInit(): void {
+    this.loadSystemStats();
+  }
+
+  private loadSystemStats(): void {
+    this.loading.set(true);
+
+    // Load admin dashboard stats
     this.dashboardApi.getAdminStats().subscribe({
       next: (stats) => {
         this.systemStats.set(stats);
-        this.cards.set([
-          {
-            title: "Incident Types",
-            description: "Configure available incident categories",
-            icon: "category",
-            color: "#2563eb",
-            route: "/administration/incident-types",
-            permission: "READ",
-            count: stats.incidentTypes,
-          },
-          {
-            title: "Workflows",
-            description: "Manage department chain workflows",
-            icon: "account_tree",
-            color: "#7c3aed",
-            route: "/administration/workflows",
-            permission: "MANAGE",
-            count: stats.workflows,
-          },
-          {
-            title: "SLA Rules",
-            description: "Tune response and resolution SLAs",
-            icon: "timer",
-            color: "#f59e0b",
-            route: "/administration/sla-rules",
-            permission: "MANAGE",
-            count: stats.slaRules,
-          },
-          {
-            title: "Roles",
-            description: "Control role assignments and scopes",
-            icon: "badge",
-            color: "#10b981",
-            route: "/administration/roles",
-            permission: "MANAGE",
-            count: stats.roles,
-          },
-          {
-            title: "Settings",
-            description: "Global administration preferences",
-            icon: "settings",
-            color: "#6b7280",
-            route: "/administration/settings",
-            permission: "READ",
-            count: 1,
-          },
-        ]);
         this.loading.set(false);
       },
-      error: () => {
+      error: (err) => {
+        console.error("Failed to load admin stats:", err);
         this.loading.set(false);
       },
     });

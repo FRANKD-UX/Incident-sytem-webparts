@@ -1,0 +1,29 @@
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ChecklistApiService } from '../../../../api/checklist-api.service';
+import { Checklist, ChecklistItem } from '../../../../shared/models/checklist.model';
+
+@Component({
+  selector: 'app-checklist-panel',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
+    <div class="checklist-panel">
+      <div class="panel-header"><h3>Checklist</h3></div>
+      <div *ngFor="let item of checklist?.items" class="checklist-item">
+        <span>{{ item.description }}</span>
+        <span>{{ item.isCompleted ? '✓' : '○' }}</span>
+      </div>
+    </div>`,
+  styles: []
+})
+export class ChecklistPanelComponent {
+  @Input({ required: true }) incidentId!: string;
+  @Input() checklist: Checklist | null = null;
+  @Output() checklistUpdated = new EventEmitter<void>();
+
+  private readonly checklistApi = inject(ChecklistApiService);
+
+  // stub
+}

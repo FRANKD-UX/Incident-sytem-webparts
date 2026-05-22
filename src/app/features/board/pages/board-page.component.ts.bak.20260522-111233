@@ -1,0 +1,198 @@
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, computed, inject, signal } from "@angular/core";
+import { IncidentApiService } from "../../../api/incident-api.service";
+import { Incident } from "../../../shared/models/incident.model";
+import { LoadingStateComponent } from "../../../shared/components/loading-state/loading-state.component";
+import { ErrorStateComponent } from "../../../shared/components/error-state/error-state.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { KanbanColumnComponent } from "../components/kanban-column/kanban-column.component";
+import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
+
+type BoardStatus = "OPEN" | "IN_PROGRESS" | "ESCALATED" | "RESOLVED" | "CLOSED";
+
+interface BoardColumn {
+  id: BoardStatus;
+  title: string;
+  color: string;
+  icon: string;
+}
+
+@Component({
+  selector: "app-board-page",
+  standalone: true,
+  imports: [
+    CommonModule,
+    LoadingStateComponent,
+    ErrorStateComponent,
+    EmptyStateComponent,
+    KanbanColumnComponent,
+    SearchInputComponent,
+  ],
+  template: `
+    <div class="board-page">
+      <div class="page-header">
+        <div>
+          <h1>Board</h1>
+          <p class="subtitle">Workflow view driven by incident status</p>
+        </div>
+
+        <div class="page-actions">
+          <app-search-input
+            [value]="searchTerm()"
+            placeholder="Search board..."
+            (search)="searchTerm.set($event)"
+          />
+          <button class="btn btn-secondary" type="button" (click)="loadIncidents()">
+            <span class="material-icons">refresh</span>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <app-loading-state message="Loading board..." />
+      } @else if (error()) {
+        <app-error-state [error]="error()!" (retry)="loadIncidents()" />
+      } @else if (boardIncidents().length === 0) {
+        <app-empty-state
+          icon="view_kanban"
+          title="No board items"
+          description="No incidents match the current query."
+        />
+      } @else {
+        <div class="board-container">
+          <div class="board-columns">
+            @for (column of columns; track column.id) {
+              <app-kanban-column
+                [column]="columnView(column.id)"
+                [canDrag]="true"
+                (incidentMoved)="moveIncident($event)"
+              />
+            }
+          </div>
+        </div>
+      }
+    </div>
+  `,
+  styleUrls: ["./board-page.component.scss"],
+})
+export class BoardPageComponent implements OnInit {
+  private readonly incidentApi = inject(IncidentApiService);
+
+  incidents = signal<Incident[]>([]);
+  loading = signal(false);
+  error = signal<string | null>(null);
+  searchTerm = signal("");
+
+  columns: BoardColumn[] = [
+    { id: "OPEN", title: "Open", color: "#6b7280", icon: "fiber_new" },
+    { id: "IN_PROGRESS", title: "In Progress", color: "#3b82f6", icon: "pending" },
+    { id: "ESCALATED", title: "Escalated", color: "#ef4444", icon: "warning" },
+    { id: "RESOLVED", title: "Resolved", color: "#10b981", icon: "check_circle" },
+    { id: "CLOSED", title: "Closed", color: "#374151", icon: "lock" },
+  ];
+
+  boardIncidents = computed(() => {
+    const term = this.searchTerm().trim().toLowerCase();
+    return this.incidents().filter((incident) => {
+      if (!term) return true;
+      return [
+        incident.referenceNumber,
+        incident.title,
+        incident.currentDepartment.name,
+        incident.priority,
+        incident.status,
+      ]
+        .join(" ")
+        .toLowerCase()
+        .includes(term);
+    });
+  });
+
+  ngOnInit(): void {
+    this.loadIncidents();
+  }
+
+  loadIncidents(): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.incidentApi.getIncidents({}).subscribe({
+      next: (response) => {
+        this.incidents.set(response.data);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(err?.message ?? "Failed to load board");
+        this.loading.set(false);
+      },
+    });
+  }
+
+  columnView(status: BoardStatus) {
+    const column = this.columns.find((c) => c.id === status)!;
+    return {
+      id: column.id,
+      title: column.title,
+      status: column.id,
+      incidents: this.boardIncidents().filter((incident) => incident.status === column.id),
+      color: column.color,
+      icon: column.icon,
+    };
+  }
+
+  moveIncident(event: { incidentId: string; fromColumnId: string; toColumnId: string }): void {
+    if (event.fromColumnId === event.toColumnId) return;
+
+    const updated = this.incidents().map((incident) => {
+      if (incident.id !== event.incidentId) return incident;
+
+      return {
+        ...incident,
+        status: event.toColumnId as Incident["status"],
+        currentDepartment: {
+          ...incident.currentDepartment,
+          name: this.statusToDepartmentLabel(event.toColumnId),
+          code: this.statusToDepartmentCode(event.toColumnId),
+        },
+        updatedAt: new Date().toISOString(),
+      };
+    });
+
+    this.incidents.set(updated);
+  }
+
+  private statusToDepartmentLabel(status: string): string {
+    switch (status) {
+      case "OPEN":
+        return "Support";
+      case "IN_PROGRESS":
+        return "Operations";
+      case "ESCALATED":
+        return "Escalations";
+      case "RESOLVED":
+        return "Resolution";
+      case "CLOSED":
+        return "Closed";
+      default:
+        return "Operations";
+    }
+  }
+
+  private statusToDepartmentCode(status: string): string {
+    switch (status) {
+      case "OPEN":
+        return "SUP";
+      case "IN_PROGRESS":
+        return "OPS";
+      case "ESCALATED":
+        return "ESC";
+      case "RESOLVED":
+        return "RES";
+      case "CLOSED":
+        return "CLO";
+      default:
+        return "OPS";
+    }
+  }
+}

@@ -1,0 +1,122 @@
+// src/app/features/board/components/kanban-card/kanban-card.component.ts
+
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  HostListener,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Incident } from "../../../../shared/models/incident.model";
+import { PriorityBadgeComponent } from "../../../../shared/components/priority-badge/priority-badge.component";
+import { SlaIndicatorComponent } from "../../../../shared/components/sla-indicator/sla-indicator.component";
+import { UserAvatarComponent } from "../../../../shared/components/user-avatar/user-avatar.component";
+
+@Component({
+  selector: "app-kanban-card",
+  standalone: true,
+  imports: [
+    CommonModule,
+    PriorityBadgeComponent,
+    SlaIndicatorComponent,
+    UserAvatarComponent,
+  ],
+  template: `
+    <div
+      class="kanban-card"
+      [class.dragging]="isDragging"
+      [class.escalated]="incident.status === 'ESCALATED'"
+      [class.priority-critical]="incident.priority === 'CRITICAL'"
+      [attr.draggable]="draggable"
+      (dragstart)="onDragStart($event)"
+      (dragend)="onDragEnd()"
+    >
+      <div class="card-header">
+        <div class="card-id">
+          <span class="ref-number">{{ incident.referenceNumber }}</span>
+          <app-priority-badge [priority]="incident.priority" [compact]="true" />
+        </div>
+        <button class="card-menu" (click)="$event.stopPropagation()">
+          <span class="material-icons">more_horiz</span>
+        </button>
+      </div>
+
+      <h4 class="card-title">{{ incident.title }}</h4>
+
+      <div class="card-meta">
+        <div class="meta-row">
+          <span class="material-icons">business</span>
+          <span>{{ incident.currentDepartment.name }}</span>
+        </div>
+        @if (incident.assignedTo) {
+          <div class="meta-row">
+            <app-user-avatar [user]="incident.assignedTo" size="xsmall" />
+            <span>{{ incident.assignedTo.displayName }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="card-footer">
+        <app-sla-indicator
+          [incidentId]="incident.id"
+          [compact]="true"
+          [showText]="false"
+        />
+        <div class="card-tags">
+          @for (tag of incident.tags.slice(0, 3); track tag) {
+            <span class="tag">{{ tag }}</span>
+          }
+          @if (incident.tags.length > 3) {
+            <span class="tag more">+{{ incident.tags.length - 3 }}</span>
+          }
+        </div>
+        <span class="card-date">{{ incident.createdAt | date: "short" }}</span>
+      </div>
+
+      @if (incident.status === "ESCALATED") {
+        <div class="escalation-banner">
+          <span class="material-icons">warning</span>
+          <span>Escalated</span>
+        </div>
+      }
+    </div>
+  `,
+  styleUrls: ["./kanban-card.component.scss"],
+})
+export class KanbanCardComponent {
+  @Input({ required: true }) incident!: Incident;
+  @Input() draggable = true;
+
+  @Output() dragStart = new EventEmitter<DragEvent>();
+  @Output() click = new EventEmitter<void>();
+
+  isDragging = false;
+
+  onDragStart(event: DragEvent): void {
+    if (!this.draggable) return;
+
+    this.isDragging = true;
+
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", this.incident.id);
+      event.dataTransfer.setData("application/x-incident-id", this.incident.id);
+      event.dataTransfer.setData(
+        "application/x-source-status",
+        this.incident.status,
+      );
+    }
+
+    this.dragStart.emit(event);
+  }
+
+  onDragEnd(): void {
+    this.isDragging = false;
+  }
+
+  @HostListener("click")
+  onClick(): void {
+    this.click.emit();
+  }
+}

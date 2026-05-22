@@ -1,0 +1,7 @@
+import { Component } from "@angular/core";
+@Component({
+  selector: "app-incident-detail-page",
+  standalone: true,
+  template: `<p>Incident Detail Page</p>`,
+})
+export class IncidentDetailPageComponent {}

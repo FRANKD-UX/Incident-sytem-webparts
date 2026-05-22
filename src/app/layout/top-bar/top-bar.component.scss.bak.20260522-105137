@@ -1,0 +1,2 @@
+@use "../../../assets/scss/abstracts/variables" as *;
+.top-bar { padding: 0 $spacing-md; }

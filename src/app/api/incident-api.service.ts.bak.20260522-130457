@@ -1,0 +1,364 @@
+import { Injectable } from "@angular/core";
+import { Observable, of } from "rxjs";
+import { delay } from "rxjs";
+import {
+  ChainStep,
+  DepartmentChain,
+  Incident,
+  IncidentType,
+} from "../shared/models/incident.model";
+import { PaginatedResponse, IncidentStatus, Priority } from "../shared/models/common.model";
+import { ChecklistTemplate } from "../shared/models/checklist.model";
+import { Department, User, UserRole } from "../shared/models/user.model";
+
+type IntakeFlow =
+  | "SUPPORT_TO_ACCOUNTS"
+  | "SUPPORT_TO_OPERATIONS"
+  | "OPERATIONS_TO_SUPPORT";
+
+interface IncidentCreateRequest extends Partial<Incident> {
+  customFields?: Record<string, unknown>;
+}
+
+@Injectable({ providedIn: "root" })
+export class IncidentApiService {
+  private incidentCounter = 2;
+  private incidents: Incident[] = [this.createSeedIncident()];
+
+  getIncidents(params?: any): Observable<PaginatedResponse<Incident>> {
+    const paginated: PaginatedResponse<Incident> = {
+      data: [...this.incidents],
+      pagination: {
+        currentPage: 1,
+        pageSize: Math.max(this.incidents.length, 10),
+        totalItems: this.incidents.length,
+        totalPages: 1,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      },
+      success: true,
+      timestamp: new Date().toISOString(),
+      correlationId: "local-mock",
+    };
+
+    return of(paginated).pipe(delay(120));
+  }
+
+  getIncidentById(id: string): Observable<Incident> {
+    const found = this.incidents.find((incident) => incident.id === id) ?? this.incidents[0];
+    return of(found).pipe(delay(80));
+  }
+
+  createIncident(incident: Partial<Incident> & IncidentCreateRequest): Observable<Incident> {
+    const now = new Date().toISOString();
+    const flow = this.getFlowFromPayload(incident);
+    const currentDepartment = incident.currentDepartment ?? this.getTargetDepartment(flow);
+    const originDepartment = incident.originDepartment ?? this.getOriginDepartment(flow);
+
+    const created: Incident = {
+      id: incident.id ?? `INC-${this.incidentCounter++}`,
+      referenceNumber:
+        incident.referenceNumber ??
+        `INC-${new Date().getFullYear()}-${String(this.incidentCounter).padStart(3, "0")}`,
+      title: incident.title ?? this.defaultTitle(flow),
+      description: incident.description ?? "",
+      type: (incident.type as IncidentType) ?? this.buildIncidentType(flow),
+      priority: incident.priority ?? ("MEDIUM" as Priority),
+      status: (incident.status ?? "OPEN") as IncidentStatus,
+      currentDepartment,
+      originDepartment,
+      createdBy:
+        incident.createdBy ?? this.getDefaultUser(originDepartment),
+      createdAt: incident.createdAt ?? now,
+      updatedAt: now,
+      resolvedAt: incident.resolvedAt,
+      closedAt: incident.closedAt,
+      tags: incident.tags ?? this.defaultTags(flow),
+      customFields: incident.customFields ?? {},
+    };
+
+    this.incidents = [created, ...this.incidents];
+    return of(created).pipe(delay(120));
+  }
+
+  updateIncident(id: string, updates: Partial<Incident>): Observable<Incident> {
+    const index = this.incidents.findIndex((incident) => incident.id === id);
+    if (index === -1) {
+      return this.getIncidentById(id);
+    }
+
+    const updated: Incident = {
+      ...this.incidents[index],
+      ...updates,
+      updatedAt: new Date().toISOString(),
+    };
+
+    this.incidents[index] = updated;
+    return of(updated).pipe(delay(80));
+  }
+
+  deleteIncident(id: string): Observable<void> {
+    this.incidents = this.incidents.filter((incident) => incident.id !== id);
+    return of(void 0).pipe(delay(80));
+  }
+
+  getIncidentTypes(): Observable<IncidentType[]> {
+    return of([
+      this.buildIncidentType("SUPPORT_TO_ACCOUNTS"),
+      this.buildIncidentType("SUPPORT_TO_OPERATIONS"),
+      this.buildIncidentType("OPERATIONS_TO_SUPPORT"),
+    ]).pipe(delay(80));
+  }
+
+  getIncidentChain(incidentId: string): Observable<DepartmentChain> {
+    const incident = this.incidents.find((item) => item.id === incidentId) ?? this.incidents[0];
+    return of(incident.type.departmentChain).pipe(delay(80));
+  }
+
+  private createSeedIncident(): Incident {
+    const now = new Date().toISOString();
+    return {
+      id: "INC-001",
+      referenceNumber: "INC-2024-001",
+      title: "Network connectivity issue in Building A",
+      description: "Multiple users reporting intermittent connectivity",
+      type: this.buildIncidentType("SUPPORT_TO_OPERATIONS"),
+      priority: "HIGH",
+      status: "IN_PROGRESS",
+      currentDepartment: {
+        id: "OPS",
+        name: "Operations",
+        code: "OPS",
+        isActive: true,
+      },
+      originDepartment: {
+        id: "SUP",
+        name: "Support",
+        code: "SUP",
+        isActive: true,
+      },
+      createdBy: this.getDefaultUser({
+        id: "SUP",
+        name: "Support",
+        code: "SUP",
+        isActive: true,
+      }),
+      createdAt: now,
+      updatedAt: now,
+      tags: ["network", "critical"],
+      customFields: {
+        flowType: "SUPPORT_TO_OPERATIONS",
+        customerConsent: true,
+        firstLineChecks: ["Line test", "Power cycle", "ONT lights checked"],
+      },
+    };
+  }
+
+  private getFlowFromPayload(payload: IncidentCreateRequest): IntakeFlow {
+    const value = payload.customFields?.["flowType"];
+    if (value === "SUPPORT_TO_ACCOUNTS" || value === "SUPPORT_TO_OPERATIONS" || value === "OPERATIONS_TO_SUPPORT") {
+      return value;
+    }
+    return "SUPPORT_TO_OPERATIONS";
+  }
+
+  private defaultTitle(flow: IntakeFlow): string {
+    switch (flow) {
+      case "SUPPORT_TO_ACCOUNTS":
+        return "Account support request";
+      case "SUPPORT_TO_OPERATIONS":
+        return "Fibre fault escalation";
+      case "OPERATIONS_TO_SUPPORT":
+        return "Maintenance notification";
+    }
+  }
+
+  private defaultTags(flow: IntakeFlow): string[] {
+    switch (flow) {
+      case "SUPPORT_TO_ACCOUNTS":
+        return ["accounts", "support"];
+      case "SUPPORT_TO_OPERATIONS":
+        return ["fibre", "support", "operations"];
+      case "OPERATIONS_TO_SUPPORT":
+        return ["maintenance", "operations", "support"];
+    }
+  }
+
+  private getOriginDepartment(flow: IntakeFlow): Department {
+    switch (flow) {
+      case "SUPPORT_TO_ACCOUNTS":
+      case "SUPPORT_TO_OPERATIONS":
+        return { id: "SUP", name: "Support", code: "SUP", isActive: true };
+      case "OPERATIONS_TO_SUPPORT":
+        return { id: "OPS", name: "Operations", code: "OPS", isActive: true };
+    }
+  }
+
+  private getTargetDepartment(flow: IntakeFlow): Department {
+    switch (flow) {
+      case "SUPPORT_TO_ACCOUNTS":
+        return { id: "ACC", name: "Accounts", code: "ACC", isActive: true };
+      case "SUPPORT_TO_OPERATIONS":
+        return { id: "OPS", name: "Operations", code: "OPS", isActive: true };
+      case "OPERATIONS_TO_SUPPORT":
+        return { id: "SUP", name: "Support", code: "SUP", isActive: true };
+    }
+  }
+
+  private getDefaultUser(department: Department): User {
+    const role: UserRole = {
+      id: "1",
+      name: department.code === "OPS" ? "Operations Agent" : department.code === "ACC" ? "Accounts Agent" : "Support Agent",
+      departmentId: department.id,
+      permissions: [],
+    };
+
+    return {
+      id: "1",
+      displayName: `${department.name} User`,
+      email: `${department.code.toLowerCase()}@example.com`,
+      department,
+      role,
+      permissions: [],
+    };
+  }
+
+  private buildIncidentType(flow: IntakeFlow): IncidentType {
+    const chain = this.buildDepartmentChain(flow);
+
+    switch (flow) {
+      case "SUPPORT_TO_ACCOUNTS":
+        return {
+          id: "TYPE-ACC",
+          name: "Support to Accounts",
+          code: "SUP-ACC",
+          description: "Account changes and billing corrections",
+          departmentChain: chain,
+          defaultChecklists: [],
+          slaRules: [],
+          escalationRules: [],
+          isActive: true,
+        };
+      case "SUPPORT_TO_OPERATIONS":
+        return {
+          id: "TYPE-OPS",
+          name: "Support to Operations",
+          code: "SUP-OPS",
+          description: "First-line fault escalation to Operations",
+          departmentChain: chain,
+          defaultChecklists: [],
+          slaRules: [],
+          escalationRules: [],
+          isActive: true,
+        };
+      case "OPERATIONS_TO_SUPPORT":
+        return {
+          id: "TYPE-MNT",
+          name: "Operations Maintenance Notice",
+          code: "OPS-SUP-MNT",
+          description: "Planned maintenance notice for Support visibility",
+          departmentChain: chain,
+          defaultChecklists: [],
+          slaRules: [],
+          escalationRules: [],
+          isActive: true,
+        };
+    }
+  }
+
+  private buildDepartmentChain(flow: IntakeFlow): DepartmentChain {
+    switch (flow) {
+      case "SUPPORT_TO_ACCOUNTS":
+        return {
+          id: "CHAIN-SUP-ACC",
+          name: "Support to Accounts",
+          allowParallel: false,
+          requireStrictOrder: true,
+          steps: [
+            this.buildStep(
+              1,
+              { id: "SUP", name: "Support", code: "SUP", isActive: true },
+              "Support intake checklist",
+              ["Verify account reference", "Confirm request type", "Record support summary"],
+            ),
+            this.buildStep(
+              2,
+              { id: "ACC", name: "Accounts", code: "ACC", isActive: true },
+              "Accounts resolution checklist",
+              ["Validate billing change", "Apply account update", "Confirm completion"],
+            ),
+          ],
+        };
+      case "SUPPORT_TO_OPERATIONS":
+        return {
+          id: "CHAIN-SUP-OPS",
+          name: "Support to Operations",
+          allowParallel: false,
+          requireStrictOrder: true,
+          steps: [
+            this.buildStep(
+              1,
+              { id: "SUP", name: "Support", code: "SUP", isActive: true },
+              "Support first-line checks",
+              ["Run first-line tests", "Capture customer consent", "Attach evidence"],
+            ),
+            this.buildStep(
+              2,
+              { id: "OPS", name: "Operations", code: "OPS", isActive: true },
+              "Operations dispatch checklist",
+              ["Assign technician", "Book attendance window", "Close call-out"],
+            ),
+          ],
+        };
+      case "OPERATIONS_TO_SUPPORT":
+        return {
+          id: "CHAIN-OPS-SUP",
+          name: "Operations to Support",
+          allowParallel: false,
+          requireStrictOrder: true,
+          steps: [
+            this.buildStep(
+              1,
+              { id: "OPS", name: "Operations", code: "OPS", isActive: true },
+              "Maintenance planning checklist",
+              ["Record maintenance window", "Define affected sites", "Prepare support brief"],
+            ),
+            this.buildStep(
+              2,
+              { id: "SUP", name: "Support", code: "SUP", isActive: true },
+              "Support client notice checklist",
+              ["Brief call centre", "Update client notes", "Monitor inbound calls"],
+            ),
+          ],
+        };
+    }
+  }
+
+  private buildStep(
+    order: number,
+    department: Department,
+    checklistName: string,
+    expectedActions: string[],
+  ): ChainStep {
+    const checklist: ChecklistTemplate = {
+      id: `CL-${department.code}-${order}`,
+      name: checklistName,
+      departmentId: department.id,
+      incidentTypeId: "TBD",
+      items: [],
+    };
+
+    return {
+      order,
+      department,
+      checklist,
+      expectedActions,
+      sla: {
+        responseTime: order === 1 ? 60 : 120,
+        resolutionTime: order === 1 ? 240 : 480,
+        escalationPoint: order === 1 ? 120 : 240,
+      },
+      isOptional: false,
+    };
+  }
+}

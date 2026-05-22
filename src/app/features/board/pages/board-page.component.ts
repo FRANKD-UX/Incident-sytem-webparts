@@ -1,390 +1,107 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnDestroy, OnInit, computed, inject, signal } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Subscription, timer } from "rxjs";
+import { Component, OnInit, computed, inject, signal } from "@angular/core";
 import { IncidentApiService } from "../../../api/incident-api.service";
-import { PermissionsApiService } from "../../../api/permissions-api.service";
-import {
-  IncidentMovedEvent,
-  KanbanColumn,
-  KanbanColumnComponent,
-} from "../components/kanban-column/kanban-column.component";
 import { Incident } from "../../../shared/models/incident.model";
-import { Department, User, UserPermissions } from "../../../shared/models/user.model";
-import { IncidentStatus } from "../../../shared/models/common.model";
-import { FilterBarComponent, FilterConfig } from "../../../shared/components/filter-bar/filter-bar.component";
+import { LoadingStateComponent } from "../../../shared/components/loading-state/loading-state.component";
+import { ErrorStateComponent } from "../../../shared/components/error-state/error-state.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { KanbanColumnComponent } from "../components/kanban-column/kanban-column.component";
 import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
-import { WorkflowApiService as WorkflowServiceAlias } from "../../../api/workflow-api.service";
+
+type BoardLane = "SUP" | "ACC" | "OPS" | "COMPLETED";
 
 @Component({
   selector: "app-board-page",
   standalone: true,
-  imports: [CommonModule, KanbanColumnComponent, FilterBarComponent, SearchInputComponent],
+  imports: [
+    CommonModule,
+    LoadingStateComponent,
+    ErrorStateComponent,
+    EmptyStateComponent,
+    KanbanColumnComponent,
+    SearchInputComponent,
+  ],
   template: `
-    <section class="board-page">
-      <header class="board-header">
-        <div class="board-header__left">
-          <h1>Incident Kanban Board</h1>
-          <p>Drag incidents through workflow states.</p>
+    <div class="board-page">
+      <div class="page-header">
+        <div>
+          <h1>Board</h1>
+          <p class="subtitle">Department workflow view</p>
         </div>
-        <div class="board-header__actions">
-          <app-search-input (search)="searchQuery.set($event)" />
-          <app-filter-bar
-            [filters]="filterConfig"
-            [activeFilters]="activeFilters()"
-            (activeFiltersChange)="activeFilters.set($event)"
-          />
-          <button type="button" (click)="exportBoard()">
-            <span class="material-icons">download</span>
-            Export
-          </button>
-        </div>
-      </header>
-
-      @if (error()) {
-        <div class="error-banner">{{ error() }}</div>
-      }
-
-      <div class="board-container" cdkDropListGroup>
-        @if (loading()) {
-          <div class="board-loading">Loading board...</div>
-        } @else {
-          <div class="board-columns">
-            @for (column of filteredColumns(); track column.id) {
-              <app-kanban-column
-                [column]="column"
-                [canDrag]="canDragIncidents()"
-                (incidentMoved)="onIncidentMoved($event)"
-                (incidentClick)="openIncident($event)"
-              />
-            }
-          </div>
-        }
+        <app-search-input [value]="searchTerm()" placeholder="Search..." (search)="searchTerm.set($event)" />
       </div>
 
-      @if (dragError()) {
-        <div class="drag-error-toast">{{ dragError() }}</div>
+      @if (loading()) {
+        <app-loading-state message="Loading board..." />
+      } @else {
+        <div class="board-columns">
+          @for (lane of lanes; track lane.id) {
+            <app-kanban-column
+              [column]="laneView(lane.id)"
+              [canDrag]="true"
+              (incidentMoved)="moveIncident($event)"
+            />
+          }
+        </div>
       }
-    </section>
+    </div>
   `,
-  styles: [
-    `
-      .board-page {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-      .board-header {
-        display: flex;
-        justify-content: space-between;
-        gap: 16px;
-        flex-wrap: wrap;
-      }
-      .board-header__left h1,
-      .board-header__left p {
-        margin: 0;
-      }
-      .board-header__actions {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
-      .board-header__actions button {
-        border: 1px solid var(--border-color, #d1d5db);
-        border-radius: 8px;
-        padding: 8px 12px;
-        background: var(--bg-primary, #ffffff);
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-      }
-      .board-container {
-        flex: 1;
-        min-height: 0;
-      }
-      .board-columns {
-        display: flex;
-        gap: 16px;
-        height: 100%;
-        min-width: max-content;
-        overflow-x: auto;
-      }
-      .board-loading {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        color: var(--text-secondary, #6b7280);
-      }
-      .error-banner {
-        background: #fef2f2;
-        border: 1px solid #fecaca;
-        color: #b91c1c;
-        border-radius: 8px;
-        padding: 10px 12px;
-      }
-      .drag-error-toast {
-        position: fixed;
-        right: 16px;
-        bottom: 16px;
-        background: #ef4444;
-        color: white;
-        border-radius: 8px;
-        padding: 10px 14px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-        z-index: 20;
-      }
-    `,
-  ],
+  styleUrls: ["./board-page.component.scss"],
 })
-export class BoardPageComponent implements OnInit, OnDestroy {
+export class BoardPageComponent implements OnInit {
   private readonly incidentApi = inject(IncidentApiService);
-  private readonly workflowApi = inject(WorkflowServiceAlias);
-  private readonly permissionsApi = inject(PermissionsApiService);
-  private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
 
-  readonly columns = signal<KanbanColumn[]>([]);
-  readonly departments = signal<Department[]>([]);
-  readonly assignees = signal<User[]>([]);
-  readonly loading = signal(true);
-  readonly error = signal("");
-  readonly dragError = signal("");
-  readonly canDragIncidents = signal(false);
+  incidents = signal<Incident[]>([]);
+  loading = signal(false);
+  searchTerm = signal("");
 
-  readonly searchQuery = signal("");
-  readonly activeFilters = signal<Record<string, string>>({});
-
-  readonly filterConfig: FilterConfig[] = [
-    {
-      key: "status",
-      label: "Status",
-      options: [
-        { label: "Open", value: "OPEN" },
-        { label: "In Progress", value: "IN_PROGRESS" },
-        { label: "Escalated", value: "ESCALATED" },
-        { label: "Resolved", value: "RESOLVED" },
-      ],
-    },
-    {
-      key: "department",
-      label: "Department",
-      options: [],
-    },
+  lanes = [
+    { id: "SUP" as BoardLane, title: "Support", color: "#3b82f6", icon: "support_agent" },
+    { id: "ACC" as BoardLane, title: "Accounts", color: "#f59e0b", icon: "payments" },
+    { id: "OPS" as BoardLane, title: "Operations", color: "#10b981", icon: "settings" },
+    { id: "COMPLETED" as BoardLane, title: "Completed", color: "#374151", icon: "task_alt" },
   ];
 
-  private readonly defaultColumns: Omit<KanbanColumn, "incidents">[] = [
-    { id: "OPEN", title: "Open", status: "OPEN", color: "#6b7280", icon: "inbox" },
-    {
-      id: "IN_PROGRESS",
-      title: "In Progress",
-      status: "IN_PROGRESS",
-      color: "#3b82f6",
-      icon: "sync",
-    },
-    {
-      id: "PENDING_CHECKLIST",
-      title: "Pending Checklist",
-      status: "PENDING_CHECKLIST",
-      color: "#f59e0b",
-      icon: "checklist",
-    },
-    {
-      id: "PENDING_TRANSITION",
-      title: "Pending Transition",
-      status: "PENDING_TRANSITION",
-      color: "#8b5cf6",
-      icon: "pending_actions",
-    },
-    {
-      id: "ESCALATED",
-      title: "Escalated",
-      status: "ESCALATED",
-      color: "#ef4444",
-      icon: "priority_high",
-    },
-    {
-      id: "RESOLVED",
-      title: "Resolved",
-      status: "RESOLVED",
-      color: "#10b981",
-      icon: "task_alt",
-    },
-    { id: "CLOSED", title: "Closed", status: "CLOSED", color: "#1f2937", icon: "lock" },
-  ];
-
-  readonly filteredColumns = computed(() => {
-    const filters = this.activeFilters();
-    const query = this.searchQuery().trim().toLowerCase();
-    return this.columns().map((column) => ({
-      ...column,
-      incidents: column.incidents.filter((incident) => {
-        const matchesStatus = !filters["status"] || incident.status === filters["status"];
-        const matchesDepartment =
-          !filters["department"] || incident.currentDepartment.id === filters["department"];
-        const matchesQuery =
-          !query ||
-          incident.title.toLowerCase().includes(query) ||
-          incident.referenceNumber.toLowerCase().includes(query);
-        return matchesStatus && matchesDepartment && matchesQuery;
-      }),
-    }));
+  filtered = computed(() => {
+    const term = this.searchTerm().toLowerCase().trim();
+    return this.incidents().filter((i) =>
+      !term || [i.referenceNumber, i.title, i.currentDepartment.name, i.status, ...i.tags].join(" ").toLowerCase().includes(term),
+    );
   });
 
-  private subscriptions = new Subscription();
-
   ngOnInit(): void {
-    this.loadBoard();
-    this.subscriptions.add(
-      this.workflowApi.getDepartments().subscribe({
-        next: (departments) => {
-          this.departments.set(departments);
-          const departmentFilter = this.filterConfig.find((filter) => filter.key === "department");
-          if (departmentFilter) {
-            departmentFilter.options = departments.map((department) => ({
-              label: department.name,
-              value: department.id,
-            }));
-          }
-        },
-      }),
-    );
-
-    this.subscriptions.add(
-      this.permissionsApi.getUserPermissions().subscribe({
-        next: (permissions: UserPermissions) => {
-          this.canDragIncidents.set(
-            permissions.allowedActions.includes("UPDATE") ||
-              permissions.allowedActions.includes("MANAGE"),
-          );
-        },
-      }),
-    );
+    this.loadIncidents();
   }
 
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
-  }
-
-  loadBoard(): void {
+  loadIncidents(): void {
     this.loading.set(true);
-    this.error.set("");
-
-    this.subscriptions.add(
-      this.incidentApi
-        .getIncidents({ view: "kanban", includeAllStatuses: true })
-        .subscribe({
-          next: (incidents) => {
-            this.columns.set(this.organizeColumns(incidents));
-            this.assignees.set(
-              Array.from(
-                incidents.reduce((map, incident) => {
-                  if (incident.assignedTo) {
-                    map.set(incident.assignedTo.id, incident.assignedTo);
-                  }
-                  return map;
-                }, new Map<string, User>()),
-              ).map((entry) => entry[1]),
-            );
-            this.loading.set(false);
-          },
-          error: () => {
-            this.error.set("Failed to load board data.");
-            this.loading.set(false);
-          },
-        }),
-    );
-  }
-
-  organizeColumns(incidents: Incident[]): KanbanColumn[] {
-    return this.defaultColumns.map((column) => ({
-      ...column,
-      incidents: incidents.filter((incident) => incident.status === column.status),
-    }));
-  }
-
-  onIncidentMoved(event: IncidentMovedEvent): void {
-    const previousColumns = this.columns();
-    this.moveIncidentLocally(event.incident, event.fromColumnId, event.toColumnId);
-
-    const targetStatus = event.toColumnId as IncidentStatus;
-    this.subscriptions.add(
-      this.workflowApi
-        .moveIncident(event.incident.id, { targetStatus })
-        .subscribe({
-          next: (serverIncident) => {
-            this.replaceIncidentInColumn(serverIncident, event.toColumnId);
-          },
-          error: () => {
-            this.columns.set(previousColumns);
-            this.dragError.set("Unable to move incident. Changes were reverted.");
-            timer(5000).subscribe(() => this.dragError.set(""));
-          },
-        }),
-    );
-  }
-
-  moveIncidentLocally(incident: Incident, fromColumnId: string, toColumnId: string): void {
-    const next = this.columns().map((column) => {
-      if (column.id === fromColumnId) {
-        return {
-          ...column,
-          incidents: column.incidents.filter((item) => item.id !== incident.id),
-        };
-      }
-
-      if (column.id === toColumnId) {
-        return {
-          ...column,
-          incidents: [...column.incidents, { ...incident, status: toColumnId as IncidentStatus }],
-        };
-      }
-
-      return column;
+    this.incidentApi.getIncidents().subscribe({
+      next: (response) => {
+        this.incidents.set(response.data);
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false),
     });
-
-    this.columns.set(next);
   }
 
-  replaceIncidentInColumn(incident: Incident, columnId: string): void {
-    this.columns.set(
-      this.columns().map((column) => {
-        if (column.id !== columnId) {
-          return {
-            ...column,
-            incidents: column.incidents.filter((item) => item.id !== incident.id),
-          };
-        }
-
-        const without = column.incidents.filter((item) => item.id !== incident.id);
-        return { ...column, incidents: [...without, incident] };
-      }),
-    );
+  laneView(id: BoardLane) {
+    return {
+      id,
+      title: this.lanes.find((l) => l.id === id)!.title,
+      departmentCode: id,
+      incidents:
+        id === "COMPLETED"
+          ? this.filtered().filter((i) => i.status === "RESOLVED" || i.status === "CLOSED")
+          : this.filtered().filter((i) => i.currentDepartment.code === id && i.status !== "RESOLVED" && i.status !== "CLOSED"),
+      color: this.lanes.find((l) => l.id === id)!.color,
+      icon: this.lanes.find((l) => l.id === id)!.icon,
+      completed: id === "COMPLETED",
+    };
   }
 
-  exportBoard(): void {
-    const payload = JSON.stringify(this.columns(), null, 2);
-    const blob = new Blob([payload], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = "incident-board.json";
-    anchor.click();
-    URL.revokeObjectURL(url);
-  }
-
-  openIncident(incident: Incident): void {
-    const current = this.route.snapshot.queryParams["incidentId"];
-    if (current === incident.id) {
-      return;
-    }
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { incidentId: incident.id },
-      queryParamsHandling: "merge",
-    });
+  moveIncident(event: { incidentId: string; fromDepartmentCode: string; toDepartmentCode: string }): void {
+    const wf = (window as any).__workflowState;
+    wf?.moveIncident?.(event.incidentId, event);
+    this.loadIncidents();
   }
 }

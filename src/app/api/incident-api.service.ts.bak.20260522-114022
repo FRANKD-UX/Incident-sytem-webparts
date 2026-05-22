@@ -1,0 +1,17 @@
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Incident, IncidentType, DepartmentChain } from '../shared/models/incident.model';
+import { PaginatedResponse } from '../shared/models/common.model';
+import { MockBackendService } from './mock-backend.service';
+
+@Injectable({ providedIn: 'root' })
+export class IncidentApiService {
+  constructor(private mock: MockBackendService) {}
+  getIncidents(params?: any): Observable<PaginatedResponse<Incident>> { return this.mock.getMockIncidents(); }
+  getIncidentById(id: string): Observable<Incident> { return this.mock.getMockIncidents() as any; }
+  createIncident(incident: Partial<Incident>): Observable<Incident> { return this.mock.getMockIncidents() as any; }
+  updateIncident(id: string, updates: Partial<Incident>): Observable<Incident> { return this.mock.getMockIncidents() as any; }
+  deleteIncident(id: string): Observable<void> { return new Observable(sub => sub.next()); }
+  getIncidentTypes(): Observable<IncidentType[]> { return new Observable(sub => sub.next([])); }
+  getIncidentChain(incidentId: string): Observable<DepartmentChain> { return this.mock.getMockIncidents() as any; }
+}

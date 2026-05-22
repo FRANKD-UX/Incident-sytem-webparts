@@ -1,0 +1,210 @@
+import { Injectable } from "@angular/core";
+import { Observable, of } from "rxjs";
+import { delay } from "rxjs";
+import { Checklist, ChecklistItem, ChecklistItemUpdatePayload, ChecklistStatus } from "../shared/models/checklist.model";
+import { IncidentApiService } from "./incident-api.service";
+
+@Injectable({ providedIn: "root" })
+export class ChecklistApiService {
+  private readonly cache = new Map<string, Checklist>();
+
+  constructor(private readonly incidentApi: IncidentApiService) {}
+
+  getChecklist(incidentId: string): Observable<Checklist> {
+    const cached = this.cache.get(incidentId);
+    if (cached) {
+      return of(this.cloneChecklist(cached)).pipe(delay(80));
+    }
+
+    const incident = this.incidentApi.getIncidentById(incidentId);
+    let checklist: Checklist | null = null;
+
+    incident.subscribe({
+      next: (item) => {
+        checklist = this.buildChecklist(item);
+        this.cache.set(incidentId, checklist!);
+      },
+    });
+
+    return of(this.cloneChecklist(checklist ?? this.emptyChecklist(incidentId))).pipe(delay(80));
+  }
+
+  updateChecklistItem(incidentId: string, itemId: string, payload: ChecklistItemUpdatePayload): Observable<any> {
+    const existing = this.cache.get(incidentId) ?? this.emptyChecklist(incidentId);
+    const updatedItems = existing.items.map((item) =>
+      item.id === itemId
+        ? {
+            ...item,
+            isCompleted: payload.isCompleted,
+            completedAt: payload.isCompleted ? new Date().toISOString() : item.completedAt,
+          }
+        : item,
+    );
+
+    const nextStatus: ChecklistStatus =
+      updatedItems.length > 0 && updatedItems.every((item) => item.isCompleted)
+        ? "COMPLETED"
+        : "IN_PROGRESS";
+
+    this.cache.set(incidentId, {
+      ...existing,
+      items: updatedItems,
+      status: nextStatus,
+    });
+
+    return of({ success: true }).pipe(delay(80));
+  }
+
+  private buildChecklist(incident: any): Checklist {
+    const flowType = incident.customFields?.flowType as
+      | "SUPPORT_TO_ACCOUNTS"
+      | "SUPPORT_TO_OPERATIONS"
+      | "OPERATIONS_TO_SUPPORT"
+      | undefined;
+
+    const items = this.getItemsForFlow(flowType ?? "SUPPORT_TO_OPERATIONS");
+
+    return {
+      id: `CL-${incident.id}`,
+      incidentId: incident.id,
+      chainStepId: `STEP-${incident.currentDepartment.code}`,
+      departmentId: incident.currentDepartment.id,
+      items,
+      status: "IN_PROGRESS",
+    };
+  }
+
+  private getItemsForFlow(flow:
+    | "SUPPORT_TO_ACCOUNTS"
+    | "SUPPORT_TO_OPERATIONS"
+    | "OPERATIONS_TO_SUPPORT",
+  ): ChecklistItem[] {
+    switch (flow) {
+      case "SUPPORT_TO_ACCOUNTS":
+        return [
+          {
+            id: "ACC-1",
+            description: "Verify customer account / user reference",
+            isCompleted: false,
+            isRequired: true,
+            order: 1,
+            category: "Validation",
+            evidenceRequired: false,
+          },
+          {
+            id: "ACC-2",
+            description: "Confirm the requested billing or profile change",
+            isCompleted: false,
+            isRequired: true,
+            order: 2,
+            category: "Change Request",
+            evidenceRequired: false,
+          },
+          {
+            id: "ACC-3",
+            description: "Document the support handoff summary",
+            isCompleted: false,
+            isRequired: true,
+            order: 3,
+            category: "Documentation",
+            evidenceRequired: true,
+            evidenceType: "NOTE",
+          },
+        ];
+      case "SUPPORT_TO_OPERATIONS":
+        return [
+          {
+            id: "OPS-1",
+            description: "Complete first-line fault checks",
+            isCompleted: false,
+            isRequired: true,
+            order: 1,
+            category: "Troubleshooting",
+            evidenceRequired: true,
+            evidenceType: "NOTE",
+          },
+          {
+            id: "OPS-2",
+            description: "Capture customer consent to escalate to Operations",
+            isCompleted: false,
+            isRequired: true,
+            order: 2,
+            category: "Consent",
+            evidenceRequired: true,
+            evidenceType: "CONFIRMATION",
+          },
+          {
+            id: "OPS-3",
+            description: "Attach evidence of first-line checks",
+            isCompleted: false,
+            isRequired: true,
+            order: 3,
+            category: "Evidence",
+            evidenceRequired: true,
+            evidenceType: "ATTACHMENT",
+          },
+          {
+            id: "OPS-4",
+            description: "Record fault summary for technician booking",
+            isCompleted: false,
+            isRequired: true,
+            order: 4,
+            category: "Documentation",
+            evidenceRequired: true,
+            evidenceType: "NOTE",
+          },
+        ];
+      case "OPERATIONS_TO_SUPPORT":
+        return [
+          {
+            id: "MNT-1",
+            description: "Record maintenance window and affected site",
+            isCompleted: false,
+            isRequired: true,
+            order: 1,
+            category: "Maintenance Planning",
+            evidenceRequired: true,
+            evidenceType: "NOTE",
+          },
+          {
+            id: "MNT-2",
+            description: "Brief Support so the call centre knows what is happening",
+            isCompleted: false,
+            isRequired: true,
+            order: 2,
+            category: "Internal Briefing",
+            evidenceRequired: true,
+            evidenceType: "CONFIRMATION",
+          },
+          {
+            id: "MNT-3",
+            description: "Capture expected client impact and outage notes",
+            isCompleted: false,
+            isRequired: true,
+            order: 3,
+            category: "Documentation",
+            evidenceRequired: true,
+            evidenceType: "NOTE",
+          },
+        ];
+    }
+  }
+
+  private emptyChecklist(incidentId: string): Checklist {
+    return {
+      id: `CL-${incidentId}`,
+      incidentId,
+      chainStepId: "",
+      departmentId: "",
+      items: [],
+      status: "NOT_STARTED",
+    };
+  }
+
+  private cloneChecklist(checklist: Checklist): Checklist {
+    return {
+      ...checklist,
+      items: checklist.items.map((item) => ({ ...item })),
+    };
+  }
+}

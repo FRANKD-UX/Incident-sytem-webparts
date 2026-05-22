@@ -1,0 +1,10 @@
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+
+@Injectable({ providedIn: 'root' })
+export class WorkflowApiService {
+  getDepartmentChains(): Observable<any[]> { return of([]); }
+  getDepartments(): Observable<any[]> { return of([]); }
+  deleteDepartmentChain(id: string): Observable<any> { return of({}); }
+  moveIncident(incidentId: string, payload: any): Observable<any> { return of({}); }
+}

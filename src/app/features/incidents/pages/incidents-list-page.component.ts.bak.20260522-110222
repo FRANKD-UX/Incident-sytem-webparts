@@ -1,0 +1,61 @@
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { IncidentApiService } from '../../../api/incident-api.service';
+import { PermissionsApiService } from '../../../api/permissions-api.service';
+import { Incident } from '../../../shared/models/incident.model';
+import { PaginationMetadata } from '../../../shared/models/common.model';
+
+@Component({
+  selector: 'app-incidents-list-page',
+  standalone: true,
+  template: `<div class="incidents-list-page">
+    <h1>Incidents</h1>
+    <p>Incident list will be implemented here.</p>
+    <button (click)="navigateToBoard()">Go to Board</button>
+  </div>`,
+  styles: [`.incidents-list-page { padding: 24px; }`]
+})
+export class IncidentsListPageComponent implements OnInit {
+  private readonly incidentApi = inject(IncidentApiService);
+  private readonly permissionsApi = inject(PermissionsApiService);
+  private readonly router = inject(Router);
+
+  incidents = signal<Incident[]>([]);
+  pagination = signal<PaginationMetadata | null>(null);
+  loading = signal(false);
+  error = signal<string | null>(null);
+  searchTerm = signal('');
+  canCreateIncident = false;
+
+  ngOnInit(): void {
+    this.checkPermissions();
+    this.loadIncidents();
+  }
+
+  private checkPermissions(): void {
+    this.permissionsApi.getUserPermissions().subscribe({
+      next: (permissions) => {
+        this.canCreateIncident = permissions.allowedActions.includes('CREATE_INCIDENT');
+      }
+    });
+  }
+
+  loadIncidents(): void {
+    this.loading.set(true);
+    this.incidentApi.getIncidents({}).subscribe({
+      next: (response) => {
+        this.incidents.set(response.data);
+        this.pagination.set(response.pagination);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(err.message);
+        this.loading.set(false);
+      }
+    });
+  }
+
+  navigateToBoard(): void {
+    this.router.navigate(['/board']);
+  }
+}

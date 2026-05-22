@@ -10,7 +10,7 @@ export interface AuditEntry {
   fromState?: string;
   toState?: string;
   details: string;
-  metadata: Record<string, unknown>;
+  metadata: Record<string, any>;
   ipAddress: string;
 }
 

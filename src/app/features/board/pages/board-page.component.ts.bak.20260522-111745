@@ -1,0 +1,195 @@
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, computed, inject, signal } from "@angular/core";
+import { IncidentApiService } from "../../../api/incident-api.service";
+import { WorkflowApiService } from "../../../api/workflow-api.service";
+import { Incident } from "../../../shared/models/incident.model";
+import { LoadingStateComponent } from "../../../shared/components/loading-state/loading-state.component";
+import { ErrorStateComponent } from "../../../shared/components/error-state/error-state.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { KanbanColumnComponent } from "../components/kanban-column/kanban-column.component";
+import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
+
+type DepartmentCode = "SUP" | "ACC" | "OPS";
+
+interface BoardColumn {
+  id: DepartmentCode;
+  title: string;
+  departmentCode: DepartmentCode;
+  color: string;
+  icon: string;
+}
+
+@Component({
+  selector: "app-board-page",
+  standalone: true,
+  imports: [
+    CommonModule,
+    LoadingStateComponent,
+    ErrorStateComponent,
+    EmptyStateComponent,
+    KanbanColumnComponent,
+    SearchInputComponent,
+  ],
+  template: `
+    <div class="board-page">
+      <div class="page-header">
+        <div>
+          <h1>Board</h1>
+          <p class="subtitle">Department workflow view</p>
+        </div>
+
+        <div class="page-actions">
+          <app-search-input
+            [value]="searchTerm()"
+            placeholder="Search board..."
+            (search)="searchTerm.set($event)"
+          />
+          <button class="btn btn-secondary" type="button" (click)="loadIncidents()">
+            <span class="material-icons">refresh</span>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <app-loading-state message="Loading board..." />
+      } @else if (error()) {
+        <app-error-state [error]="error()!" (retry)="loadIncidents()" />
+      } @else if (boardIncidents().length === 0) {
+        <app-empty-state
+          icon="view_kanban"
+          title="No board items"
+          description="No incidents match the current query."
+        />
+      } @else {
+        <div class="board-container">
+          <div class="board-columns">
+            @for (column of columns; track column.id) {
+              <app-kanban-column
+                [column]="columnView(column.departmentCode)"
+                [canDrag]="true"
+                (incidentMoved)="moveIncident($event)"
+              />
+            }
+          </div>
+        </div>
+      }
+    </div>
+  `,
+  styleUrls: ["./board-page.component.scss"],
+})
+export class BoardPageComponent implements OnInit {
+  private readonly incidentApi = inject(IncidentApiService);
+  private readonly workflowApi = inject(WorkflowApiService);
+
+  incidents = signal<Incident[]>([]);
+  loading = signal(false);
+  error = signal<string | null>(null);
+  searchTerm = signal("");
+
+  columns: BoardColumn[] = [
+    { id: "SUP", departmentCode: "SUP", title: "Support", color: "#3b82f6", icon: "support_agent" },
+    { id: "ACC", departmentCode: "ACC", title: "Accounts", color: "#f59e0b", icon: "payments" },
+    { id: "OPS", departmentCode: "OPS", title: "Operations", color: "#10b981", icon: "settings" },
+  ];
+
+  boardIncidents = computed(() => {
+    const term = this.searchTerm().trim().toLowerCase();
+    return this.incidents().filter((incident) => {
+      if (!term) return true;
+      return [
+        incident.referenceNumber,
+        incident.title,
+        incident.currentDepartment.name,
+        incident.currentDepartment.code,
+        incident.priority,
+        incident.status,
+        ...(incident.tags ?? []),
+      ]
+        .join(" ")
+        .toLowerCase()
+        .includes(term);
+    });
+  });
+
+  ngOnInit(): void {
+    this.loadIncidents();
+  }
+
+  loadIncidents(): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.incidentApi.getIncidents({}).subscribe({
+      next: (response) => {
+        this.incidents.set(response.data);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(err?.message ?? "Failed to load board");
+        this.loading.set(false);
+      },
+    });
+  }
+
+  columnView(departmentCode: DepartmentCode) {
+    const column = this.columns.find((c) => c.departmentCode === departmentCode)!;
+    return {
+      id: column.id,
+      title: column.title,
+      departmentCode: column.departmentCode,
+      incidents: this.boardIncidents().filter(
+        (incident) => incident.currentDepartment.code === departmentCode,
+      ),
+      color: column.color,
+      icon: column.icon,
+    };
+  }
+
+  moveIncident(event: {
+    incidentId: string;
+    fromDepartmentCode: string;
+    toDepartmentCode: string;
+  }): void {
+    if (event.fromDepartmentCode === event.toDepartmentCode) return;
+
+    const previous = this.incidents();
+
+    const optimistic = previous.map((incident) => {
+      if (incident.id !== event.incidentId) return incident;
+
+      const nextDepartment = this.departmentForCode(event.toDepartmentCode as DepartmentCode);
+
+      return {
+        ...incident,
+        currentDepartment: nextDepartment,
+        updatedAt: new Date().toISOString(),
+      };
+    });
+
+    this.incidents.set(optimistic);
+
+    this.workflowApi
+      .moveIncident(event.incidentId, {
+        fromDepartmentCode: event.fromDepartmentCode,
+        toDepartmentCode: event.toDepartmentCode,
+      })
+      .subscribe({
+        error: () => {
+          this.incidents.set(previous);
+        },
+      });
+  }
+
+  private departmentForCode(code: DepartmentCode) {
+    switch (code) {
+      case "SUP":
+        return { id: "SUP", name: "Support", code: "SUP", isActive: true };
+      case "ACC":
+        return { id: "ACC", name: "Accounts", code: "ACC", isActive: true };
+      case "OPS":
+      default:
+        return { id: "OPS", name: "Operations", code: "OPS", isActive: true };
+    }
+  }
+}

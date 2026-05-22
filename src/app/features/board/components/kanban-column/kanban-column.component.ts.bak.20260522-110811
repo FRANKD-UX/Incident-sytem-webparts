@@ -1,0 +1,139 @@
+// src/app/features/board/components/kanban-column/kanban-column.component.ts
+
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Incident } from "../../../../shared/models/incident.model";
+import { KanbanCardComponent } from "../kanban-card/kanban-card.component";
+
+interface KanbanColumn {
+  id: string;
+  title: string;
+  status: string;
+  incidents: Incident[];
+  limit?: number;
+  color: string;
+  icon: string;
+}
+
+@Component({
+  selector: "app-kanban-column",
+  standalone: true,
+  imports: [CommonModule, KanbanCardComponent],
+  template: `
+    <div
+      class="kanban-column"
+      [style.borderTopColor]="column.color"
+      (dragover)="onDragOver($event)"
+      (drop)="onDrop($event)"
+    >
+      <!-- Column Header -->
+      <div class="column-header">
+        <div class="column-title">
+          <span class="material-icons" [style.color]="column.color">{{
+            column.icon
+          }}</span>
+          <h3>{{ column.title }}</h3>
+          <span class="count-badge" [style.background]="column.color">
+            {{ column.incidents.length }}
+          </span>
+        </div>
+        @if (column.limit) {
+          <div class="column-limit">
+            <span>{{ column.incidents.length }}/{{ column.limit }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Column Content -->
+      <div class="column-content">
+        @if (column.incidents.length === 0) {
+          <div class="empty-column">
+            <span class="material-icons">inbox</span>
+            <p>No incidents</p>
+          </div>
+        } @else {
+          @for (incident of column.incidents; track incident.id) {
+            <app-kanban-card
+              [incident]="incident"
+              [draggable]="canDrag"
+              (dragStart)="onDragStart($event, incident)"
+              (click)="incidentClick.emit(incident)"
+            />
+          }
+        }
+      </div>
+
+      <!-- Column Footer -->
+      @if (column.incidents.length > 0) {
+        <div class="column-footer">
+          <span class="total-incidents">
+            {{ column.incidents.length }} incident{{
+              column.incidents.length !== 1 ? "s" : ""
+            }}
+          </span>
+        </div>
+      }
+    </div>
+  `,
+  styleUrls: ["./kanban-column.component.scss"],
+})
+export class KanbanColumnComponent {
+  @Input({ required: true }) column!: KanbanColumn;
+  @Input() connectedColumns: string[] = [];
+  @Input() canDrag = false;
+
+  @Output() incidentMoved = new EventEmitter<{
+    incident: Incident;
+    fromColumnId: string;
+    toColumnId: string;
+  }>();
+  @Output() incidentClick = new EventEmitter<Incident>();
+
+  private draggedIncident: Incident | null = null;
+
+  onDragStart(event: DragEvent, incident: Incident): void {
+    this.draggedIncident = incident;
+    event.dataTransfer?.setData("text/plain", incident.id);
+
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setDragImage(
+        (event.target as HTMLElement).closest(".kanban-card") as HTMLElement,
+        0,
+        0,
+      );
+    }
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = "move";
+    }
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+
+    if (this.draggedIncident) {
+      const fromColumnId = this.getColumnIdFromElement(
+        (event.target as HTMLElement).closest(".kanban-column"),
+      );
+
+      if (fromColumnId && fromColumnId !== this.column.id) {
+        this.incidentMoved.emit({
+          incident: this.draggedIncident,
+          fromColumnId,
+          toColumnId: this.column.id,
+        });
+      }
+    }
+
+    this.draggedIncident = null;
+  }
+
+  private getColumnIdFromElement(element: Element | null): string | null {
+    // Logic to extract column ID from DOM element
+    return null;
+  }
+}

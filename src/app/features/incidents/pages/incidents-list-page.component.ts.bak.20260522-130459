@@ -1,0 +1,249 @@
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, computed, inject, signal } from "@angular/core";
+import { Router } from "@angular/router";
+import { IncidentApiService } from "../../../api/incident-api.service";
+import { PermissionsApiService } from "../../../api/permissions-api.service";
+import { Incident } from "../../../shared/models/incident.model";
+import { PaginationMetadata } from "../../../shared/models/common.model";
+import { IncidentTableComponent } from "../components/Incident-table/incident-table.component";
+import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
+import { FilterBarComponent, FilterConfig } from "../../../shared/components/filter-bar/filter-bar.component";
+import { LoadingStateComponent } from "../../../shared/components/loading-state/loading-state.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { ErrorStateComponent } from "../../../shared/components/error-state/error-state.component";
+import { IncidentDrawerComponent } from "../components/incident-drawer/incident-drawer.component";
+
+type SortDirection = "asc" | "desc";
+
+@Component({
+  selector: "app-incidents-list-page",
+  standalone: true,
+  imports: [
+    CommonModule,
+    IncidentTableComponent,
+    SearchInputComponent,
+    FilterBarComponent,
+    LoadingStateComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
+    IncidentDrawerComponent,
+  ],
+  template: `
+    <div class="incidents-page">
+      <div class="page-header">
+        <div>
+          <h1>Incidents</h1>
+          <p class="subtitle">System of record for all incidents, including completed work</p>
+        </div>
+
+        <div class="page-actions">
+          <button class="btn btn-primary" type="button" (click)="createIncident()">
+            <span class="material-icons">add</span>
+            Create incident
+          </button>
+          <button class="btn btn-secondary" type="button" (click)="loadIncidents()">
+            <span class="material-icons">refresh</span>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <div class="toolbar card">
+        <app-search-input
+          [value]="searchTerm()"
+          placeholder="Search incidents, departments, tags..."
+          (search)="searchTerm.set($event)"
+        />
+        <app-filter-bar
+          [filters]="filters"
+          [activeFilters]="activeFilters()"
+          (activeFiltersChange)="activeFilters.set($event)"
+        />
+      </div>
+
+      @if (loading()) {
+        <app-loading-state message="Loading incidents..." />
+      } @else if (error()) {
+        <app-error-state [error]="error()!" (retry)="loadIncidents()" />
+      } @else if (visibleIncidents().length === 0) {
+        <app-empty-state
+          icon="inbox"
+          title="No incidents found"
+          description="Try a different search or filter."
+        />
+      } @else {
+        <div class="card">
+          <app-incident-table
+            [incidents]="visibleIncidents()"
+            [sortColumn]="sortColumn()"
+            [sortDirection]="sortDirection()"
+            (sortChange)="onSortChange($event)"
+            (rowClick)="openDrawer($event)"
+          />
+        </div>
+
+        <div class="pagination card">
+          <div class="pagination__meta" *ngIf="pagination()">
+            Showing page {{ pagination()!.currentPage }} of {{ pagination()!.totalPages }} ·
+            {{ pagination()!.totalItems }} total
+          </div>
+          <div class="pagination__actions">
+            <button class="btn btn-secondary btn-sm" type="button" [disabled]="!pagination()?.hasPreviousPage">
+              Previous
+            </button>
+            <button class="btn btn-secondary btn-sm" type="button" [disabled]="!pagination()?.hasNextPage">
+              Next
+            </button>
+          </div>
+        </div>
+      }
+
+      <app-incident-drawer
+        [incident]="selectedIncident()"
+        [isOpen]="drawerOpen()"
+        (close)="closeDrawer()"
+        (refresh)="loadIncidents()"
+      />
+    </div>
+  `,
+  styleUrls: ["./incidents-list-page.component.scss"],
+})
+export class IncidentsListPageComponent implements OnInit {
+  private readonly incidentApi = inject(IncidentApiService);
+  private readonly permissionsApi = inject(PermissionsApiService);
+  private readonly router = inject(Router);
+
+  incidents = signal<Incident[]>([]);
+  pagination = signal<PaginationMetadata | null>(null);
+  loading = signal(false);
+  error = signal<string | null>(null);
+  searchTerm = signal("");
+  activeFilters = signal<Record<string, string>>({});
+  sortColumn = signal("createdAt");
+  sortDirection = signal<SortDirection>("desc");
+  selectedIncident = signal<Incident | null>(null);
+  drawerOpen = signal(false);
+  canCreateIncident = false;
+
+  filters: FilterConfig[] = [
+    {
+      key: "status",
+      label: "Status",
+      options: [
+        { label: "Open", value: "OPEN" },
+        { label: "In Progress", value: "IN_PROGRESS" },
+        { label: "Escalated", value: "ESCALATED" },
+        { label: "Resolved", value: "RESOLVED" },
+        { label: "Closed", value: "CLOSED" },
+      ],
+    },
+    {
+      key: "priority",
+      label: "Priority",
+      options: [
+        { label: "Critical", value: "CRITICAL" },
+        { label: "High", value: "HIGH" },
+        { label: "Medium", value: "MEDIUM" },
+        { label: "Low", value: "LOW" },
+      ],
+    },
+  ];
+
+  visibleIncidents = computed(() => {
+    const term = this.searchTerm().trim().toLowerCase();
+    const filters = this.activeFilters();
+    const sortColumn = this.sortColumn();
+    const sortDirection = this.sortDirection();
+
+    const filtered = this.incidents().filter((incident) => {
+      const searchable = [
+        incident.referenceNumber,
+        incident.title,
+        incident.description,
+        incident.currentDepartment.name,
+        incident.originDepartment.name,
+        ...(incident.tags ?? []),
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      if (term && !searchable.includes(term)) return false;
+      if (filters["status"] && incident.status !== filters["status"]) return false;
+      if (filters["priority"] && incident.priority !== filters["priority"]) return false;
+
+      return true;
+    });
+
+    return [...filtered].sort((a, b) => {
+      const av = this.sortValue(a, sortColumn);
+      const bv = this.sortValue(b, sortColumn);
+      const cmp = av.localeCompare(bv);
+      return sortDirection === "asc" ? cmp : -cmp;
+    });
+  });
+
+  ngOnInit(): void {
+    this.checkPermissions();
+    this.loadIncidents();
+  }
+
+  private checkPermissions(): void {
+    this.permissionsApi.getUserPermissions().subscribe({
+      next: (permissions) => {
+        this.canCreateIncident = permissions.allowedActions.includes("CREATE_INCIDENT");
+      },
+    });
+  }
+
+  loadIncidents(): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.incidentApi.getIncidents({}).subscribe({
+      next: (response) => {
+        this.incidents.set(response.data);
+        this.pagination.set(response.pagination);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(err?.message ?? "Failed to load incidents");
+        this.loading.set(false);
+      },
+    });
+  }
+
+  createIncident(): void {
+    this.router.navigateByUrl("/incidents/new");
+  }
+
+  onSortChange(event: { column: string; direction: SortDirection }): void {
+    this.sortColumn.set(event.column);
+    this.sortDirection.set(event.direction);
+  }
+
+  openDrawer(incident: Incident): void {
+    this.selectedIncident.set(incident);
+    this.drawerOpen.set(true);
+  }
+
+  closeDrawer(): void {
+    this.drawerOpen.set(false);
+  }
+
+  private sortValue(incident: Incident, column: string): string {
+    switch (column) {
+      case "referenceNumber":
+        return incident.referenceNumber ?? "";
+      case "title":
+        return incident.title ?? "";
+      case "status":
+        return incident.status ?? "";
+      case "priority":
+        return incident.priority ?? "";
+      case "createdAt":
+        return incident.createdAt ?? "";
+      default:
+        return "";
+    }
+  }
+}

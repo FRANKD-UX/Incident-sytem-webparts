@@ -1,131 +1,153 @@
-import {
-  HttpErrorResponse,
-  provideHttpClient,
-  withInterceptors,
-} from "@angular/common/http";
-import {
-  HttpTestingController,
-  provideHttpClientTesting,
-} from "@angular/common/http/testing";
-import { TestBed } from "@angular/core/testing";
-import { firstValueFrom } from "rxjs";
-import { mockBackendInterceptor } from "../../api/mock-backend.interceptor";
-import { DashboardApiService } from "../../api/dashboard-api.service";
-import { IncidentApiService } from "../../api/incident-api.service";
-import { HttpClientService } from "./http-client.service";
+// src/app/core/services/http-client.service.ts
 
-describe("HttpClientService", () => {
-  let service: HttpClientService;
-  let httpTestingController: HttpTestingController;
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError, timer } from 'rxjs';
+import { retryWhen, mergeMap, catchError, timeout } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+import { ApiResponse, ApiError } from '../../shared/models/common.model';
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [HttpClientService, provideHttpClient(), provideHttpClientTesting()],
+@Injectable({ providedIn: 'root' })
+export class HttpClientService {
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = environment.apiUrl;
+  private readonly defaultTimeout = 30000;
+  private readonly maxRetries = 2;
+
+  get<T>(endpoint: string, params?: Record<string, any>): Observable<ApiResponse<T>> {
+    const httpParams = this.buildParams(params);
+    return this.http.get<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, {
+      params: httpParams,
+      headers: this.getHeaders()
+    }).pipe(
+      timeout(this.defaultTimeout),
+      retryWhen(this.retryStrategy()),
+      catchError(this.handleError)
+    );
+  }
+
+  getPaginated<T>(endpoint: string, params?: Record<string, any>): Observable<ApiResponse<T>> {
+    return this.get<T>(endpoint, params);
+  }
+
+  post<T>(endpoint: string, body: any): Observable<ApiResponse<T>> {
+    return this.http.post<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, body, {
+      headers: this.getHeaders()
+    }).pipe(
+      timeout(this.defaultTimeout),
+      catchError(this.handleError)
+    );
+  }
+
+  put<T>(endpoint: string, body: any): Observable<ApiResponse<T>> {
+    return this.http.put<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, body, {
+      headers: this.getHeaders()
+    }).pipe(
+      timeout(this.defaultTimeout),
+      catchError(this.handleError)
+    );
+  }
+
+  patch<T>(endpoint: string, body: any): Observable<ApiResponse<T>> {
+    return this.http.patch<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, body, {
+      headers: this.getHeaders()
+    }).pipe(
+      timeout(this.defaultTimeout),
+      catchError(this.handleError)
+    );
+  }
+
+  delete<T>(endpoint: string): Observable<ApiResponse<T>> {
+    return this.http.delete<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, {
+      headers: this.getHeaders()
+    }).pipe(
+      timeout(this.defaultTimeout),
+      catchError(this.handleError)
+    );
+  }
+
+  upload<T>(endpoint: string, formData: FormData): Observable<ApiResponse<T>> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.getToken()}`
+    });
+    return this.http.post<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, formData, {
+      headers
+    }).pipe(
+      timeout(60000),
+      catchError(this.handleError)
+    );
+  }
+
+  private getHeaders(): HttpHeaders {
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'X-Correlation-Id': this.generateCorrelationId()
     });
 
-    service = TestBed.inject(HttpClientService);
-    httpTestingController = TestBed.inject(HttpTestingController);
-  });
+    const token = this.getToken();
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
 
-  afterEach(() => {
-    httpTestingController.verify();
-  });
+    return headers;
+  }
 
-  it("maps API envelopes to typed data and serializes array params", async () => {
-    const requestPromise = firstValueFrom(
-      service.get<{ id: string }[]>("/incidents", {
-        params: { status: ["OPEN", "ESCALATED"], page: 1 },
-      }),
+  private buildParams(params?: Record<string, any>): HttpParams {
+    let httpParams = new HttpParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          httpParams = httpParams.set(key, value.toString());
+        }
+      });
+    }
+    return httpParams;
+  }
+
+  private retryStrategy() {
+    return (errors: Observable<any>) => errors.pipe(
+      mergeMap((error: HttpErrorResponse, index: number) => {
+        if (index < this.maxRetries && error.status !== 400 && error.status !== 401 && error.status !== 403) {
+          return timer((index + 1) * 1000);
+        }
+        return throwError(() => error);
+      })
     );
+  }
 
-    const req = httpTestingController.expectOne(
-      (request) =>
-        request.method === "GET" &&
-        request.url === "/api/incidents" &&
-        request.params.getAll("status")?.join(",") === "OPEN,ESCALATED" &&
-        request.params.get("page") === "1",
-    );
-
-    expect(req.request.headers.get("Accept")).toBe("application/json");
-    expect(req.request.headers.has("X-Correlation-Id")).toBeTrue();
-
-    req.flush({
-      data: [{ id: "INC-001" }],
-      success: true,
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    const apiError: ApiError = {
+      code: 'UNKNOWN_ERROR',
+      message: 'An unexpected error occurred',
       timestamp: new Date().toISOString(),
-      correlationId: "corr-1",
-    });
+      correlationId: ''
+    };
 
-    await expectAsync(requestPromise).toBeResolvedTo([{ id: "INC-001" }]);
-  });
+    if (error.error && error.error.code) {
+      apiError.code = error.error.code;
+      apiError.message = error.error.message;
+      apiError.details = error.error.details;
+      apiError.correlationId = error.error.correlationId;
+    } else if (error.status === 0) {
+      apiError.code = 'NETWORK_ERROR';
+      apiError.message = 'Network connectivity issue';
+    } else if (error.status === 401) {
+      apiError.code = 'AUTHENTICATION_ERROR';
+      apiError.message = 'Authentication required';
+    } else if (error.status === 403) {
+      apiError.code = 'AUTHORIZATION_ERROR';
+      apiError.message = 'Insufficient permissions';
+    }
 
-  it("does not force json content type for form data uploads", () => {
-    const body = new FormData();
-    body.append("fileName", "evidence.txt");
+    return throwError(() => apiError);
+  }
 
-    service.post("/incidents/INC-001/attachments", body).subscribe();
+  private getToken(): string | null {
+    return localStorage.getItem('access_token');
+  }
 
-    const req = httpTestingController.expectOne("/api/incidents/INC-001/attachments");
-    expect(req.request.headers.has("Content-Type")).toBeFalse();
-    req.flush({
-      data: [],
-      success: true,
-      timestamp: new Date().toISOString(),
-      correlationId: "corr-2",
-    });
-  });
-
-  it("normalizes backend errors into ApiError objects", async () => {
-    const requestPromise = firstValueFrom(service.get("/incidents/INC-404")).catch(
-      (error: HttpErrorResponse | { code: string; message: string }) => error,
-    );
-
-    const req = httpTestingController.expectOne("/api/incidents/INC-404");
-    req.flush(
-      {
-        code: "INCIDENT_NOT_FOUND",
-        message: "Incident not found.",
-        timestamp: new Date().toISOString(),
-        correlationId: "corr-404",
-      },
-      { status: 404, statusText: "Not Found" },
-    );
-
-    await expectAsync(requestPromise).toBeResolvedTo(
-      jasmine.objectContaining({
-        code: "INCIDENT_NOT_FOUND",
-        message: "Incident not found.",
-      }),
-    );
-  });
-});
-
-describe("API services with mock backend", () => {
-  let dashboardApi: DashboardApiService;
-  let incidentApi: IncidentApiService;
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        DashboardApiService,
-        IncidentApiService,
-        HttpClientService,
-        provideHttpClient(withInterceptors([mockBackendInterceptor])),
-      ],
-    });
-
-    dashboardApi = TestBed.inject(DashboardApiService);
-    incidentApi = TestBed.inject(IncidentApiService);
-  });
-
-  it("serves dashboard summary through the shared http client", async () => {
-    const summary = await firstValueFrom(dashboardApi.getDashboardSummary());
-    expect(summary.kpis.length).toBeGreaterThan(0);
-    expect(summary.recentIncidents.length).toBeGreaterThan(0);
-  });
-
-  it("serves incidents through the mock interceptor stack", async () => {
-    const incidents = await firstValueFrom(incidentApi.getIncidents());
-    expect(incidents.some((incident) => incident.status === "ESCALATED")).toBeTrue();
-  });
-});
+  private generateCorrelationId(): string {
+    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  }
+}

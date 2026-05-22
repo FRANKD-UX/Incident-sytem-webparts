@@ -1,0 +1,22 @@
+.board-page {
+  display: grid;
+  gap: 16px;
+}
+
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.board-container {
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.board-columns {
+  display: flex;
+  gap: 16px;
+  min-width: max-content;
+}

@@ -1,0 +1,6990 @@
+=== PROJECT STRUCTURE ===
+./angular.json
+./lib/app/app.component.css
+./lib/app/app.component.html
+./lib/index.html
+./lib/styles.css
+./package.json
+./package-lock.json
+./src/app/api/attachment-api.service.ts
+./src/app/api/audit-api.service.ts
+./src/app/api/checklist-api.service.ts
+./src/app/api/dashboard-api.service.ts
+./src/app/api/escalation-api.service.ts
+./src/app/api/incident-api.service.ts
+./src/app/api/mock-backend.service.ts
+./src/app/api/permissions-api.service.ts
+./src/app/api/sla-api.service.ts
+./src/app/api/workflow-api.service.ts
+./src/app/app.component.html
+./src/app/app.component.scss
+./src/app/app.component.scss.ts
+./src/app/app.component.ts
+./src/app/app.config.ts
+./src/app/app.routes.ts
+./src/app/core/auth/auth.guard.ts
+./src/app/core/auth/auth.interceptor.ts
+./src/app/core/auth/auth.service.ts
+./src/app/core/auth/role.guard.ts
+./src/app/core/config/app-config.service.ts
+./src/app/core/guards/auth.guard.ts
+./src/app/core/guards/role.guard.ts
+./src/app/core/interceptors/error.interceptor.ts
+./src/app/core/interceptors/loading.interceptor.ts
+./src/app/core/interceptors/logging.interceptor.ts
+./src/app/core/services/cache.service.ts
+./src/app/core/services/http-client.service.spec.ts
+./src/app/core/services/http-client.service.ts
+./src/app/core/services/notification.service.ts
+./src/app/features/administration/administration.module.ts
+./src/app/features/administration/pages/admin-dashboard.component.ts
+./src/app/features/administration/pages/workflow-config.component.ts
+./src/app/features/auth/pages/login-page.component.ts
+./src/app/features/auth/pages/unauthorized-page.component.ts
+./src/app/features/board/components/board-filters/board-filters.component.ts
+./src/app/features/board/components/kanban-card/kanban-card.component.scss
+./src/app/features/board/components/kanban-card/kanban-card.component.ts
+./src/app/features/board/components/kanban-column/kanban-column.component.scss
+./src/app/features/board/components/kanban-column/kanban-column.component.ts
+./src/app/features/board/pages/board-page.component.scss
+./src/app/features/board/pages/board-page.component.ts
+./src/app/features/dashboard/pages/dashboard-page.component.scss
+./src/app/features/dashboard/pages/dashboard-page.component.ts
+./src/app/features/errors/unauthorized.component.ts
+./src/app/features/incidents/components/attachments-panel/attachments-panel.component.scss
+./src/app/features/incidents/components/attachments-panel/attachments-panel.component.ts
+./src/app/features/incidents/components/audit-timeline/audit-timeline.component.scss
+./src/app/features/incidents/components/audit-timeline/audit-timeline.component.ts
+./src/app/features/incidents/components/chain-progress/chain-progress.component.ts
+./src/app/features/incidents/components/checklist-panel/checklist-panel.component.html
+./src/app/features/incidents/components/checklist-panel/checklist-panel.component.scss
+./src/app/features/incidents/components/checklist-panel/checklist-panel.component.ts
+./src/app/features/incidents/components/confirmation-dialog/confirmation-dialog.component.ts
+./src/app/features/incidents/components/escalation-panel/escalation-panel.component.ts
+./src/app/features/incidents/components/incident-drawer/incident-drawer.component.scss
+./src/app/features/incidents/components/incident-drawer/incident-drawer.component.ts
+./src/app/features/incidents/components/incident-form/incident-form.component.ts
+./src/app/features/incidents/components/incident-summary/incident-summary.component.ts
+./src/app/features/incidents/components/Incident-table/incident-table.component.scss
+./src/app/features/incidents/components/Incident-table/incident-table.component.ts
+./src/app/features/incidents/components/sla-panel/sla-panel.component.scss
+./src/app/features/incidents/components/sla-panel/sla-panel.component.ts
+./src/app/features/incidents/pages/incident-detail-page.component.ts
+./src/app/features/incidents/pages/incidents-list-page.component.scss
+./src/app/features/incidents/pages/incidents-list-page.component.ts
+./src/app/layout/app-shell/app-shell.component.scss
+./src/app/layout/app-shell/app-shell.component.ts
+./src/app/layout/side-nav/side-nav.component.scss
+./src/app/layout/side-nav/side-nav.component.ts
+./src/app/layout/top-bar/top-bar.component.scss
+./src/app/layout/top-bar/top-bar.component.ts
+./src/app/shared/components/confirmation-dialog/confirmation-dialog.component.ts
+./src/app/shared/components/empty-state/empty-state.component.ts
+./src/app/shared/components/error-state/error-state.component.ts
+./src/app/shared/components/filter-bar/filter-bar.component.ts
+./src/app/shared/components/loading-state/loading-state.component.ts
+./src/app/shared/components/priority-badge/priority-badge.component.ts
+./src/app/shared/components/search-input/search-input.component.ts
+./src/app/shared/components/sla-indicator/sla-indicator.component.ts
+./src/app/shared/components/stat-card/stat-card.component.scss
+./src/app/shared/components/stat-card/stat-card.component.ts
+./src/app/shared/components/status-badge/status-badge.component.ts
+./src/app/shared/components/user-avatar/user-avatar.component.ts
+./src/app/shared/directives/has-permission.directive.ts
+./src/app/shared/models/attachment.model.ts
+./src/app/shared/models/audit.model.ts
+./src/app/shared/models/checklist.model.ts
+./src/app/shared/models/common.model.ts
+./src/app/shared/models/dashboard.model.ts
+./src/app/shared/models/escalation.model.ts
+./src/app/shared/models/incident.model.ts
+./src/app/shared/models/sla.model.ts
+./src/app/shared/models/user.model.ts
+./src/assets/scss/abstracts/_variables.scss
+./src/environments/environment.prod.ts
+./src/environments/environment.ts
+./src/index.html
+./src/main.ts
+./src/styles.scss
+./src/styles.scss.ts
+./tsconfig.app.json
+./tsconfig.json
+./tsconfig.spec.json
+
+
+=== FILE CONTENTS ===
+
+==================================================
+FILE: src/app/api/attachment-api.service.ts
+==================================================
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+
+@Injectable({ providedIn: 'root' })
+export class AttachmentApiService {
+  getAttachments(incidentId: string): Observable<any[]> { return of([]); }
+  uploadAttachments(incidentId: string, formData: FormData): Observable<any> { return of({}); }
+  deleteAttachment(incidentId: string, attachmentId: string): Observable<any> { return of({}); }
+  updateAttachment(incidentId: string, attachmentId: string, payload: any): Observable<any> { return of({}); }
+}
+
+
+
+==================================================
+FILE: src/app/api/audit-api.service.ts
+==================================================
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+
+@Injectable({ providedIn: 'root' })
+export class AuditApiService {
+  getAuditTrail(incidentId: string): Observable<any[]> { return of([]); }
+}
+
+
+
+==================================================
+FILE: src/app/api/checklist-api.service.ts
+==================================================
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+
+@Injectable({ providedIn: 'root' })
+export class ChecklistApiService {
+  getChecklist(incidentId: string): Observable<any> { return of({ items: [] }); }
+  updateChecklistItem(incidentId: string, itemId: string, payload: any): Observable<any> { return of({}); }
+}
+
+
+
+==================================================
+FILE: src/app/api/dashboard-api.service.ts
+==================================================
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { DashboardSummary, AdminDashboardStats } from '../shared/models/dashboard.model';
+import { MockBackendService } from './mock-backend.service';
+
+@Injectable({ providedIn: 'root' })
+export class DashboardApiService {
+  constructor(private mock: MockBackendService) {}
+  getDashboardSummary(): Observable<DashboardSummary> { return this.mock.getMockDashboardSummary(); }
+  getAdminStats(): Observable<AdminDashboardStats> { return this.mock.getMockDashboardSummary() as any; }
+}
+
+
+
+==================================================
+FILE: src/app/api/escalation-api.service.ts
+==================================================
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+
+@Injectable({ providedIn: 'root' })
+export class EscalationApiService {
+  getEscalations(incidentId: string): Observable<any[]> { return of([]); }
+}
+
+
+
+==================================================
+FILE: src/app/api/incident-api.service.ts
+==================================================
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Incident, IncidentType, DepartmentChain } from '../shared/models/incident.model';
+import { PaginatedResponse } from '../shared/models/common.model';
+import { MockBackendService } from './mock-backend.service';
+
+@Injectable({ providedIn: 'root' })
+export class IncidentApiService {
+  constructor(private mock: MockBackendService) {}
+  getIncidents(params?: any): Observable<PaginatedResponse<Incident>> { return this.mock.getMockIncidents(); }
+  getIncidentById(id: string): Observable<Incident> { return this.mock.getMockIncidents() as any; }
+  createIncident(incident: Partial<Incident>): Observable<Incident> { return this.mock.getMockIncidents() as any; }
+  updateIncident(id: string, updates: Partial<Incident>): Observable<Incident> { return this.mock.getMockIncidents() as any; }
+  deleteIncident(id: string): Observable<void> { return new Observable(sub => sub.next()); }
+  getIncidentTypes(): Observable<IncidentType[]> { return new Observable(sub => sub.next([])); }
+  getIncidentChain(incidentId: string): Observable<DepartmentChain> { return this.mock.getMockIncidents() as any; }
+}
+
+
+
+==================================================
+FILE: src/app/api/mock-backend.service.ts
+==================================================
+import { Injectable } from "@angular/core";
+import { Observable, of, delay } from "rxjs";
+import {
+  DashboardSummary,
+  DashboardKpi,
+  DepartmentWorkload,
+  IncidentTrends,
+  SlaCompliance,
+} from "../shared/models/dashboard.model";
+import { Incident, IncidentType } from "../shared/models/incident.model";
+import { Department, User, UserRole } from "../shared/models/user.model";
+import {
+  Checklist,
+  ChecklistItem,
+  ChecklistStatus,
+} from "../shared/models/checklist.model";
+import {
+  Attachment,
+  AttachmentCategory,
+} from "../shared/models/attachment.model";
+import { AuditEntry, AuditAction } from "../shared/models/audit.model";
+import { Escalation } from "../shared/models/escalation.model";
+import { SlaState } from "../shared/models/sla.model";
+import {
+  PaginatedResponse,
+  Priority,
+  IncidentStatus,
+} from "../shared/models/common.model";
+
+@Injectable({ providedIn: "root" })
+export class MockBackendService {
+  getMockDashboardSummary(): Observable<DashboardSummary> {
+    const kpis: DashboardKpi[] = [
+      {
+        id: "1",
+        label: "Open Incidents",
+        value: 47,
+        change: 12,
+        changeType: "INCREASE",
+        icon: "warning",
+        color: "#ef4444",
+      },
+      {
+        id: "2",
+        label: "In Progress",
+        value: 28,
+        change: 5,
+        changeType: "DECREASE",
+        icon: "pending",
+        color: "#f59e0b",
+      },
+      {
+        id: "3",
+        label: "Escalated",
+        value: 8,
+        change: 2,
+        changeType: "INCREASE",
+        icon: "error",
+        color: "#dc2626",
+      },
+      {
+        id: "4",
+        label: "Resolved Today",
+        value: 15,
+        change: 25,
+        changeType: "INCREASE",
+        icon: "check_circle",
+        color: "#10b981",
+      },
+    ];
+    const dept: Department = {
+      id: "1",
+      name: "Support",
+      code: "SUP",
+      isActive: true,
+    };
+    const dept2: Department = {
+      id: "2",
+      name: "Operations",
+      code: "OPS",
+      isActive: true,
+    };
+    const dept3: Department = {
+      id: "3",
+      name: "Engineering",
+      code: "ENG",
+      isActive: true,
+    };
+    const workload: DepartmentWorkload[] = [
+      {
+        department: dept,
+        openIncidents: 12,
+        inProgress: 8,
+        escalated: 2,
+        avgResolutionTime: 240,
+        slaCompliance: 85,
+      },
+      {
+        department: dept2,
+        openIncidents: 18,
+        inProgress: 12,
+        escalated: 4,
+        avgResolutionTime: 360,
+        slaCompliance: 78,
+      },
+      {
+        department: dept3,
+        openIncidents: 10,
+        inProgress: 5,
+        escalated: 1,
+        avgResolutionTime: 480,
+        slaCompliance: 92,
+      },
+    ];
+    const summary: DashboardSummary = {
+      kpis,
+      workloadByDepartment: workload,
+      trends: { daily: [], weekly: [], monthly: [] },
+      recentIncidents: [],
+      slaCompliance: { overall: 85, byDepartment: [], byPriority: [] },
+    };
+    return of(summary).pipe(delay(500));
+  }
+
+  getMockIncidents(): Observable<PaginatedResponse<Incident>> {
+    const incident: Incident = {
+      id: "INC-001",
+      referenceNumber: "INC-2024-001",
+      title: "Network connectivity issue in Building A",
+      description: "Multiple users reporting intermittent connectivity",
+      type: {
+        id: "1",
+        name: "Network Incident",
+        code: "NET-INC",
+        description: "Network related incidents",
+        departmentChain: {
+          id: "1",
+          name: "Standard",
+          steps: [],
+          allowParallel: false,
+          requireStrictOrder: true,
+        },
+        defaultChecklists: [],
+        slaRules: [],
+        escalationRules: [],
+        isActive: true,
+      },
+      priority: "HIGH" as Priority,
+      status: "IN_PROGRESS" as IncidentStatus,
+      currentDepartment: {
+        id: "2",
+        name: "Operations",
+        code: "OPS",
+        isActive: true,
+      },
+      originDepartment: {
+        id: "1",
+        name: "Support",
+        code: "SUP",
+        isActive: true,
+      },
+      createdBy: {
+        id: "1",
+        displayName: "Jane Smith",
+        email: "jane@example.com",
+        department: { id: "1", name: "Support", code: "SUP", isActive: true },
+        role: { id: "1", name: "Agent", departmentId: "1", permissions: [] },
+        permissions: [],
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      tags: ["network", "critical"],
+      customFields: {},
+    };
+    const paginated: PaginatedResponse<Incident> = {
+      data: [incident],
+      pagination: {
+        currentPage: 1,
+        pageSize: 10,
+        totalItems: 1,
+        totalPages: 1,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      },
+      success: true,
+      timestamp: new Date().toISOString(),
+      correlationId: "mock",
+    };
+    return of(paginated).pipe(delay(500));
+  }
+
+  getMockChecklist(incidentId: string): Observable<Checklist> {
+    const checklist: Checklist = {
+      id: "CL-001",
+      incidentId,
+      chainStepId: "STEP-1",
+      departmentId: "2",
+      items: [
+        {
+          id: "CI-1",
+          description: "Verify network equipment status",
+          isCompleted: false,
+          isRequired: true,
+          order: 1,
+          category: "Technical Check",
+          evidenceRequired: false,
+        },
+        {
+          id: "CI-2",
+          description: "Check switch configuration",
+          isCompleted: false,
+          isRequired: true,
+          order: 2,
+          category: "Configuration",
+          evidenceRequired: true,
+          evidenceType: "ATTACHMENT",
+        },
+        {
+          id: "CI-3",
+          description: "Document findings",
+          isCompleted: false,
+          isRequired: false,
+          order: 3,
+          category: "Documentation",
+          evidenceRequired: true,
+          evidenceType: "NOTE",
+        },
+      ],
+      status: "IN_PROGRESS" as ChecklistStatus,
+    };
+    return of(checklist).pipe(delay(300));
+  }
+
+  getMockAttachments(incidentId: string): Observable<Attachment[]> {
+    const att: Attachment = {
+      id: "ATT-1",
+      incidentId,
+      fileName: "network-diagram.pdf",
+      fileType: "application/pdf",
+      fileSize: 245760,
+      uploadedBy: "John Doe",
+      uploadedAt: new Date().toISOString(),
+      category: "DOCUMENT" as AttachmentCategory,
+      isProofOfUptime: false,
+      url: "/mock/network-diagram.pdf",
+      metadata: {
+        uploadedFromDepartment: "Operations",
+        description: "Network topology diagram",
+        tags: ["documentation"],
+      },
+    };
+    return of([att]).pipe(delay(300));
+  }
+
+  getMockAuditTrail(incidentId: string): Observable<AuditEntry[]> {
+    const entries: AuditEntry[] = [
+      {
+        id: "AUD-1",
+        incidentId,
+        timestamp: new Date(Date.now() - 86400000).toISOString(),
+        userId: "1",
+        userName: "Jane Smith",
+        departmentId: "1",
+        departmentName: "Support",
+        action: "CREATED" as AuditAction,
+        details: "Incident created based on user reports",
+        metadata: {},
+        ipAddress: "192.168.1.100",
+      },
+      {
+        id: "AUD-2",
+        incidentId,
+        timestamp: new Date(Date.now() - 43200000).toISOString(),
+        userId: "1",
+        userName: "Jane Smith",
+        departmentId: "1",
+        departmentName: "Support",
+        action: "DEPARTMENT_TRANSITION" as AuditAction,
+        fromState: "Support",
+        toState: "Operations",
+        details: "Transitioned to Operations department",
+        metadata: { transitionType: "AUTOMATIC" },
+        ipAddress: "192.168.1.100",
+      },
+    ];
+    return of(entries).pipe(delay(300));
+  }
+}
+
+
+
+==================================================
+FILE: src/app/api/permissions-api.service.ts
+==================================================
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { UserPermissions } from '../shared/models/user.model';
+
+@Injectable({ providedIn: 'root' })
+export class PermissionsApiService {
+  getUserPermissions(): Observable<UserPermissions> {
+    return of({
+      userId: '1',
+      departmentId: '1',
+      departmentName: 'Support',
+      role: 'Agent',
+      permissions: [],
+      allowedIncidentTypes: ['1'],
+      allowedActions: ['VIEW_INCIDENTS', 'CREATE_INCIDENT', 'VIEW_BOARD']
+    });
+  }
+}
+
+
+
+==================================================
+FILE: src/app/api/sla-api.service.ts
+==================================================
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+
+@Injectable({ providedIn: 'root' })
+export class SlaApiService {
+  getSlaState(incidentId: string): Observable<any> { return of({}); }
+}
+
+
+
+==================================================
+FILE: src/app/api/workflow-api.service.ts
+==================================================
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+
+@Injectable({ providedIn: 'root' })
+export class WorkflowApiService {
+  getDepartmentChains(): Observable<any[]> { return of([]); }
+  getDepartments(): Observable<any[]> { return of([]); }
+  deleteDepartmentChain(id: string): Observable<any> { return of({}); }
+  moveIncident(incidentId: string, payload: any): Observable<any> { return of({}); }
+}
+
+
+
+==================================================
+FILE: src/app/app.component.html
+==================================================
+<main class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">IO</div>
+      <div>
+        <div class="brand-title">Incident Operations</div>
+        <div class="brand-subtitle">Angular shell</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button
+        *ngFor="let section of sections"
+        type="button"
+        class="nav-item"
+        [class.active]="activeSection === section.key"
+        (click)="selectSection(section.key)"
+      >
+        <span class="nav-label">{{ section.label }}</span>
+        <span class="nav-description">{{ section.description }}</span>
+      </button>
+    </nav>
+  </aside>
+
+  <section class="workspace">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Operations center</p>
+        <h1>
+          Build fast, keep control, stay out of the SharePoint layout trap.
+        </h1>
+        <p class="lede">
+          This is now a standalone Angular shell with internal navigation,
+          shared state, and space for the incident modules you want to rebuild
+          cleanly.
+        </p>
+      </div>
+      <div class="hero-card">
+        <span>Environment</span>
+        <strong>Standalone Angular app</strong>
+        <small>SPFx removed from the execution path.</small>
+      </div>
+    </header>
+
+    <section *ngIf="activeSection === 'dashboard'" class="content-grid">
+      <article
+        *ngFor="let metric of metrics"
+        class="metric-card"
+        [attr.data-tone]="metric.tone"
+      >
+        <span>{{ metric.label }}</span>
+        <strong>{{ metric.value }}</strong>
+        <small>{{ metric.delta }}</small>
+      </article>
+    </section>
+
+    <section *ngIf="activeSection === 'tickets'" class="panel">
+      <div class="panel-header">
+        <h2>Ticket queue</h2>
+        <span>Live work items</span>
+      </div>
+      <div class="ticket-list">
+        <article *ngFor="let ticket of tickets" class="ticket-card">
+          <div>
+            <div class="ticket-id">{{ ticket.id }}</div>
+            <div class="ticket-title">{{ ticket.title }}</div>
+          </div>
+          <div class="ticket-meta">
+            <span>{{ ticket.status }}</span>
+            <span>{{ ticket.priority }}</span>
+            <span>{{ ticket.owner }}</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section *ngIf="activeSection === 'board'" class="panel split-panel">
+      <div class="panel-header">
+        <h2>Board</h2>
+        <span>Drag-ready layout next</span>
+      </div>
+      <div class="board-columns">
+        <div class="board-column">
+          <h3>Open</h3>
+          <p>Tickets waiting for assignment.</p>
+        </div>
+        <div class="board-column">
+          <h3>In progress</h3>
+          <p>Active ownership and execution.</p>
+        </div>
+        <div class="board-column">
+          <h3>Escalated</h3>
+          <p>High-priority items under review.</p>
+        </div>
+      </div>
+    </section>
+
+    <section *ngIf="activeSection === 'admin'" class="panel">
+      <div class="panel-header">
+        <h2>Admin</h2>
+        <span>Saved views and governance</span>
+      </div>
+      <div class="admin-grid">
+        <div class="admin-card">
+          <h3>Saved filters</h3>
+          <p>Persisted queue views and role-based access.</p>
+        </div>
+        <div class="admin-card">
+          <h3>Audit controls</h3>
+          <p>Traceable changes, approvals, and escalations.</p>
+        </div>
+      </div>
+    </section>
+  </section>
+</main>
+
+
+
+==================================================
+FILE: src/app/app.component.scss
+==================================================
+.app-shell {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  min-height: 100vh;
+  width: 100%;
+}
+
+.sidebar {
+  background: linear-gradient(
+    180deg,
+    rgba(8, 18, 38, 0.98),
+    rgba(13, 27, 57, 0.96)
+  );
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 28px 22px;
+}
+
+.brand {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+}
+
+.brand-mark {
+  align-items: center;
+  background: linear-gradient(135deg, #1849ff, #68b7ff);
+  border-radius: 18px;
+  display: inline-flex;
+  font-weight: 800;
+  height: 44px;
+  justify-content: center;
+  width: 44px;
+}
+
+.brand-title {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.brand-subtitle,
+.nav-description,
+.hero-card small,
+.metric-card small,
+.ticket-meta,
+.panel-header span,
+.lede {
+  color: rgba(226, 232, 240, 0.72);
+}
+
+.nav {
+  display: grid;
+  gap: 10px;
+}
+
+.nav-item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid transparent;
+  border-radius: 18px;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  text-align: left;
+  transition:
+    transform 120ms ease,
+    background 120ms ease,
+    border-color 120ms ease;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  background: rgba(24, 73, 255, 0.18);
+  border-color: rgba(104, 183, 255, 0.32);
+  transform: translateY(-1px);
+}
+
+.nav-label {
+  font-weight: 700;
+}
+
+.workspace {
+  padding: 28px;
+}
+
+.hero {
+  align-items: start;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  margin: 0 0 10px;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-size: clamp(32px, 4vw, 56px);
+  line-height: 1;
+  margin: 0;
+  max-width: 12ch;
+}
+
+.lede {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 16px 0 0;
+  max-width: 64ch;
+}
+
+.hero-card,
+.metric-card,
+.panel,
+.admin-card,
+.ticket-card,
+.board-column {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.hero-card {
+  display: grid;
+  gap: 8px;
+  padding: 22px;
+}
+
+.hero-card span,
+.metric-card span,
+.ticket-id {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero-card strong,
+.metric-card strong {
+  font-size: 24px;
+}
+
+.content-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.metric-card {
+  display: grid;
+  gap: 12px;
+  padding: 22px;
+}
+
+.metric-card[data-tone="blue"] strong {
+  color: var(--accent);
+}
+
+.metric-card[data-tone="green"] strong {
+  color: var(--success);
+}
+
+.metric-card[data-tone="amber"] strong {
+  color: var(--warning);
+}
+
+.metric-card[data-tone="red"] strong {
+  color: var(--danger);
+}
+
+.panel {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+}
+
+.panel-header {
+  align-items: baseline;
+  display: flex;
+  justify-content: space-between;
+}
+
+.panel-header h2,
+.board-column h3,
+.admin-card h3 {
+  margin: 0;
+}
+
+.ticket-list,
+.admin-grid,
+.board-columns {
+  display: grid;
+  gap: 14px;
+}
+
+.ticket-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 20px;
+}
+
+.ticket-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.ticket-meta {
+  align-items: end;
+  display: grid;
+  gap: 6px;
+  justify-items: end;
+}
+
+.board-columns,
+.admin-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.board-column,
+.admin-card {
+  padding: 20px;
+  min-height: 160px;
+}
+
+.split-panel {
+  min-height: 320px;
+}
+
+@media (max-width: 1100px) {
+  .app-shell,
+  .hero,
+  .content-grid,
+  .board-columns,
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+@media (max-width: 720px) {
+  .workspace {
+    padding: 18px;
+  }
+
+  .ticket-card {
+    flex-direction: column;
+  }
+
+  .ticket-meta {
+    justify-items: start;
+  }
+}
+
+
+
+==================================================
+FILE: src/app/app.component.scss.ts
+==================================================
+
+require("./app.component.css");
+const styles = {
+
+};
+
+export default styles;
+
+
+
+==================================================
+FILE: src/app/app.component.ts
+==================================================
+// src/app/app.component.ts
+
+import { Component } from "@angular/core";
+import { RouterOutlet } from "@angular/router";
+import { AppShellComponent } from "./layout/app-shell/app-shell.component";
+
+@Component({
+  selector: "app-root",
+  standalone: true,
+  imports: [RouterOutlet, AppShellComponent],
+  template: `
+    <app-shell>
+      <router-outlet />
+    </app-shell>
+  `,
+  styles: [
+    `
+      :host {
+        display: block;
+        height: 100vh;
+      }
+    `,
+  ],
+})
+export class AppComponent {}
+
+
+
+==================================================
+FILE: src/app/app.config.ts
+==================================================
+import { ApplicationConfig } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { routes } from './app.routes';
+import { errorInterceptor } from './core/interceptors/error.interceptor';
+import { loadingInterceptor } from './core/interceptors/loading.interceptor';
+import { authInterceptor } from './core/auth/auth.interceptor';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(routes),
+    provideHttpClient(
+      withInterceptors([
+        errorInterceptor,
+        loadingInterceptor,
+        authInterceptor
+      ])
+    )
+  ]
+};
+
+
+
+==================================================
+FILE: src/app/app.routes.ts
+==================================================
+// src/app/app.routes.ts (updated)
+
+import { Routes } from "@angular/router";
+import { authGuard } from "./core/guards/auth.guard";
+import { roleGuard } from "./core/guards/role.guard";
+
+export const routes: Routes = [
+  {
+    path: "",
+    redirectTo: "/dashboard",
+    pathMatch: "full",
+  },
+  {
+    path: "dashboard",
+    loadComponent: () =>
+      import("./features/dashboard/pages/dashboard-page.component").then(
+        (m) => m.DashboardPageComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "incidents",
+    children: [
+      {
+        path: "",
+        loadComponent: () =>
+          import("./features/incidents/pages/incidents-list-page.component").then(
+            (m) => m.IncidentsListPageComponent,
+          ),
+        canActivate: [authGuard],
+        data: { permissions: ["VIEW_INCIDENTS"] },
+      },
+      {
+        path: ":id",
+        loadComponent: () =>
+          import("./features/incidents/pages/incident-detail-page.component").then(
+            (m) => m.IncidentDetailPageComponent,
+          ),
+        canActivate: [authGuard],
+        data: { permissions: ["VIEW_INCIDENT_DETAILS"] },
+      },
+      {
+        path: "new",
+        loadComponent: () =>
+          import("./features/incidents/components/incident-form/incident-form.component").then(
+            (m) => m.IncidentFormComponent,
+          ),
+        canActivate: [authGuard],
+        data: { permissions: ["CREATE_INCIDENT"] },
+      },
+    ],
+  },
+  {
+    path: "board",
+    loadComponent: () =>
+      import("./features/board/pages/board-page.component").then(
+        (m) => m.BoardPageComponent,
+      ),
+    canActivate: [authGuard],
+    data: { permissions: ["VIEW_BOARD"] },
+  },
+  {
+    path: "administration",
+    loadChildren: () =>
+      import("./features/administration/administration.module").then(
+        (m) => m.AdministrationModule,
+      ),
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ["ADMIN", "SYSTEM_ADMIN"] },
+  },
+  {
+    path: "unauthorized",
+    loadComponent: () =>
+      import("./features/errors/unauthorized.component").then(
+        (m) => m.UnauthorizedComponent,
+      ),
+  },
+  {
+    path: "**",
+    redirectTo: "/dashboard",
+  },
+];
+
+
+
+==================================================
+FILE: src/app/core/auth/auth.guard.ts
+==================================================
+import { inject } from "@angular/core";
+import { CanActivateFn, Router } from "@angular/router";
+import { AuthService } from "./auth.service";
+
+export const authGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (authService.isAuthenticated()) {
+    return true;
+  }
+
+  router.navigate(["/dashboard"]);
+  return false;
+};
+
+
+
+==================================================
+FILE: src/app/core/auth/auth.interceptor.ts
+==================================================
+import { HttpInterceptorFn } from "@angular/common/http";
+export const authInterceptor: HttpInterceptorFn = (req, next) => next(req);
+
+
+
+==================================================
+FILE: src/app/core/auth/auth.service.ts
+==================================================
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { UserPermissions } from '../../shared/models/user.model';
+
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+  isAuthenticated() { return true; }
+  getToken() { return 'mock-token'; }
+  getUser() { return { id: '1', displayName: 'Test User', email: 'test@test.com', department: { id: '1', name: 'Support', code: 'SUP', isActive: true }, role: { id: '1', name: 'Agent', departmentId: '1', permissions: [] }, permissions: [] }; }
+  getPermissions(): UserPermissions {
+    return {
+      userId: '1',
+      departmentId: '1',
+      departmentName: 'Support',
+      role: 'Agent',
+      permissions: [],
+      allowedIncidentTypes: ['1'],
+      allowedActions: ['VIEW_INCIDENTS', 'CREATE_INCIDENT', 'VIEW_BOARD']
+    };
+  }
+  refreshToken() { return new Promise(resolve => resolve('mock-token')); }
+  logout() {}
+}
+
+
+
+==================================================
+FILE: src/app/core/auth/role.guard.ts
+==================================================
+import { inject } from "@angular/core";
+import { ActivatedRouteSnapshot, CanActivateFn, Router } from "@angular/router";
+import { AuthService } from "./auth.service";
+
+export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+  const requiredRoles = (route.data["roles"] as string[] | undefined) ?? [];
+
+  if (!requiredRoles.length || authService.isAuthenticated()) {
+    return true;
+  }
+
+  router.navigate(["/dashboard"]);
+  return false;
+};
+
+
+
+==================================================
+FILE: src/app/core/config/app-config.service.ts
+==================================================
+// src/app/core/config/app-config.service.ts
+
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { BehaviorSubject, Observable } from "rxjs";
+import { tap } from "rxjs/operators";
+
+interface AppConfig {
+  features: Record<string, boolean>;
+  ui: {
+    theme: string;
+    dateFormat: string;
+    timezone: string;
+    itemsPerPage: number;
+  };
+  sla: {
+    warningThreshold: number;
+    criticalThreshold: number;
+  };
+  departments: {
+    allowCrossDepartmentView: boolean;
+    defaultDepartment: string;
+  };
+  attachments: {
+    maxFileSize: number;
+    allowedTypes: string[];
+    maxFilesPerUpload: number;
+  };
+}
+
+@Injectable({ providedIn: "root" })
+export class AppConfigService {
+  private readonly http = inject(HttpClient);
+  private readonly configSubject = new BehaviorSubject<AppConfig | null>(null);
+
+  readonly config$ = this.configSubject.asObservable();
+
+  loadConfig(): Observable<AppConfig> {
+    return this.http
+      .get<AppConfig>("/api/config")
+      .pipe(tap((config) => this.configSubject.next(config)));
+  }
+
+  getConfig(): AppConfig | null {
+    return this.configSubject.value;
+  }
+
+  isFeatureEnabled(feature: string): boolean {
+    return this.configSubject.value?.features[feature] ?? false;
+  }
+
+  getUiConfig() {
+    return this.configSubject.value?.ui;
+  }
+}
+
+
+
+==================================================
+FILE: src/app/core/guards/auth.guard.ts
+==================================================
+import { inject } from "@angular/core";
+export const authGuard = () => true;
+
+
+
+==================================================
+FILE: src/app/core/guards/role.guard.ts
+==================================================
+import { inject } from "@angular/core";
+export const roleGuard = (route: any) => true;
+
+
+
+==================================================
+FILE: src/app/core/interceptors/error.interceptor.ts
+==================================================
+import { HttpInterceptorFn } from "@angular/common/http";
+
+export const errorInterceptor: HttpInterceptorFn = (req, next) => next(req);
+
+
+
+==================================================
+FILE: src/app/core/interceptors/loading.interceptor.ts
+==================================================
+import { HttpInterceptorFn } from "@angular/common/http";
+
+export const loadingInterceptor: HttpInterceptorFn = (req, next) => next(req);
+
+
+
+==================================================
+FILE: src/app/core/interceptors/logging.interceptor.ts
+==================================================
+import { HttpInterceptorFn } from "@angular/common/http";
+
+export const loggingInterceptor: HttpInterceptorFn = (req, next) => next(req);
+
+
+
+==================================================
+FILE: src/app/core/services/cache.service.ts
+==================================================
+import { Injectable } from "@angular/core";
+
+@Injectable({ providedIn: "root" })
+export class CacheService {
+  private readonly cache = new Map<string, unknown>();
+
+  get<T>(key: string): T | null {
+    return (this.cache.get(key) as T | undefined) ?? null;
+  }
+
+  set<T>(key: string, value: T): void {
+    this.cache.set(key, value);
+  }
+
+  clear(): void {
+    this.cache.clear();
+  }
+}
+
+
+
+==================================================
+FILE: src/app/core/services/http-client.service.spec.ts
+==================================================
+// src/app/core/services/http-client.service.ts
+
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError, timer } from 'rxjs';
+import { retryWhen, mergeMap, catchError, timeout } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+import { ApiResponse, ApiError } from '../../shared/models/common.model';
+
+@Injectable({ providedIn: 'root' })
+export class HttpClientService {
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = environment.apiUrl;
+  private readonly defaultTimeout = 30000;
+  private readonly maxRetries = 2;
+
+  get<T>(endpoint: string, params?: Record<string, any>): Observable<ApiResponse<T>> {
+    const httpParams = this.buildParams(params);
+    return this.http.get<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, {
+      params: httpParams,
+      headers: this.getHeaders()
+    }).pipe(
+      timeout(this.defaultTimeout),
+      retryWhen(this.retryStrategy()),
+      catchError(this.handleError)
+    );
+  }
+
+  getPaginated<T>(endpoint: string, params?: Record<string, any>): Observable<ApiResponse<T>> {
+    return this.get<T>(endpoint, params);
+  }
+
+  post<T>(endpoint: string, body: any): Observable<ApiResponse<T>> {
+    return this.http.post<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, body, {
+      headers: this.getHeaders()
+    }).pipe(
+      timeout(this.defaultTimeout),
+      catchError(this.handleError)
+    );
+  }
+
+  put<T>(endpoint: string, body: any): Observable<ApiResponse<T>> {
+    return this.http.put<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, body, {
+      headers: this.getHeaders()
+    }).pipe(
+      timeout(this.defaultTimeout),
+      catchError(this.handleError)
+    );
+  }
+
+  patch<T>(endpoint: string, body: any): Observable<ApiResponse<T>> {
+    return this.http.patch<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, body, {
+      headers: this.getHeaders()
+    }).pipe(
+      timeout(this.defaultTimeout),
+      catchError(this.handleError)
+    );
+  }
+
+  delete<T>(endpoint: string): Observable<ApiResponse<T>> {
+    return this.http.delete<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, {
+      headers: this.getHeaders()
+    }).pipe(
+      timeout(this.defaultTimeout),
+      catchError(this.handleError)
+    );
+  }
+
+  upload<T>(endpoint: string, formData: FormData): Observable<ApiResponse<T>> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.getToken()}`
+    });
+    return this.http.post<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, formData, {
+      headers
+    }).pipe(
+      timeout(60000),
+      catchError(this.handleError)
+    );
+  }
+
+  private getHeaders(): HttpHeaders {
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'X-Correlation-Id': this.generateCorrelationId()
+    });
+
+    const token = this.getToken();
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    return headers;
+  }
+
+  private buildParams(params?: Record<string, any>): HttpParams {
+    let httpParams = new HttpParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          httpParams = httpParams.set(key, value.toString());
+        }
+      });
+    }
+    return httpParams;
+  }
+
+  private retryStrategy() {
+    return (errors: Observable<any>) => errors.pipe(
+      mergeMap((error: HttpErrorResponse, index: number) => {
+        if (index < this.maxRetries && error.status !== 400 && error.status !== 401 && error.status !== 403) {
+          return timer((index + 1) * 1000);
+        }
+        return throwError(() => error);
+      })
+    );
+  }
+
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    const apiError: ApiError = {
+      code: 'UNKNOWN_ERROR',
+      message: 'An unexpected error occurred',
+      timestamp: new Date().toISOString(),
+      correlationId: ''
+    };
+
+    if (error.error && error.error.code) {
+      apiError.code = error.error.code;
+      apiError.message = error.error.message;
+      apiError.details = error.error.details;
+      apiError.correlationId = error.error.correlationId;
+    } else if (error.status === 0) {
+      apiError.code = 'NETWORK_ERROR';
+      apiError.message = 'Network connectivity issue';
+    } else if (error.status === 401) {
+      apiError.code = 'AUTHENTICATION_ERROR';
+      apiError.message = 'Authentication required';
+    } else if (error.status === 403) {
+      apiError.code = 'AUTHORIZATION_ERROR';
+      apiError.message = 'Insufficient permissions';
+    }
+
+    return throwError(() => apiError);
+  }
+
+  private getToken(): string | null {
+    return localStorage.getItem('access_token');
+  }
+
+  private generateCorrelationId(): string {
+    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  }
+}
+
+
+==================================================
+FILE: src/app/core/services/http-client.service.ts
+==================================================
+// src/app/core/services/http-client.service.ts
+
+import { Injectable, inject } from "@angular/core";
+import {
+  HttpClient,
+  HttpHeaders,
+  HttpParams,
+  HttpErrorResponse,
+} from "@angular/common/http";
+import { Observable, throwError, timer } from "rxjs";
+import { retryWhen, mergeMap, catchError, timeout } from "rxjs/operators";
+import { environment } from "../../../environments/environment";
+import { ApiResponse, ApiError } from "../../shared/models/common.model";
+
+@Injectable({ providedIn: "root" })
+export class HttpClientService {
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = environment.apiUrl;
+  private readonly defaultTimeout = 30000;
+  private readonly maxRetries = 2;
+
+  get<T>(
+    endpoint: string,
+    params?: Record<string, any>,
+  ): Observable<ApiResponse<T>> {
+    const httpParams = this.buildParams(params);
+    return this.http
+      .get<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, {
+        params: httpParams,
+        headers: this.getHeaders(),
+      })
+      .pipe(
+        timeout(this.defaultTimeout),
+        retryWhen(this.retryStrategy()),
+        catchError(this.handleError),
+      );
+  }
+
+  getPaginated<T>(
+    endpoint: string,
+    params?: Record<string, any>,
+  ): Observable<ApiResponse<T>> {
+    return this.get<T>(endpoint, params);
+  }
+
+  post<T>(endpoint: string, body: any): Observable<ApiResponse<T>> {
+    return this.http
+      .post<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, body, {
+        headers: this.getHeaders(),
+      })
+      .pipe(timeout(this.defaultTimeout), catchError(this.handleError));
+  }
+
+  put<T>(endpoint: string, body: any): Observable<ApiResponse<T>> {
+    return this.http
+      .put<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, body, {
+        headers: this.getHeaders(),
+      })
+      .pipe(timeout(this.defaultTimeout), catchError(this.handleError));
+  }
+
+  patch<T>(endpoint: string, body: any): Observable<ApiResponse<T>> {
+    return this.http
+      .patch<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, body, {
+        headers: this.getHeaders(),
+      })
+      .pipe(timeout(this.defaultTimeout), catchError(this.handleError));
+  }
+
+  delete<T>(endpoint: string): Observable<ApiResponse<T>> {
+    return this.http
+      .delete<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, {
+        headers: this.getHeaders(),
+      })
+      .pipe(timeout(this.defaultTimeout), catchError(this.handleError));
+  }
+
+  upload<T>(endpoint: string, formData: FormData): Observable<ApiResponse<T>> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.getToken()}`,
+    });
+    return this.http
+      .post<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, formData, {
+        headers,
+      })
+      .pipe(timeout(60000), catchError(this.handleError));
+  }
+
+  private getHeaders(): HttpHeaders {
+    let headers = new HttpHeaders({
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "X-Correlation-Id": this.generateCorrelationId(),
+    });
+
+    const token = this.getToken();
+    if (token) {
+      headers = headers.set("Authorization", `Bearer ${token}`);
+    }
+
+    return headers;
+  }
+
+  private buildParams(params?: Record<string, any>): HttpParams {
+    let httpParams = new HttpParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          httpParams = httpParams.set(key, value.toString());
+        }
+      });
+    }
+    return httpParams;
+  }
+
+  private retryStrategy() {
+    return (errors: Observable<any>) =>
+      errors.pipe(
+        mergeMap((error: HttpErrorResponse, index: number) => {
+          if (
+            index < this.maxRetries &&
+            error.status !== 400 &&
+            error.status !== 401 &&
+            error.status !== 403
+          ) {
+            return timer((index + 1) * 1000);
+          }
+          return throwError(() => error);
+        }),
+      );
+  }
+
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    const apiError: ApiError = {
+      code: "UNKNOWN_ERROR",
+      message: "An unexpected error occurred",
+      timestamp: new Date().toISOString(),
+      correlationId: "",
+    };
+
+    if (error.error && error.error.code) {
+      apiError.code = error.error.code;
+      apiError.message = error.error.message;
+      apiError.details = error.error.details;
+      apiError.correlationId = error.error.correlationId;
+    } else if (error.status === 0) {
+      apiError.code = "NETWORK_ERROR";
+      apiError.message = "Network connectivity issue";
+    } else if (error.status === 401) {
+      apiError.code = "AUTHENTICATION_ERROR";
+      apiError.message = "Authentication required";
+    } else if (error.status === 403) {
+      apiError.code = "AUTHORIZATION_ERROR";
+      apiError.message = "Insufficient permissions";
+    }
+
+    return throwError(() => apiError);
+  }
+
+  private getToken(): string | null {
+    return localStorage.getItem("access_token");
+  }
+
+  private generateCorrelationId(): string {
+    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  }
+}
+
+
+
+==================================================
+FILE: src/app/core/services/notification.service.ts
+==================================================
+import { Injectable } from "@angular/core";
+
+@Injectable({ providedIn: "root" })
+export class NotificationService {
+  success(message: string): void {
+    console.log("[success]", message);
+  }
+  error(message: string): void {
+    console.error("[error]", message);
+  }
+  info(message: string): void {
+    console.info("[info]", message);
+  }
+}
+
+
+
+==================================================
+FILE: src/app/features/administration/administration.module.ts
+==================================================
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes } from "@angular/router";
+const routes: Routes = [];
+@NgModule({ imports: [RouterModule.forChild(routes)] })
+export class AdministrationModule {}
+
+
+
+==================================================
+FILE: src/app/features/administration/pages/admin-dashboard.component.ts
+==================================================
+// src/app/features/administration/pages/admin-dashboard.component.ts
+
+import { Component, OnInit, inject, signal } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { RouterLink } from "@angular/router";
+import { PermissionsApiService } from "../../../api/permissions-api.service";
+import { DashboardApiService } from "../../../api/dashboard-api.service";
+import { StatCardComponent } from "../../../shared/components/stat-card/stat-card.component";
+import { LoadingStateComponent } from "../../../shared/components/loading-state/loading-state.component";
+import { HasPermissionDirective } from "../../../shared/directives/has-permission.directive";
+
+@Component({
+  selector: "app-admin-dashboard",
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterLink,
+    StatCardComponent,
+    LoadingStateComponent,
+    HasPermissionDirective,
+  ],
+  template: `
+    <div class="admin-dashboard">
+      <div class="page-header">
+        <div>
+          <h1>Administration</h1>
+          <p class="subtitle">System configuration and management</p>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <app-loading-state message="Loading configuration..." />
+      } @else {
+        <div class="admin-grid">
+          <!-- Incident Types Card -->
+          <a
+            routerLink="incident-types"
+            class="admin-card"
+            *hasPermission="'MANAGE_INCIDENT_TYPES'"
+          >
+            <div
+              class="admin-card__icon"
+              style="background: linear-gradient(135deg, #3b82f6, #2563eb)"
+            >
+              <span class="material-icons">category</span>
+            </div>
+            <div class="admin-card__content">
+              <h3>Incident Types</h3>
+              <p>Configure incident types, categories, and default settings</p>
+              <span class="admin-card__count"
+                >{{ systemStats().incidentTypes }} configured</span
+              >
+            </div>
+            <span class="material-icons chevron">chevron_right</span>
+          </a>
+
+          <!-- Workflows Card -->
+          <a
+            routerLink="workflows"
+            class="admin-card"
+            *hasPermission="'MANAGE_WORKFLOWS'"
+          >
+            <div
+              class="admin-card__icon"
+              style="background: linear-gradient(135deg, #8b5cf6, #7c3aed)"
+            >
+              <span class="material-icons">account_tree</span>
+            </div>
+            <div class="admin-card__content">
+              <h3>Workflows</h3>
+              <p>Manage department chains, checklists, and transition rules</p>
+              <span class="admin-card__count"
+                >{{ systemStats().workflows }} active</span
+              >
+            </div>
+            <span class="material-icons chevron">chevron_right</span>
+          </a>
+
+          <!-- SLA Rules Card -->
+          <a routerLink="sla" class="admin-card" *hasPermission="'MANAGE_SLA'">
+            <div
+              class="admin-card__icon"
+              style="background: linear-gradient(135deg, #f59e0b, #d97706)"
+            >
+              <span class="material-icons">timer</span>
+            </div>
+            <div class="admin-card__content">
+              <h3>SLA Configuration</h3>
+              <p>Define response and resolution time targets</p>
+              <span class="admin-card__count"
+                >{{ systemStats().slaRules }} rules</span
+              >
+            </div>
+            <span class="material-icons chevron">chevron_right</span>
+          </a>
+
+          <!-- User Roles Card -->
+          <a
+            routerLink="roles"
+            class="admin-card"
+            *hasPermission="'MANAGE_ROLES'"
+          >
+            <div
+              class="admin-card__icon"
+              style="background: linear-gradient(135deg, #10b981, #059669)"
+            >
+              <span class="material-icons">shield</span>
+            </div>
+            <div class="admin-card__content">
+              <h3>Roles & Permissions</h3>
+              <p>Manage user roles, department access, and permissions</p>
+              <span class="admin-card__count"
+                >{{ systemStats().roles }} roles</span
+              >
+            </div>
+            <span class="material-icons chevron">chevron_right</span>
+          </a>
+
+          <!-- System Settings Card -->
+          <a
+            routerLink="settings"
+            class="admin-card"
+            *hasPermission="'MANAGE_SETTINGS'"
+          >
+            <div
+              class="admin-card__icon"
+              style="background: linear-gradient(135deg, #6b7280, #4b5563)"
+            >
+              <span class="material-icons">settings</span>
+            </div>
+            <div class="admin-card__content">
+              <h3>System Settings</h3>
+              <p>Global configuration, integrations, and maintenance</p>
+              <span class="admin-card__count">View settings</span>
+            </div>
+            <span class="material-icons chevron">chevron_right</span>
+          </a>
+        </div>
+      }
+    </div>
+  `,
+  styleUrls: ["./admin-dashboard.component.scss"],
+})
+export class AdminDashboardComponent implements OnInit {
+  private readonly dashboardApi = inject(DashboardApiService);
+  private readonly permissionsApi = inject(PermissionsApiService);
+
+  loading = signal(false);
+  systemStats = signal({
+    incidentTypes: 0,
+    workflows: 0,
+    slaRules: 0,
+    roles: 0,
+  });
+
+  ngOnInit(): void {
+    this.loadSystemStats();
+  }
+
+  private loadSystemStats(): void {
+    this.loading.set(true);
+
+    // Load admin dashboard stats
+    this.dashboardApi.getAdminStats().subscribe({
+      next: (stats) => {
+        this.systemStats.set(stats);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error("Failed to load admin stats:", err);
+        this.loading.set(false);
+      },
+    });
+  }
+}
+
+
+
+==================================================
+FILE: src/app/features/administration/pages/workflow-config.component.ts
+==================================================
+// src/app/features/administration/pages/workflow-config.component.ts
+
+import { Component, OnInit, inject, signal } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
+import { WorkflowApiService } from "../../../api/workflow-api.service";
+import {
+  DepartmentChain,
+  ChainStep,
+} from "../../../shared/models/incident.model";
+import { Department } from "../../../shared/models/user.model";
+import { LoadingStateComponent } from "../../../shared/components/loading-state/loading-state.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+
+@Component({
+  selector: "app-workflow-config",
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    LoadingStateComponent,
+    EmptyStateComponent,
+  ],
+  template: `
+    <div class="workflow-config">
+      <div class="page-header">
+        <div>
+          <h1>Workflow Configuration</h1>
+          <p class="subtitle">Manage department chains and transition rules</p>
+        </div>
+        <button class="btn btn-primary" (click)="createNewChain()">
+          <span class="material-icons">add</span>
+          New Chain
+        </button>
+      </div>
+
+      @if (loading()) {
+        <app-loading-state message="Loading workflows..." />
+      } @else if (chains().length === 0) {
+        <app-empty-state
+          icon="account_tree"
+          title="No workflow chains"
+          description="Define department chains for incident types"
+          actionLabel="Create First Chain"
+          (action)="createNewChain()"
+        />
+      } @else {
+        <div class="chains-grid">
+          @for (chain of chains(); track chain.id) {
+            <div class="chain-card">
+              <div class="chain-header">
+                <div>
+                  <h3>{{ chain.name }}</h3>
+                  <div class="chain-meta">
+                    <span>{{ chain.steps.length }} steps</span>
+                    <span>{{
+                      chain.allowParallel ? "Parallel" : "Sequential"
+                    }}</span>
+                    <span>{{
+                      chain.requireStrictOrder ? "Strict Order" : "Flexible"
+                    }}</span>
+                  </div>
+                </div>
+                <div class="chain-actions">
+                  <button
+                    class="btn btn-secondary btn-sm"
+                    (click)="editChain(chain)"
+                  >
+                    <span class="material-icons">edit</span>
+                  </button>
+                  <button
+                    class="btn btn-secondary btn-sm"
+                    (click)="deleteChain(chain)"
+                  >
+                    <span class="material-icons">delete</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Chain Visualization -->
+              <div class="chain-visualization">
+                @for (
+                  step of chain.steps;
+                  track step.order;
+                  let isLast = $last
+                ) {
+                  <div class="chain-step">
+                    <div class="step-node" [class.optional]="step.isOptional">
+                      <span class="step-number">{{ step.order }}</span>
+                      <div class="step-info">
+                        <strong>{{ step.department.name }}</strong>
+                        @if (step.sla) {
+                          <span class="step-sla">
+                            Response: {{ step.sla.responseTime }}m | Resolution:
+                            {{ step.sla.resolutionTime }}m
+                          </span>
+                        }
+                      </div>
+                    </div>
+                    @if (!isLast) {
+                      <div class="step-connector">
+                        <span class="material-icons">arrow_forward</span>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+
+              <!-- Checklist Summary -->
+              <div class="chain-checklist-summary">
+                <h4>Checklists</h4>
+                @for (step of chain.steps; track step.order) {
+                  <div class="step-checklist">
+                    <span class="department-label">{{
+                      step.department.code
+                    }}</span>
+                    <span>{{ step.checklist?.items?.length || 0 }} items</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  `,
+  styleUrls: ["./workflow-config.component.scss"],
+})
+export class WorkflowConfigComponent implements OnInit {
+  private readonly workflowApi = inject(WorkflowApiService);
+  private readonly fb = inject(FormBuilder);
+
+  chains = signal<DepartmentChain[]>([]);
+  departments = signal<Department[]>([]);
+  loading = signal(false);
+  editingChain = signal<DepartmentChain | null>(null);
+
+  chainForm = this.fb.group({
+    name: ["", Validators.required],
+    allowParallel: [false],
+    requireStrictOrder: [true],
+    steps: this.fb.array([]),
+  });
+
+  ngOnInit(): void {
+    this.loadChains();
+    this.loadDepartments();
+  }
+
+  private loadChains(): void {
+    this.loading.set(true);
+    this.workflowApi.getDepartmentChains().subscribe({
+      next: (chains) => {
+        this.chains.set(chains);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error("Failed to load chains:", err);
+        this.loading.set(false);
+      },
+    });
+  }
+
+  private loadDepartments(): void {
+    this.workflowApi.getDepartments().subscribe({
+      next: (departments) => {
+        this.departments.set(departments);
+      },
+    });
+  }
+
+  createNewChain(): void {
+    // Open chain creation modal/form
+    this.editingChain.set({
+      id: "",
+      name: "New Chain",
+      steps: [],
+      allowParallel: false,
+      requireStrictOrder: true,
+    });
+  }
+
+  editChain(chain: DepartmentChain): void {
+    this.editingChain.set(chain);
+  }
+
+  deleteChain(chain: DepartmentChain): void {
+    if (confirm(`Are you sure you want to delete "${chain.name}"?`)) {
+      this.workflowApi.deleteDepartmentChain(chain.id).subscribe({
+        next: () => this.loadChains(),
+        error: (err) => console.error("Failed to delete chain:", err),
+      });
+    }
+  }
+}
+
+
+
+==================================================
+FILE: src/app/features/auth/pages/login-page.component.ts
+==================================================
+import { CommonModule } from "@angular/common";
+import { Component, inject, signal } from "@angular/core";
+import { Router } from "@angular/router";
+import { finalize } from "rxjs/operators";
+import { AuthService } from "../../../core/auth/auth.service";
+
+@Component({
+  selector: "app-login-page",
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <section class="auth-page">
+      <div class="auth-card">
+        <h1>Sign in</h1>
+        <p>
+          Frontend mode is active. Use mock sign-in to continue building UI while
+          backend integration is pending.
+        </p>
+        <button type="button" [disabled]="isLoading()" (click)="login()">
+          {{ isLoading() ? "Signing in..." : "Continue with mock sign-in" }}
+        </button>
+        <p *ngIf="errorMessage()" class="error">{{ errorMessage() }}</p>
+      </div>
+    </section>
+  `,
+  styles: [
+    `
+      .auth-page {
+        min-height: calc(100vh - 64px);
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+      .auth-card {
+        width: min(460px, 100%);
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+        padding: 28px;
+        display: grid;
+        gap: 16px;
+      }
+      h1 {
+        margin: 0;
+        color: #0f172a;
+      }
+      p {
+        margin: 0;
+        color: #334155;
+      }
+      button {
+        border: 0;
+        border-radius: 10px;
+        background: #1849ff;
+        color: #fff;
+        font-weight: 600;
+        padding: 12px 14px;
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .error {
+        color: #b91c1c;
+      }
+    `,
+  ],
+})
+export class LoginPageComponent {
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+
+  readonly isLoading = signal(false);
+  readonly errorMessage = signal<string | null>(null);
+
+  login(): void {
+    this.errorMessage.set(null);
+    this.isLoading.set(true);
+
+    this.authService
+      .loginWithMicrosoft()
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: () => {
+          const redirectUrl = localStorage.getItem("redirectUrl") ?? "/dashboard";
+          localStorage.removeItem("redirectUrl");
+          this.router.navigateByUrl(redirectUrl);
+        },
+        error: () => {
+          this.errorMessage.set("Sign-in failed. Please try again.");
+        },
+      });
+  }
+}
+
+
+
+==================================================
+FILE: src/app/features/auth/pages/unauthorized-page.component.ts
+==================================================
+import { Component } from "@angular/core";
+import { RouterLink } from "@angular/router";
+
+@Component({
+  selector: "app-unauthorized-page",
+  standalone: true,
+  imports: [RouterLink],
+  template: `
+    <section class="state-page">
+      <div class="state-card">
+        <h1>Unauthorized</h1>
+        <p>You do not have permission to access this page.</p>
+        <a routerLink="/dashboard">Back to dashboard</a>
+      </div>
+    </section>
+  `,
+  styles: [
+    `
+      .state-page {
+        min-height: calc(100vh - 64px);
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+      .state-card {
+        width: min(460px, 100%);
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+        padding: 28px;
+        display: grid;
+        gap: 12px;
+      }
+      h1,
+      p {
+        margin: 0;
+      }
+      a {
+        color: #1849ff;
+        font-weight: 600;
+        text-decoration: none;
+      }
+    `,
+  ],
+})
+export class UnauthorizedPageComponent {}
+
+
+
+==================================================
+FILE: src/app/features/board/components/board-filters/board-filters.component.ts
+==================================================
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+@Component({
+  selector: 'app-board-filters',
+  standalone: true,
+  template: `<div>Board Filters</div>`
+})
+export class BoardFiltersComponent {
+  @Input() departments: any[] = [];
+  @Input() assignees: any[] = [];
+  @Output() filterChange = new EventEmitter<any>();
+}
+
+
+
+==================================================
+FILE: src/app/features/board/components/kanban-card/kanban-card.component.scss
+==================================================
+// src/app/features/board/components/kanban-card/kanban-card.component.scss
+
+.kanban-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+  }
+
+  &.dragging {
+    opacity: 0.5;
+    transform: rotate(2deg);
+  }
+
+  &.escalated {
+    border-left: 3px solid #ef4444;
+  }
+
+  &.priority-critical {
+    border-left: 3px solid #dc2626;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+
+    .card-id {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .ref-number {
+        font-family: monospace;
+        font-size: 0.75rem;
+        color: #3b82f6;
+        font-weight: 500;
+      }
+    }
+
+    .card-menu {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 2px;
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 0.2s;
+
+      .material-icons {
+        font-size: 18px;
+      }
+
+      &:hover {
+        background: var(--bg-tertiary);
+      }
+    }
+  }
+
+  &:hover .card-menu {
+    opacity: 1;
+  }
+
+  .card-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+  }
+
+  .card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 8px;
+
+    .meta-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+
+      .material-icons {
+        font-size: 14px;
+      }
+    }
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-color);
+
+    .card-tags {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+
+      .tag {
+        padding: 1px 6px;
+        background: var(--bg-tertiary);
+        border-radius: 3px;
+        font-size: 0.6875rem;
+        color: var(--text-secondary);
+
+        &.more {
+          background: #3b82f6;
+          color: white;
+        }
+      }
+    }
+
+    .card-date {
+      font-size: 0.6875rem;
+      color: var(--text-secondary);
+      margin-left: auto;
+    }
+  }
+
+  .escalation-banner {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 8px;
+    padding: 4px 8px;
+    background: #fef2f2;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: #991b1b;
+
+    .material-icons {
+      font-size: 14px;
+    }
+  }
+}
+
+
+
+==================================================
+FILE: src/app/features/board/components/kanban-card/kanban-card.component.ts
+==================================================
+// src/app/features/board/components/kanban-card/kanban-card.component.ts
+
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  HostListener,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Incident } from "../../../../shared/models/incident.model";
+import { StatusBadgeComponent } from "../../../../shared/components/status-badge/status-badge.component";
+import { PriorityBadgeComponent } from "../../../../shared/components/priority-badge/priority-badge.component";
+import { SlaIndicatorComponent } from "../../../../shared/components/sla-indicator/sla-indicator.component";
+import { UserAvatarComponent } from "../../../../shared/components/user-avatar/user-avatar.component";
+
+@Component({
+  selector: "app-kanban-card",
+  standalone: true,
+  imports: [
+    CommonModule,
+    StatusBadgeComponent,
+    PriorityBadgeComponent,
+    SlaIndicatorComponent,
+    UserAvatarComponent,
+  ],
+  template: `
+    <div
+      class="kanban-card"
+      [class.dragging]="isDragging"
+      [class.escalated]="incident.status === 'ESCALATED'"
+      [class.priority-critical]="incident.priority === 'CRITICAL'"
+      draggable="true"
+      (dragstart)="onDragStart($event)"
+      (dragend)="onDragEnd()"
+    >
+      <!-- Card Header -->
+      <div class="card-header">
+        <div class="card-id">
+          <span class="ref-number">{{ incident.referenceNumber }}</span>
+          <app-priority-badge [priority]="incident.priority" [compact]="true" />
+        </div>
+        <button class="card-menu" (click)="$event.stopPropagation()">
+          <span class="material-icons">more_horiz</span>
+        </button>
+      </div>
+
+      <!-- Card Title -->
+      <h4 class="card-title">{{ incident.title }}</h4>
+
+      <!-- Card Meta -->
+      <div class="card-meta">
+        <div class="meta-row">
+          <span class="material-icons">business</span>
+          <span>{{ incident.currentDepartment.name }}</span>
+        </div>
+        @if (incident.assignedTo) {
+          <div class="meta-row">
+            <app-user-avatar [user]="incident.assignedTo" size="xsmall" />
+            <span>{{ incident.assignedTo.displayName }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Card Footer -->
+      <div class="card-footer">
+        <app-sla-indicator
+          [incidentId]="incident.id"
+          [compact]="true"
+          [showText]="false"
+        />
+        <div class="card-tags">
+          @for (tag of incident.tags?.slice(0, 3); track tag) {
+            <span class="tag">{{ tag }}</span>
+          }
+          @if (incident.tags?.length > 3) {
+            <span class="tag more">+{{ incident.tags.length - 3 }}</span>
+          }
+        </div>
+        <span class="card-date">{{ incident.createdAt | date: "short" }}</span>
+      </div>
+
+      <!-- Escalation Warning -->
+      @if (incident.status === "ESCALATED") {
+        <div class="escalation-banner">
+          <span class="material-icons">warning</span>
+          <span>Escalated</span>
+        </div>
+      }
+    </div>
+  `,
+  styleUrls: ["./kanban-card.component.scss"],
+})
+export class KanbanCardComponent {
+  @Input({ required: true }) incident!: Incident;
+  @Input() draggable = true;
+
+  @Output() dragStart = new EventEmitter<DragEvent>();
+  @Output() click = new EventEmitter<void>();
+
+  isDragging = false;
+
+  onDragStart(event: DragEvent): void {
+    this.isDragging = true;
+    this.dragStart.emit(event);
+  }
+
+  onDragEnd(): void {
+    this.isDragging = false;
+  }
+
+  @HostListener("click")
+  onClick(): void {
+    this.click.emit();
+  }
+}
+
+
+
+==================================================
+FILE: src/app/features/board/components/kanban-column/kanban-column.component.scss
+==================================================
+// src/app/features/board/components/kanban-column/kanban-column.component.scss
+
+.kanban-column {
+  width: 300px;
+  min-width: 300px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border-top: 3px solid;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+
+  .column-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+
+    .column-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      h3 {
+        font-size: 0.9375rem;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .material-icons {
+        font-size: 20px;
+      }
+
+      .count-badge {
+        padding: 2px 8px;
+        border-radius: 12px;
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 600;
+        min-width: 24px;
+        text-align: center;
+        margin-left: auto;
+      }
+    }
+
+    .column-limit {
+      margin-top: 8px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+  }
+
+  .column-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+    min-height: 100px;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 3px;
+    }
+  }
+
+  .empty-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    color: var(--text-secondary);
+
+    .material-icons {
+      font-size: 32px;
+      margin-bottom: 8px;
+      opacity: 0.5;
+    }
+
+    p {
+      font-size: 0.875rem;
+      margin: 0;
+    }
+  }
+
+  .column-footer {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border-color);
+
+    .total-incidents {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+    }
+  }
+}
+
+
+
+==================================================
+FILE: src/app/features/board/components/kanban-column/kanban-column.component.ts
+==================================================
+// src/app/features/board/components/kanban-column/kanban-column.component.ts
+
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Incident } from "../../../../shared/models/incident.model";
+import { KanbanCardComponent } from "../kanban-card/kanban-card.component";
+
+interface KanbanColumn {
+  id: string;
+  title: string;
+  status: string;
+  incidents: Incident[];
+  limit?: number;
+  color: string;
+  icon: string;
+}
+
+@Component({
+  selector: "app-kanban-column",
+  standalone: true,
+  imports: [CommonModule, KanbanCardComponent],
+  template: `
+    <div
+      class="kanban-column"
+      [style.borderTopColor]="column.color"
+      (dragover)="onDragOver($event)"
+      (drop)="onDrop($event)"
+    >
+      <!-- Column Header -->
+      <div class="column-header">
+        <div class="column-title">
+          <span class="material-icons" [style.color]="column.color">{{
+            column.icon
+          }}</span>
+          <h3>{{ column.title }}</h3>
+          <span class="count-badge" [style.background]="column.color">
+            {{ column.incidents.length }}
+          </span>
+        </div>
+        @if (column.limit) {
+          <div class="column-limit">
+            <span>{{ column.incidents.length }}/{{ column.limit }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Column Content -->
+      <div class="column-content">
+        @if (column.incidents.length === 0) {
+          <div class="empty-column">
+            <span class="material-icons">inbox</span>
+            <p>No incidents</p>
+          </div>
+        } @else {
+          @for (incident of column.incidents; track incident.id) {
+            <app-kanban-card
+              [incident]="incident"
+              [draggable]="canDrag"
+              (dragStart)="onDragStart($event, incident)"
+              (click)="incidentClick.emit(incident)"
+            />
+          }
+        }
+      </div>
+
+      <!-- Column Footer -->
+      @if (column.incidents.length > 0) {
+        <div class="column-footer">
+          <span class="total-incidents">
+            {{ column.incidents.length }} incident{{
+              column.incidents.length !== 1 ? "s" : ""
+            }}
+          </span>
+        </div>
+      }
+    </div>
+  `,
+  styleUrls: ["./kanban-column.component.scss"],
+})
+export class KanbanColumnComponent {
+  @Input({ required: true }) column!: KanbanColumn;
+  @Input() connectedColumns: string[] = [];
+  @Input() canDrag = false;
+
+  @Output() incidentMoved = new EventEmitter<{
+    incident: Incident;
+    fromColumnId: string;
+    toColumnId: string;
+  }>();
+  @Output() incidentClick = new EventEmitter<Incident>();
+
+  private draggedIncident: Incident | null = null;
+
+  onDragStart(event: DragEvent, incident: Incident): void {
+    this.draggedIncident = incident;
+    event.dataTransfer?.setData("text/plain", incident.id);
+
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setDragImage(
+        (event.target as HTMLElement).closest(".kanban-card") as HTMLElement,
+        0,
+        0,
+      );
+    }
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = "move";
+    }
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+
+    if (this.draggedIncident) {
+      const fromColumnId = this.getColumnIdFromElement(
+        (event.target as HTMLElement).closest(".kanban-column"),
+      );
+
+      if (fromColumnId && fromColumnId !== this.column.id) {
+        this.incidentMoved.emit({
+          incident: this.draggedIncident,
+          fromColumnId,
+          toColumnId: this.column.id,
+        });
+      }
+    }
+
+    this.draggedIncident = null;
+  }
+
+  private getColumnIdFromElement(element: Element | null): string | null {
+    // Logic to extract column ID from DOM element
+    return null;
+  }
+}
+
+
+
+==================================================
+FILE: src/app/features/board/pages/board-page.component.scss
+==================================================
+// src/app/features/board/pages/board-page.component.scss
+
+.board-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: $spacing-lg;
+    border-bottom: 1px solid var(--border-color);
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      margin-top: $spacing-xs;
+    }
+
+    .board-actions {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+    }
+  }
+
+  .board-container {
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: $spacing-lg;
+  }
+
+  .board-columns {
+    display: flex;
+    gap: $spacing-md;
+    height: 100%;
+    min-width: max-content;
+  }
+}
+
+// Toast notifications
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 2000;
+  animation: slideIn 0.3s ease;
+
+  &-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+  }
+
+  button {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: inherit;
+    padding: 0 4px;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+
+
+==================================================
+FILE: src/app/features/board/pages/board-page.component.ts
+==================================================
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-board-page',
+  standalone: true,
+  template: `<p>Board works!</p>`,
+  styles: []
+})
+export class BoardPageComponent {}
+
+
+
+==================================================
+FILE: src/app/features/dashboard/pages/dashboard-page.component.scss
+==================================================
+@use "../../../../assets/scss/abstracts/variables" as *;
+.dashboard-page { padding: $spacing-lg; }
+
+
+
+==================================================
+FILE: src/app/features/dashboard/pages/dashboard-page.component.ts
+==================================================
+// src/app/features/dashboard/pages/dashboard-page.component.ts
+
+import { Component, OnInit, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { DashboardApiService } from "../../../api/dashboard-api.service";
+import { DashboardSummary } from "../../../shared/models/dashboard.model";
+import { StatCardComponent } from "../../../shared/components/stat-card/stat-card.component";
+import { LoadingStateComponent } from "../../../shared/components/loading-state/loading-state.component";
+import { ErrorStateComponent } from "../../../shared/components/error-state/error-state.component";
+
+@Component({
+  selector: "app-dashboard-page",
+  standalone: true,
+  imports: [
+    CommonModule,
+    StatCardComponent,
+    LoadingStateComponent,
+    ErrorStateComponent,
+  ],
+  template: `
+    <div class="dashboard-page">
+      <div class="page-header">
+        <div>
+          <h1>Dashboard</h1>
+          <p class="subtitle">Operations Overview</p>
+        </div>
+        <div class="page-actions">
+          <span class="last-updated">Last updated: {{ lastUpdated }}</span>
+          <button class="btn btn-secondary" (click)="refresh()">
+            <span class="material-icons">refresh</span>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      @if (loading) {
+        <app-loading-state message="Loading dashboard data..." />
+      } @else if (error) {
+        <app-error-state [error]="error" (retry)="loadDashboard()" />
+      } @else {
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+          @for (kpi of dashboardData?.kpis; track kpi.id) {
+            <app-stat-card [kpi]="kpi" />
+          }
+        </div>
+
+        <!-- Workload & Trends -->
+        <div class="dashboard-grid">
+          <div class="card">
+            <div class="card__header">
+              <h3>Department Workload</h3>
+            </div>
+            <div class="card__body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Department</th>
+                    <th>Open</th>
+                    <th>In Progress</th>
+                    <th>Escalated</th>
+                    <th>SLA Compliance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (
+                    dept of dashboardData?.workloadByDepartment;
+                    track dept.department.id
+                  ) {
+                    <tr>
+                      <td>{{ dept.department.name }}</td>
+                      <td>{{ dept.openIncidents }}</td>
+                      <td>{{ dept.inProgress }}</td>
+                      <td>{{ dept.escalated }}</td>
+                      <td>
+                        <div class="compliance-bar">
+                          <div
+                            class="compliance-bar__fill"
+                            [style.width]="dept.slaCompliance + '%'"
+                            [class.warning]="dept.slaCompliance < 80"
+                            [class.critical]="dept.slaCompliance < 60"
+                          ></div>
+                          <span>{{ dept.slaCompliance }}%</span>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card__header">
+              <h3>Recent Incidents</h3>
+            </div>
+            <div class="card__body">
+              @for (
+                incident of dashboardData?.recentIncidents;
+                track incident.id
+              ) {
+                <div class="incident-item">
+                  <div class="incident-item__header">
+                    <span class="incident-ref">{{
+                      incident.referenceNumber
+                    }}</span>
+                    <span
+                      class="status-badge"
+                      [class]="'status-' + incident.status.toLowerCase()"
+                    >
+                      {{ incident.status }}
+                    </span>
+                  </div>
+                  <h4>{{ incident.title }}</h4>
+                  <div class="incident-item__meta">
+                    <span>{{ incident.currentDepartment.name }}</span>
+                    <span>{{ incident.priority }}</span>
+                    <span>{{ incident.updatedAt | date: "short" }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  `,
+  styleUrls: ["./dashboard-page.component.scss"],
+})
+export class DashboardPageComponent implements OnInit {
+  private readonly dashboardApi = inject(DashboardApiService);
+
+  dashboardData: DashboardSummary | null = null;
+  loading = false;
+  error: string | null = null;
+  lastUpdated = "";
+
+  ngOnInit(): void {
+    this.loadDashboard();
+  }
+
+  loadDashboard(): void {
+    this.loading = true;
+    this.error = null;
+
+    this.dashboardApi.getDashboardSummary().subscribe({
+      next: (data) => {
+        this.dashboardData = data;
+        this.lastUpdated = new Date().toLocaleString();
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = err.message;
+        this.loading = false;
+      },
+    });
+  }
+
+  refresh(): void {
+    this.loadDashboard();
+  }
+}
+
+
+
+==================================================
+FILE: src/app/features/errors/unauthorized.component.ts
+==================================================
+import { Component } from "@angular/core";
+@Component({
+  selector: "app-unauthorized",
+  standalone: true,
+  template: `<h1>Unauthorized</h1>`,
+})
+export class UnauthorizedComponent {}
+
+
+
+==================================================
+FILE: src/app/features/incidents/components/attachments-panel/attachments-panel.component.scss
+==================================================
+
+
+
+==================================================
+FILE: src/app/features/incidents/components/attachments-panel/attachments-panel.component.ts
+==================================================
+// src/app/features/incidents/components/attachments-panel/attachments-panel.component.ts
+
+import { Component, Input, Output, EventEmitter, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { AttachmentApiService } from "../../../../api/attachment-api.service";
+import {
+  Attachment,
+  AttachmentCategory,
+} from "../../../../shared/models/attachment.model";
+import { LoadingStateComponent } from "../../../../shared/components/loading-state/loading-state.component";
+import { EmptyStateComponent } from "../../../../shared/components/empty-state/empty-state.component";
+import { ConfirmationDialogComponent } from "../../../../shared/components/confirmation-dialog/confirmation-dialog.component";
+
+@Component({
+  selector: "app-attachments-panel",
+  standalone: true,
+  imports: [
+    CommonModule,
+    LoadingStateComponent,
+    EmptyStateComponent,
+    ConfirmationDialogComponent,
+  ],
+  template: `
+    <div class="attachments-panel">
+      <div class="panel-header">
+        <h3>Attachments</h3>
+        <div class="upload-area">
+          <input
+            type="file"
+            #fileInput
+            multiple
+            (change)="onFilesSelected($event)"
+            style="display: none"
+            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xlsx,.csv"
+          />
+          <button class="btn btn-primary" (click)="fileInput.click()">
+            <span class="material-icons">upload</span>
+            Upload Files
+          </button>
+        </div>
+      </div>
+
+      @if (uploading) {
+        <div class="upload-progress">
+          <span class="material-icons spinning">sync</span>
+          <span>Uploading files...</span>
+        </div>
+      }
+
+      @if (loading) {
+        <app-loading-state message="Loading attachments..." />
+      } @else if (attachments.length === 0) {
+        <app-empty-state
+          icon="attach_file"
+          title="No attachments"
+          description="Upload files, screenshots, or documents as evidence"
+        />
+      } @else {
+        <div class="attachments-list">
+          <!-- Proof of Uptime Section -->
+          @if (hasProofOfUptime) {
+            <div class="attachment-section">
+              <h4 class="section-title">
+                <span class="material-icons">verified</span>
+                Proof of Uptime
+              </h4>
+              @for (attachment of proofOfUptimeFiles; track attachment.id) {
+                <div class="attachment-item proof">
+                  <div class="attachment-icon">
+                    <span class="material-icons">verified</span>
+                  </div>
+                  <div class="attachment-info">
+                    <span class="attachment-name">{{
+                      attachment.fileName
+                    }}</span>
+                    <span class="attachment-meta">
+                      Uploaded {{ attachment.uploadedAt | date: "medium" }}
+                    </span>
+                  </div>
+                  <div class="attachment-actions">
+                    <button
+                      class="btn-icon"
+                      (click)="downloadAttachment(attachment)"
+                    >
+                      <span class="material-icons">download</span>
+                    </button>
+                    <button
+                      class="btn-icon"
+                      (click)="deleteAttachment(attachment)"
+                    >
+                      <span class="material-icons">delete</span>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Other Attachments -->
+          <div class="attachment-section">
+            <h4 class="section-title">
+              <span class="material-icons">folder</span>
+              All Files
+            </h4>
+            @for (attachment of otherAttachments; track attachment.id) {
+              <div class="attachment-item">
+                <div
+                  class="attachment-icon"
+                  [class]="getFileTypeClass(attachment.fileType)"
+                >
+                  <span class="material-icons">{{
+                    getFileIcon(attachment.fileType)
+                  }}</span>
+                </div>
+                <div class="attachment-info">
+                  <span class="attachment-name">{{ attachment.fileName }}</span>
+                  <div class="attachment-meta">
+                    <span>{{ formatFileSize(attachment.fileSize) }}</span>
+                    <span>{{ attachment.category }}</span>
+                    <span>{{ attachment.uploadedAt | date: "medium" }}</span>
+                  </div>
+                </div>
+                <div class="attachment-actions">
+                  @if (canMarkAsProof && !attachment.isProofOfUptime) {
+                    <button
+                      class="btn btn-secondary btn-xs"
+                      (click)="markAsProof(attachment)"
+                    >
+                      Mark as Proof
+                    </button>
+                  }
+                  <button
+                    class="btn-icon"
+                    (click)="downloadAttachment(attachment)"
+                  >
+                    <span class="material-icons">download</span>
+                  </button>
+                  <button
+                    class="btn-icon"
+                    (click)="deleteAttachment(attachment)"
+                  >
+                    <span class="material-icons">delete</span>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Delete Confirmation -->
+      @if (deleteTarget) {
+        <app-confirmation-dialog
+          title="Delete Attachment"
+          [message]="
+            'Are you sure you want to delete ' + deleteTarget.fileName + '?'
+          "
+          confirmLabel="Delete"
+          (confirm)="confirmDelete()"
+          (cancel)="deleteTarget = null"
+        />
+      }
+    </div>
+  `,
+  styleUrls: ["./attachments-panel.component.scss"],
+})
+export class AttachmentsPanelComponent {
+  @Input({ required: true }) incidentId!: string;
+  @Input() attachments: Attachment[] = [];
+  @Input() canMarkAsProof = true;
+  @Output() attachmentsUpdated = new EventEmitter<void>();
+
+  private readonly attachmentApi = inject(AttachmentApiService);
+
+  loading = false;
+  uploading = false;
+  deleteTarget: Attachment | null = null;
+
+  get proofOfUptimeFiles(): Attachment[] {
+    return this.attachments.filter((a) => a.isProofOfUptime);
+  }
+
+  get otherAttachments(): Attachment[] {
+    return this.attachments.filter((a) => !a.isProofOfUptime);
+  }
+
+  get hasProofOfUptime(): boolean {
+    return this.proofOfUptimeFiles.length > 0;
+  }
+
+  onFilesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.length) {
+      this.uploadFiles(Array.from(input.files));
+    }
+  }
+
+  private uploadFiles(files: File[]): void {
+    this.uploading = true;
+
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append("files", file);
+    });
+    formData.append("incidentId", this.incidentId);
+
+    this.attachmentApi.uploadAttachments(this.incidentId, formData).subscribe({
+      next: () => {
+        this.uploading = false;
+        this.attachmentsUpdated.emit();
+      },
+      error: (err) => {
+        this.uploading = false;
+        console.error("Upload failed:", err);
+      },
+    });
+  }
+
+  downloadAttachment(attachment: Attachment): void {
+    window.open(attachment.url, "_blank");
+  }
+
+  deleteAttachment(attachment: Attachment): void {
+    this.deleteTarget = attachment;
+  }
+
+  confirmDelete(): void {
+    if (!this.deleteTarget) return;
+
+    this.attachmentApi
+      .deleteAttachment(this.incidentId, this.deleteTarget.id)
+      .subscribe({
+        next: () => {
+          this.deleteTarget = null;
+          this.attachmentsUpdated.emit();
+        },
+        error: (err) => {
+          console.error("Delete failed:", err);
+          this.deleteTarget = null;
+        },
+      });
+  }
+
+  markAsProof(attachment: Attachment): void {
+    this.attachmentApi
+      .updateAttachment(this.incidentId, attachment.id, {
+        isProofOfUptime: true,
+      })
+      .subscribe({
+        next: () => {
+          this.attachmentsUpdated.emit();
+        },
+        error: (err) => console.error("Failed to mark as proof:", err),
+      });
+  }
+
+  getFileIcon(fileType: string): string {
+    if (fileType.includes("pdf")) return "picture_as_pdf";
+    if (fileType.includes("image")) return "image";
+    if (fileType.includes("word") || fileType.includes("document"))
+      return "description";
+    if (fileType.includes("spreadsheet") || fileType.includes("excel"))
+      return "table_chart";
+    return "insert_drive_file";
+  }
+
+  getFileTypeClass(fileType: string): string {
+    if (fileType.includes("pdf")) return "file-pdf";
+    if (fileType.includes("image")) return "file-image";
+    if (fileType.includes("word")) return "file-doc";
+    return "file-other";
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return "0 B";
+    const k = 1024;
+    const sizes = ["B", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
+  }
+}
+
+
+
+==================================================
+FILE: src/app/features/incidents/components/audit-timeline/audit-timeline.component.scss
+==================================================
+// src/app/features/incidents/components/audit-timeline/audit-timeline.component.scss
+
+.audit-timeline {
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .entry-count {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 40px;
+  }
+
+  .timeline-item {
+    position: relative;
+    padding-bottom: 32px;
+
+    &.last {
+      padding-bottom: 0;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: -28px;
+      top: 28px;
+      bottom: 0;
+      width: 2px;
+      background: var(--border-color);
+    }
+
+    &.last::before {
+      display: none;
+    }
+  }
+
+  .timeline-marker {
+    position: absolute;
+    left: -40px;
+    top: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+
+    .material-icons {
+      font-size: 16px;
+      color: var(--text-secondary);
+    }
+
+    &.action-create {
+      background: #dbeafe;
+      border-color: #3b82f6;
+
+      .material-icons {
+        color: #3b82f6;
+      }
+    }
+
+    &.action-escalate {
+      background: #fee2e2;
+      border-color: #ef4444;
+
+      .material-icons {
+        color: #ef4444;
+      }
+    }
+
+    &.action-resolve {
+      background: #d1fae5;
+      border-color: #10b981;
+
+      .material-icons {
+        color: #10b981;
+      }
+    }
+  }
+
+  .timeline-content {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+
+    .entry-action {
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .entry-time {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-family: monospace;
+    }
+  }
+
+  .entry-details {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  .entry-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+
+    .material-icons {
+      font-size: 14px;
+    }
+  }
+
+  .state-transition {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+    font-size: 0.8125rem;
+
+    .state {
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-weight: 500;
+
+      &.from {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+      &.to {
+        background: #d1fae5;
+        color: #065f46;
+      }
+    }
+
+    .material-icons {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+  }
+
+  .entry-metadata {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .metadata-item {
+    display: flex;
+    gap: 8px;
+    font-size: 0.8125rem;
+
+    .metadata-key {
+      font-weight: 500;
+      color: var(--text-secondary);
+      min-width: 120px;
+    }
+
+    .metadata-value {
+      color: var(--text-primary);
+      word-break: break-all;
+    }
+  }
+}
+
+
+
+==================================================
+FILE: src/app/features/incidents/components/audit-timeline/audit-timeline.component.ts
+==================================================
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { AuditEntry } from '../../../../shared/models/audit.model';
+
+@Component({
+  selector: 'app-audit-timeline',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <div class="audit-timeline">
+      <div class="panel-header">
+        <h3>Audit Trail</h3>
+        <span>{{ entries.length }} entries</span>
+      </div>
+      <div *ngIf="entries.length; else empty" class="timeline">
+        <div *ngFor="let entry of entries" class="timeline-item">
+          <div class="timeline-marker">{{ getActionIcon(entry.action) }}</div>
+          <div>
+            <strong>{{ entry.action }}</strong>
+            <p>{{ entry.details }}</p>
+            <small>{{ entry.userName }} - {{ entry.timestamp | date:'short' }}</small>
+          </div>
+        </div>
+      </div>
+      <ng-template #empty>No audit entries.</ng-template>
+    </div>
+  `,
+  styles: []
+})
+export class AuditTimelineComponent {
+  @Input({ required: true }) entries: AuditEntry[] = [];
+
+  getActionIcon(action: string): string {
+    return action === 'CREATED' ? 'add_circle' : 'info';
+  }
+}
+
+
+
+==================================================
+FILE: src/app/features/incidents/components/chain-progress/chain-progress.component.ts
+==================================================
+import { Component, Input } from '@angular/core';
+@Component({
+  selector: 'app-chain-progress',
+  standalone: true,
+  template: `<div>Chain Progress</div>`
+})
+export class ChainProgressComponent {
+  @Input() chain: any = null;
+  @Input() currentStepId = '';
+}
+
+
+
+==================================================
+FILE: src/app/features/incidents/components/checklist-panel/checklist-panel.component.html
+==================================================
+@Component({
+  selector: 'app-checklist-panel',
+  standalone: true,
+  imports: [CommonModule, FormsModule, LoadingStateComponent, EmptyStateComponent],
+  template: `
+    <div class="checklist-panel">
+      <div class="panel-header">
+        <h3>Checklist</h3>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width]="progressPercentage + '%'"></div>
+        </div>
+      </div>
+      <div class="checklist-items">
+        <div *ngFor="let item of checklist?.items" class="checklist-item">
+          <div class="item-header" (click)="toggleItem(item)">
+            <span class="item-checkbox">{{ item.isCompleted ? '✓' : '○' }}</span>
+            <span>{{ item.description }}</span>
+          </div>
+          <div *ngIf="!item.isCompleted && selectedItem?.id === item.id && item.evidenceRequired" class="evidence-section">
+            <div *ngIf="item.evidenceType === 'NOTE'">
+              <textarea [(ngModel)]="evidenceNotes[item.id]" placeholder="Enter notes..."></textarea>
+              <button (click)="completeItem(item)">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `,
+  styleUrls: ['./checklist-panel.component.scss']
+})
+
+
+==================================================
+FILE: src/app/features/incidents/components/checklist-panel/checklist-panel.component.scss
+==================================================
+
+
+
+==================================================
+FILE: src/app/features/incidents/components/checklist-panel/checklist-panel.component.ts
+==================================================
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ChecklistApiService } from '../../../../api/checklist-api.service';
+import { Checklist, ChecklistItem } from '../../../../shared/models/checklist.model';
+
+@Component({
+  selector: 'app-checklist-panel',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
+    <div class="checklist-panel">
+      <div class="panel-header"><h3>Checklist</h3></div>
+      <div *ngFor="let item of checklist?.items" class="checklist-item">
+        <span>{{ item.description }}</span>
+        <span>{{ item.isCompleted ? '✓' : '○' }}</span>
+      </div>
+    </div>`,
+  styles: []
+})
+export class ChecklistPanelComponent {
+  @Input({ required: true }) incidentId!: string;
+  @Input() checklist: Checklist | null = null;
+  @Output() checklistUpdated = new EventEmitter<void>();
+
+  private readonly checklistApi = inject(ChecklistApiService);
+
+  // stub
+}
+
+
+
+==================================================
+FILE: src/app/features/incidents/components/confirmation-dialog/confirmation-dialog.component.ts
+==================================================
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+@Component({
+  selector: "app-confirmation-dialog",
+  standalone: true,
+  template: ` <div class="modal-overlay">
+    <div class="modal">
+      <h3>{{ title }}</h3>
+      <p>{{ message }}</p>
+      <button (click)="confirm.emit()">{{ confirmLabel }}</button>
+      <button (click)="cancel.emit()">{{ cancelLabel }}</button>
+    </div>
+  </div>`,
+  styles: [
+    `
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal {
+        background: white;
+        padding: 24px;
+        border-radius: 8px;
+      }
+    `,
+  ],
+})
+export class ConfirmationDialogComponent {
+  @Input() title = "Confirm";
+  @Input() message = "Are you sure?";
+  @Input() confirmLabel = "Confirm";
+  @Input() cancelLabel = "Cancel";
+  @Output() confirm = new EventEmitter<void>();
+  @Output() cancel = new EventEmitter<void>();
+}
+
+
+
+==================================================
+FILE: src/app/features/incidents/components/escalation-panel/escalation-panel.component.ts
+==================================================
+import { Component, Input } from '@angular/core';
+@Component({
+  selector: 'app-escalation-panel',
+  standalone: true,
+  template: `<div>Escalation Panel</div>`
+})
+export class EscalationPanelComponent {
+  @Input() incidentId = '';
+  @Input() escalations: any[] = [];
+}
+
+
+
+==================================================
+FILE: src/app/features/incidents/components/incident-drawer/incident-drawer.component.scss
+==================================================
+// src/app/features/incidents/components/incident-drawer/incident-drawer.component.scss
+
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+
+  &.open {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 800px;
+  max-width: 90vw;
+  background: var(--bg-primary);
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  z-index: 1001;
+
+  &.open {
+    transform: translateX(0);
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 24px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+
+    &-content {
+      flex: 1;
+    }
+
+    &-actions {
+      display: flex;
+      gap: 8px;
+    }
+  }
+
+  .incident-ref {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+
+    .ref-badge {
+      padding: 4px 12px;
+      background: #3b82f6;
+      color: white;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  &__tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    padding: 0 24px;
+    overflow-x: auto;
+
+    .tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 0.875rem;
+      white-space: nowrap;
+      transition: all 0.2s;
+
+      &:hover {
+        color: var(--text-primary);
+        background: var(--bg-hover);
+      }
+
+      &.active {
+        color: #3b82f6;
+        border-bottom-color: #3b82f6;
+      }
+
+      .material-icons {
+        font-size: 18px;
+      }
+
+      .tab-badge {
+        padding: 2px 6px;
+        background: var(--bg-tertiary);
+        border-radius: 10px;
+        font-size: 0.75rem;
+        min-width: 20px;
+        text-align: center;
+      }
+    }
+  }
+
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+  }
+}
+
+
+
+==================================================
+FILE: src/app/features/incidents/components/incident-drawer/incident-drawer.component.ts
+==================================================
+// src/app/features/incidents/components/incident-drawer/incident-drawer.component.ts
+
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnChanges,
+  inject,
+  signal,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Incident } from "../../../../shared/models/incident.model";
+import { Checklist } from "../../../../shared/models/checklist.model";
+import { Attachment } from "../../../../shared/models/attachment.model";
+import { AuditEntry } from "../../../../shared/models/audit.model";
+import { Escalation } from "../../../../shared/models/escalation.model";
+import { SlaState } from "../../../../shared/models/sla.model";
+import { IncidentApiService } from "../../../../api/incident-api.service";
+import { ChecklistApiService } from "../../../../api/checklist-api.service";
+import { AttachmentApiService } from "../../../../api/attachment-api.service";
+import { AuditApiService } from "../../../../api/audit-api.service";
+import { EscalationApiService } from "../../../../api/escalation-api.service";
+import { SlaApiService } from "../../../../api/sla-api.service";
+import { IncidentSummaryComponent } from "../incident-summary/incident-summary.component";
+import { ChainProgressComponent } from "../chain-progress/chain-progress.component";
+import { ChecklistPanelComponent } from "../checklist-panel/checklist-panel.component";
+import { AttachmentsPanelComponent } from "../attachments-panel/attachments-panel.component";
+import { AuditTimelineComponent } from "../audit-timeline/audit-timeline.component";
+import { EscalationPanelComponent } from "../escalation-panel/escalation-panel.component";
+import { SlaPanelComponent } from "../sla-panel/sla-panel.component";
+import { LoadingStateComponent } from "../../../../shared/components/loading-state/loading-state.component";
+
+type DetailTab =
+  | "summary"
+  | "checklist"
+  | "attachments"
+  | "audit"
+  | "escalations"
+  | "sla";
+
+@Component({
+  selector: "app-incident-drawer",
+  standalone: true,
+  imports: [
+    CommonModule,
+    IncidentSummaryComponent,
+    ChainProgressComponent,
+    ChecklistPanelComponent,
+    AttachmentsPanelComponent,
+    AuditTimelineComponent,
+    EscalationPanelComponent,
+    SlaPanelComponent,
+    LoadingStateComponent,
+  ],
+  template: `
+    <div class="drawer-overlay" [class.open]="isOpen" (click)="close.emit()">
+      <div
+        class="drawer"
+        [class.open]="isOpen"
+        (click)="$event.stopPropagation()"
+      >
+        <!-- Drawer Header -->
+        <div class="drawer__header">
+          <div class="drawer__header-content">
+            <div class="incident-ref">
+              <span class="ref-badge">{{ incident?.referenceNumber }}</span>
+              <span
+                class="status-badge"
+                [class]="'status-' + incident?.status?.toLowerCase()"
+              >
+                {{ incident?.status }}
+              </span>
+            </div>
+            <h2>{{ incident?.title }}</h2>
+          </div>
+          <div class="drawer__header-actions">
+            <button class="btn-icon" (click)="refresh.emit()">
+              <span class="material-icons">refresh</span>
+            </button>
+            <button class="btn-icon" (click)="close.emit()">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="drawer__tabs">
+          @for (tab of tabs; track tab.id) {
+            <button
+              class="tab"
+              [class.active]="activeTab === tab.id"
+              (click)="setActiveTab(tab.id)"
+            >
+              <span class="material-icons">{{ tab.icon }}</span>
+              <span>{{ tab.label }}</span>
+              @if (tab.badge) {
+                <span class="tab-badge">{{ getBadgeCount(tab) }}</span>
+              }
+            </button>
+          }
+        </div>
+
+        <!-- Drawer Content -->
+        <div class="drawer__content">
+          @if (loading()) {
+            <app-loading-state message="Loading incident details..." />
+          } @else {
+            @switch (activeTab) {
+              @case ("summary") {
+                <app-incident-summary [incident]="incident!" />
+                <app-chain-progress
+                  [chain]="chain()"
+                  [currentStepId]="incident?.currentDepartment?.id ?? ''"
+                />
+              }
+              @case ("checklist") {
+                <app-checklist-panel
+                  [incidentId]="incident!.id"
+                  [checklist]="checklist()"
+                  (checklistUpdated)="loadChecklist()"
+                />
+              }
+              @case ("attachments") {
+                <app-attachments-panel
+                  [incidentId]="incident!.id"
+                  [attachments]="attachments()"
+                  (attachmentsUpdated)="loadAttachments()"
+                />
+              }
+              @case ("audit") {
+                <app-audit-timeline [entries]="auditTrail()" />
+              }
+              @case ("escalations") {
+                <app-escalation-panel
+                  [incidentId]="incident!.id"
+                  [escalations]="escalations()"
+                />
+              }
+              @case ("sla") {
+                <app-sla-panel [slaState]="slaState()" />
+              }
+            }
+          }
+        </div>
+      </div>
+    </div>
+  `,
+  styleUrls: ["./incident-drawer.component.scss"],
+})
+export class IncidentDrawerComponent implements OnInit, OnChanges {
+  @Input({ required: true }) incident!: Incident | null;
+  @Input() isOpen = false;
+  @Output() close = new EventEmitter<void>();
+  @Output() refresh = new EventEmitter<void>();
+
+  private readonly incidentApi = inject(IncidentApiService);
+  private readonly checklistApi = inject(ChecklistApiService);
+  private readonly attachmentApi = inject(AttachmentApiService);
+  private readonly auditApi = inject(AuditApiService);
+  private readonly escalationApi = inject(EscalationApiService);
+  private readonly slaApi = inject(SlaApiService);
+
+  activeTab: DetailTab = "summary";
+  loading = signal(false);
+
+  // Detail data
+  chain = signal<any>(null);
+  checklist = signal<Checklist | null>(null);
+  attachments = signal<Attachment[]>([]);
+  auditTrail = signal<AuditEntry[]>([]);
+  escalations = signal<Escalation[]>([]);
+  slaState = signal<SlaState | null>(null);
+
+  tabs = [
+    {
+      id: "summary" as DetailTab,
+      label: "Summary",
+      icon: "info",
+      badge: false,
+    },
+    {
+      id: "checklist" as DetailTab,
+      label: "Checklist",
+      icon: "checklist",
+      badge: true,
+    },
+    {
+      id: "attachments" as DetailTab,
+      label: "Attachments",
+      icon: "attach_file",
+      badge: true,
+    },
+    {
+      id: "audit" as DetailTab,
+      label: "Audit Trail",
+      icon: "timeline",
+      badge: false,
+    },
+    {
+      id: "escalations" as DetailTab,
+      label: "Escalations",
+      icon: "warning",
+      badge: true,
+    },
+    { id: "sla" as DetailTab, label: "SLA", icon: "timer", badge: false },
+  ];
+
+  ngOnInit(): void {
+    if (this.incident) {
+      this.loadDetailData();
+    }
+  }
+
+  ngOnChanges(): void {
+    if (this.incident && this.isOpen) {
+      this.loadDetailData();
+    }
+  }
+
+  private loadDetailData(): void {
+    if (!this.incident) return;
+
+    this.loading.set(true);
+    this.loadChain();
+    this.loadChecklist();
+    this.loadAttachments();
+    this.loadAuditTrail();
+    this.loadEscalations();
+    this.loadSlaState();
+    this.loading.set(false);
+  }
+
+  private loadChain(): void {
+    this.incidentApi.getIncidentChain(this.incident!.id).subscribe({
+      next: (chain) => this.chain.set(chain),
+      error: (err) => console.error("Failed to load chain:", err),
+    });
+  }
+
+  loadChecklist(): void {
+    this.checklistApi.getChecklist(this.incident!.id).subscribe({
+      next: (checklist) => this.checklist.set(checklist),
+      error: (err) => console.error("Failed to load checklist:", err),
+    });
+  }
+
+  loadAttachments(): void {
+    this.attachmentApi.getAttachments(this.incident!.id).subscribe({
+      next: (attachments) => this.attachments.set(attachments),
+      error: (err) => console.error("Failed to load attachments:", err),
+    });
+  }
+
+  private loadAuditTrail(): void {
+    this.auditApi.getAuditTrail(this.incident!.id).subscribe({
+      next: (entries) => this.auditTrail.set(entries),
+      error: (err) => console.error("Failed to load audit trail:", err),
+    });
+  }
+
+  private loadEscalations(): void {
+    this.escalationApi.getEscalations(this.incident!.id).subscribe({
+      next: (escalations) => this.escalations.set(escalations),
+      error: (err) => console.error("Failed to load escalations:", err),
+    });
+  }
+
+  private loadSlaState(): void {
+    this.slaApi.getSlaState(this.incident!.id).subscribe({
+      next: (sla) => this.slaState.set(sla),
+      error: (err) => console.error("Failed to load SLA state:", err),
+    });
+  }
+
+  setActiveTab(tab: DetailTab): void {
+    this.activeTab = tab;
+  }
+
+  getBadgeCount(tab: any): number | null {
+    switch (tab.id) {
+      case "checklist":
+        return this.checklist()?.items?.length || null;
+      case "attachments":
+        return this.attachments()?.length || null;
+      case "escalations":
+        return (
+          this.escalations()?.filter((e) => e.status === "ACTIVE")?.length ||
+          null
+        );
+      default:
+        return null;
+    }
+  }
+}
+
+
+
+==================================================
+FILE: src/app/features/incidents/components/incident-form/incident-form.component.ts
+==================================================
+import { Component } from "@angular/core";
+@Component({
+  selector: "app-incident-form",
+  standalone: true,
+  template: `<p>Incident Form</p>`,
+})
+export class IncidentFormComponent {}
+
+
+
+==================================================
+FILE: src/app/features/incidents/components/incident-summary/incident-summary.component.ts
+==================================================
+import { Component, Input } from '@angular/core';
+import { Incident } from '../../../../shared/models/incident.model';
+@Component({
+  selector: 'app-incident-summary',
+  standalone: true,
+  template: `<div>Incident Summary</div>`
+})
+export class IncidentSummaryComponent {
+  @Input() incident!: Incident;
+}
+
+
+
+==================================================
+FILE: src/app/features/incidents/components/Incident-table/incident-table.component.scss
+==================================================
+// src/app/features/incidents/components/incident-table/incident-table.component.scss
+
+.incident-table-container {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.incident-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    background: var(--bg-secondary);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--text-primary);
+      background: var(--bg-tertiary);
+    }
+  }
+
+  .sort-icon {
+    margin-left: 4px;
+    font-size: 0.75rem;
+    opacity: 0.5;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.875rem;
+    vertical-align: middle;
+  }
+
+  .incident-row {
+    cursor: pointer;
+    transition: background-color 0.15s;
+
+    &:hover {
+      background: var(--bg-hover);
+    }
+
+    &.selected {
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    &:last-child td {
+      border-bottom: none;
+    }
+  }
+
+  .col-checkbox {
+    width: 48px;
+    text-align: center;
+
+    input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+  }
+
+  .col-ref {
+    width: 130px;
+
+    .ref-number {
+      font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+      font-size: 0.8125rem;
+      color: #3b82f6;
+      font-weight: 500;
+    }
+  }
+
+  .col-title {
+    min-width: 250px;
+
+    .incident-title {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .title-text {
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+
+    .tags {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      padding: 2px 6px;
+      background: var(--bg-tertiary);
+      border-radius: 3px;
+      font-size: 0.6875rem;
+      color: var(--text-secondary);
+
+      &.more {
+        background: #3b82f6;
+        color: white;
+      }
+    }
+  }
+
+  .col-status {
+    width: 140px;
+  }
+
+  .col-priority {
+    width: 100px;
+  }
+
+  .col-department {
+    width: 160px;
+
+    .department-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .department-name {
+      font-weight: 500;
+    }
+
+    .origin-dept {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+  }
+
+  .col-assignee {
+    width: 140px;
+
+    .unassigned {
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+  }
+
+  .col-sla {
+    width: 100px;
+  }
+
+  .col-created {
+    width: 120px;
+
+    .date-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .date {
+      font-size: 0.8125rem;
+    }
+
+    .time {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+  }
+
+  .col-actions {
+    width: 60px;
+    text-align: center;
+  }
+}
+
+
+
+==================================================
+FILE: src/app/features/incidents/components/Incident-table/incident-table.component.ts
+==================================================
+// src/app/features/incidents/components/incident-table/incident-table.component.ts
+
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Incident } from "../../../../shared/models/incident.model";
+import { StatusBadgeComponent } from "../../../../shared/components/status-badge/status-badge.component";
+import { PriorityBadgeComponent } from "../../../../shared/components/priority-badge/priority-badge.component";
+import { SlaIndicatorComponent } from "../../../../shared/components/sla-indicator/sla-indicator.component";
+import { UserAvatarComponent } from "../../../../shared/components/user-avatar/user-avatar.component";
+
+@Component({
+  selector: "app-incident-table",
+  standalone: true,
+  imports: [
+    CommonModule,
+    StatusBadgeComponent,
+    PriorityBadgeComponent,
+    SlaIndicatorComponent,
+    UserAvatarComponent,
+  ],
+  template: `
+    <div class="incident-table-container">
+      <table class="incident-table">
+        <thead>
+          <tr>
+            <th class="col-checkbox">
+              <input type="checkbox" (change)="toggleAllSelection($event)" />
+            </th>
+            <th class="col-ref" (click)="onSort('referenceNumber')">
+              ID
+              <span class="sort-icon">{{
+                getSortIcon("referenceNumber")
+              }}</span>
+            </th>
+            <th class="col-title" (click)="onSort('title')">
+              Title
+              <span class="sort-icon">{{ getSortIcon("title") }}</span>
+            </th>
+            <th class="col-status" (click)="onSort('status')">
+              Status
+              <span class="sort-icon">{{ getSortIcon("status") }}</span>
+            </th>
+            <th class="col-priority" (click)="onSort('priority')">
+              Priority
+              <span class="sort-icon">{{ getSortIcon("priority") }}</span>
+            </th>
+            <th class="col-department">Department</th>
+            <th class="col-assignee">Assignee</th>
+            <th class="col-sla">SLA</th>
+            <th class="col-created" (click)="onSort('createdAt')">
+              Created
+              <span class="sort-icon">{{ getSortIcon("createdAt") }}</span>
+            </th>
+            <th class="col-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (incident of incidents; track incident.id) {
+            <tr
+              class="incident-row"
+              [class.selected]="isSelected(incident.id)"
+              (click)="onRowClick(incident)"
+            >
+              <td class="col-checkbox" (click)="$event.stopPropagation()">
+                <input
+                  type="checkbox"
+                  [checked]="isSelected(incident.id)"
+                  (change)="toggleSelection(incident.id)"
+                />
+              </td>
+              <td class="col-ref">
+                <span class="ref-number">{{ incident.referenceNumber }}</span>
+              </td>
+              <td class="col-title">
+                <div class="incident-title">
+                  <span class="title-text">{{ incident.title }}</span>
+                  @if (incident.tags?.length) {
+                    <div class="tags">
+                      @for (tag of incident.tags.slice(0, 2); track tag) {
+                        <span class="tag">{{ tag }}</span>
+                      }
+                      @if (incident.tags.length > 2) {
+                        <span class="tag more"
+                          >+{{ incident.tags.length - 2 }}</span
+                        >
+                      }
+                    </div>
+                  }
+                </div>
+              </td>
+              <td class="col-status">
+                <app-status-badge [status]="incident.status" />
+              </td>
+              <td class="col-priority">
+                <app-priority-badge [priority]="incident.priority" />
+              </td>
+              <td class="col-department">
+                <div class="department-info">
+                  <span class="department-name">{{
+                    incident.currentDepartment.name
+                  }}</span>
+                  @if (
+                    incident.originDepartment.id !==
+                    incident.currentDepartment.id
+                  ) {
+                    <span
+                      class="origin-dept"
+                      title="Origin: {{ incident.originDepartment.name }}"
+                    >
+                      from {{ incident.originDepartment.code }}
+                    </span>
+                  }
+                </div>
+              </td>
+              <td class="col-assignee">
+                @if (incident.assignedTo) {
+                  <app-user-avatar [user]="incident.assignedTo" size="small" />
+                } @else {
+                  <span class="unassigned">Unassigned</span>
+                }
+              </td>
+              <td class="col-sla">
+                <app-sla-indicator
+                  [incidentId]="incident.id"
+                  [compact]="true"
+                />
+              </td>
+              <td class="col-created">
+                <div class="date-info">
+                  <span class="date">{{
+                    incident.createdAt | date: "MMM d, y"
+                  }}</span>
+                  <span class="time">{{
+                    incident.createdAt | date: "HH:mm"
+                  }}</span>
+                </div>
+              </td>
+              <td class="col-actions" (click)="$event.stopPropagation()">
+                <button
+                  class="btn-icon"
+                  (click)="openMenu(incident, $event)"
+                  title="More actions"
+                >
+                  <span class="material-icons">more_vert</span>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  `,
+  styleUrls: ["./incident-table.component.scss"],
+})
+export class IncidentTableComponent {
+  @Input({ required: true }) incidents: Incident[] = [];
+  @Input() loading = false;
+  @Input() sortColumn = "createdAt";
+  @Input() sortDirection: "asc" | "desc" = "desc";
+
+  @Output() sortChange = new EventEmitter<{
+    column: string;
+    direction: "asc" | "desc";
+  }>();
+  @Output() rowClick = new EventEmitter<Incident>();
+
+  selectedIncidents = new Set<string>();
+
+  isSelected(incidentId: string): boolean {
+    return this.selectedIncidents.has(incidentId);
+  }
+
+  toggleSelection(incidentId: string): void {
+    if (this.selectedIncidents.has(incidentId)) {
+      this.selectedIncidents.delete(incidentId);
+    } else {
+      this.selectedIncidents.add(incidentId);
+    }
+  }
+
+  toggleAllSelection(event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    if (checked) {
+      this.incidents.forEach((i) => this.selectedIncidents.add(i.id));
+    } else {
+      this.selectedIncidents.clear();
+    }
+  }
+
+  onRowClick(incident: Incident): void {
+    this.rowClick.emit(incident);
+  }
+
+  onSort(column: string): void {
+    const direction =
+      this.sortColumn === column && this.sortDirection === "asc"
+        ? "desc"
+        : "asc";
+    this.sortChange.emit({ column, direction });
+  }
+
+  getSortIcon(column: string): string {
+    if (this.sortColumn !== column) return "↕";
+    return this.sortDirection === "asc" ? "↑" : "↓";
+  }
+
+  openMenu(incident: Incident, event: Event): void {
+    // Context menu implementation
+    console.log("Open menu for", incident.id);
+  }
+}
+
+
+
+==================================================
+FILE: src/app/features/incidents/components/sla-panel/sla-panel.component.scss
+==================================================
+
+
+
+==================================================
+FILE: src/app/features/incidents/components/sla-panel/sla-panel.component.ts
+==================================================
+// src/app/features/incidents/components/sla-panel/sla-panel.component.ts
+
+import { Component, Input } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import {
+  SlaState,
+  SlaMetricState,
+  SlaBreach,
+} from "../../../../shared/models/sla.model";
+import { EmptyStateComponent } from "../../../../shared/components/empty-state/empty-state.component";
+
+@Component({
+  selector: "app-sla-panel",
+  standalone: true,
+  imports: [CommonModule, EmptyStateComponent],
+  template: `
+    <div class="sla-panel">
+      <div class="panel-header">
+        <h3>SLA Performance</h3>
+        @if (slaState) {
+          <div
+            class="overall-status"
+            [class]="'status-' + slaState.overallStatus.toLowerCase()"
+          >
+            <span class="status-dot"></span>
+            <span>{{ formatStatus(slaState.overallStatus) }}</span>
+          </div>
+        }
+      </div>
+
+      @if (!slaState) {
+        <app-empty-state
+          icon="timer"
+          title="No SLA data"
+          description="SLA tracking is not configured for this incident"
+        />
+      } @else {
+        <!-- Next Breach Warning -->
+        @if (slaState.nextBreach) {
+          <div class="breach-warning">
+            <span class="material-icons">warning</span>
+            <div>
+              <strong>Approaching SLA Breach</strong>
+              <p>Next breach at {{ slaState.nextBreach | date: "medium" }}</p>
+            </div>
+          </div>
+        }
+
+        <!-- SLA Metrics -->
+        <div class="metrics-grid">
+          @for (metric of slaState.metrics; track metric.metric) {
+            <div
+              class="metric-card"
+              [class]="'status-' + metric.status.toLowerCase()"
+            >
+              <div class="metric-header">
+                <span class="metric-name">{{
+                  formatMetric(metric.metric)
+                }}</span>
+                <span class="metric-status">{{
+                  formatStatus(metric.status)
+                }}</span>
+              </div>
+
+              <div class="metric-progress">
+                <div class="progress-bar">
+                  <div
+                    class="progress-fill"
+                    [style.width]="getMetricProgress(metric) + '%'"
+                    [class]="getProgressClass(metric)"
+                  ></div>
+                </div>
+                <div class="progress-stats">
+                  <span>{{ formatDuration(metric.elapsed) }} elapsed</span>
+                  <span>{{ formatDuration(metric.target) }} target</span>
+                </div>
+              </div>
+
+              <div class="metric-deadline">
+                <span class="material-icons">schedule</span>
+                <span
+                  >Deadline:
+                  {{ metric.deadline | date: "MMM d, y HH:mm" }}</span
+                >
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- SLA Breaches -->
+        @if (slaState.breaches.length) {
+          <div class="breaches-section">
+            <h4>SLA Breaches</h4>
+            @for (breach of slaState.breaches; track breach.id) {
+              <div
+                class="breach-card"
+                [class]="'severity-' + breach.severity.toLowerCase()"
+              >
+                <div class="breach-header">
+                  <span class="material-icons">error</span>
+                  <div>
+                    <strong>{{ formatMetric(breach.metric) }}</strong>
+                    <p>Breached at {{ breach.breachedAt | date: "medium" }}</p>
+                  </div>
+                  <span class="severity-badge">{{ breach.severity }}</span>
+                </div>
+                @if (!breach.acknowledged) {
+                  <div class="breach-actions">
+                    <button class="btn btn-secondary btn-sm">
+                      Acknowledge
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      }
+    </div>
+  `,
+  styleUrls: ["./sla-panel.component.scss"],
+})
+export class SlaPanelComponent {
+  @Input() slaState: SlaState | null = null;
+
+  formatStatus(status: string): string {
+    return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+  }
+
+  formatMetric(metric: string): string {
+    return metric.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+  }
+
+  formatDuration(minutes: number): string {
+    if (minutes < 60) return `${minutes}m`;
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+  }
+
+  getMetricProgress(metric: SlaMetricState): number {
+    if (metric.target === 0) return 100;
+    return Math.min((metric.elapsed / metric.target) * 100, 100);
+  }
+
+  getProgressClass(metric: SlaMetricState): string {
+    if (metric.status === "BREACHED") return "breached";
+    if (metric.status === "APPROACHING_BREACH") return "approaching";
+    return "within";
+  }
+}
+
+
+
+==================================================
+FILE: src/app/features/incidents/pages/incident-detail-page.component.ts
+==================================================
+import { Component } from "@angular/core";
+@Component({
+  selector: "app-incident-detail-page",
+  standalone: true,
+  template: `<p>Incident Detail Page</p>`,
+})
+export class IncidentDetailPageComponent {}
+
+
+
+==================================================
+FILE: src/app/features/incidents/pages/incidents-list-page.component.scss
+==================================================
+
+
+
+==================================================
+FILE: src/app/features/incidents/pages/incidents-list-page.component.ts
+==================================================
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { IncidentApiService } from '../../../api/incident-api.service';
+import { PermissionsApiService } from '../../../api/permissions-api.service';
+import { Incident } from '../../../shared/models/incident.model';
+import { PaginationMetadata } from '../../../shared/models/common.model';
+
+@Component({
+  selector: 'app-incidents-list-page',
+  standalone: true,
+  template: `<div class="incidents-list-page">
+    <h1>Incidents</h1>
+    <p>Incident list will be implemented here.</p>
+    <button (click)="navigateToBoard()">Go to Board</button>
+  </div>`,
+  styles: [`.incidents-list-page { padding: 24px; }`]
+})
+export class IncidentsListPageComponent implements OnInit {
+  private readonly incidentApi = inject(IncidentApiService);
+  private readonly permissionsApi = inject(PermissionsApiService);
+  private readonly router = inject(Router);
+
+  incidents = signal<Incident[]>([]);
+  pagination = signal<PaginationMetadata | null>(null);
+  loading = signal(false);
+  error = signal<string | null>(null);
+  searchTerm = signal('');
+  canCreateIncident = false;
+
+  ngOnInit(): void {
+    this.checkPermissions();
+    this.loadIncidents();
+  }
+
+  private checkPermissions(): void {
+    this.permissionsApi.getUserPermissions().subscribe({
+      next: (permissions) => {
+        this.canCreateIncident = permissions.allowedActions.includes('CREATE_INCIDENT');
+      }
+    });
+  }
+
+  loadIncidents(): void {
+    this.loading.set(true);
+    this.incidentApi.getIncidents({}).subscribe({
+      next: (response) => {
+        this.incidents.set(response.data);
+        this.pagination.set(response.pagination);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(err.message);
+        this.loading.set(false);
+      }
+    });
+  }
+
+  navigateToBoard(): void {
+    this.router.navigate(['/board']);
+  }
+}
+
+
+
+==================================================
+FILE: src/app/layout/app-shell/app-shell.component.scss
+==================================================
+@use "../../../assets/scss/abstracts/variables" as *;
+.app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+
+
+==================================================
+FILE: src/app/layout/app-shell/app-shell.component.ts
+==================================================
+import { Component } from '@angular/core';
+import { TopBarComponent } from '../top-bar/top-bar.component';
+import { SideNavComponent } from '../side-nav/side-nav.component';
+
+@Component({
+  selector: 'app-shell',
+  standalone: true,
+  imports: [TopBarComponent, SideNavComponent],
+  template: `
+    <div class="app-shell">
+      <app-top-bar (toggleSidebar)="sidebarCollapsed = !sidebarCollapsed" />
+      <div class="app-shell__body">
+        <app-side-nav [collapsed]="sidebarCollapsed" />
+        <main class="app-shell__content" [class.expanded]="sidebarCollapsed">
+          <ng-content />
+        </main>
+      </div>
+    </div>
+  `,
+  styleUrls: ['./app-shell.component.scss']
+})
+export class AppShellComponent {
+  sidebarCollapsed = false;
+}
+
+
+
+==================================================
+FILE: src/app/layout/side-nav/side-nav.component.scss
+==================================================
+// src/app/layout/side-nav/side-nav.component.scss
+
+.side-nav {
+  width: 240px;
+  background: #1e293b;
+  color: #cbd5e1;
+  transition: width 0.3s ease;
+  overflow-y: auto;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+
+  &.collapsed {
+    width: 64px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    color: #cbd5e1;
+    text-decoration: none;
+    transition: all 0.2s;
+    gap: 12px;
+    position: relative;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+    }
+
+    &.active {
+      background: rgba(59, 130, 246, 0.15);
+      color: #3b82f6;
+      border-right: 3px solid #3b82f6;
+    }
+
+    &--child {
+      padding-left: 40px;
+      font-size: 0.875rem;
+    }
+
+    .material-icons {
+      font-size: 20px;
+      width: 20px;
+    }
+
+    .nav-label {
+      flex: 1;
+    }
+
+    .nav-badge {
+      background: #3b82f6;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      min-width: 20px;
+      text-align: center;
+    }
+  }
+
+  .nav-group {
+    &__header {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      width: 100%;
+      background: none;
+      border: none;
+      color: #cbd5e1;
+      cursor: pointer;
+      gap: 12px;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+      }
+
+      &.active {
+        color: #3b82f6;
+      }
+
+      .chevron {
+        margin-left: auto;
+        font-size: 18px;
+      }
+    }
+
+    &__children {
+      background: rgba(0, 0, 0, 0.2);
+      padding: 4px 0;
+    }
+  }
+}
+
+
+
+==================================================
+FILE: src/app/layout/side-nav/side-nav.component.ts
+==================================================
+// src/app/layout/side-nav/side-nav.component.ts
+
+import { Component, Input } from "@angular/core";
+import { RouterLink, RouterLinkActive } from "@angular/router";
+import { NgClass } from "@angular/common";
+
+interface NavItem {
+  label: string;
+  icon: string;
+  route: string;
+  badge?: number;
+  children?: NavItem[];
+}
+
+@Component({
+  selector: "app-side-nav",
+  standalone: true,
+  imports: [RouterLink, RouterLinkActive],
+  template: `
+    <nav class="side-nav" [class.collapsed]="collapsed">
+      <div class="side-nav__items">
+        @for (item of navItems; track item.route) {
+          @if (item.children) {
+            <div class="nav-group">
+              <button
+                class="nav-group__header"
+                [class.active]="isGroupActive(item)"
+                (click)="toggleGroup(item)"
+              >
+                <span class="material-icons">{{ item.icon }}</span>
+                @if (!collapsed) {
+                  <span class="nav-label">{{ item.label }}</span>
+                  <span class="material-icons chevron">
+                    {{ isGroupExpanded(item) ? "expand_less" : "expand_more" }}
+                  </span>
+                }
+              </button>
+              @if (!collapsed && isGroupExpanded(item)) {
+                <div class="nav-group__children">
+                  @for (child of item.children; track child.route) {
+                    <a
+                      [routerLink]="child.route"
+                      routerLinkActive="active"
+                      class="nav-item nav-item--child"
+                    >
+                      <span class="material-icons">{{ child.icon }}</span>
+                      <span class="nav-label">{{ child.label }}</span>
+                    </a>
+                  }
+                </div>
+              }
+            </div>
+          } @else {
+            <a
+              [routerLink]="item.route"
+              routerLinkActive="active"
+              class="nav-item"
+            >
+              <span class="material-icons">{{ item.icon }}</span>
+              @if (!collapsed) {
+                <span class="nav-label">{{ item.label }}</span>
+                @if (item.badge) {
+                  <span class="nav-badge">{{ item.badge }}</span>
+                }
+              }
+            </a>
+          }
+        }
+      </div>
+    </nav>
+  `,
+  styleUrls: ["./side-nav.component.scss"],
+})
+export class SideNavComponent {
+  @Input() collapsed = false;
+
+  expandedGroups = new Set<string>();
+
+  navItems: NavItem[] = [
+    { label: "Dashboard", icon: "dashboard", route: "/dashboard" },
+    {
+      label: "Incidents",
+      icon: "warning",
+      route: "/incidents",
+      children: [
+        { label: "All Incidents", icon: "list", route: "/incidents" },
+        { label: "Board View", icon: "view_kanban", route: "/board" },
+      ],
+    },
+    { label: "Board", icon: "view_kanban", route: "/board" },
+    {
+      label: "Administration",
+      icon: "settings",
+      route: "/administration",
+      children: [
+        {
+          label: "Overview",
+          icon: "admin_panel_settings",
+          route: "/administration",
+        },
+        {
+          label: "Incident Types",
+          icon: "category",
+          route: "/administration/incident-types",
+        },
+        {
+          label: "Workflows",
+          icon: "account_tree",
+          route: "/administration/workflows",
+        },
+        { label: "SLA Rules", icon: "timer", route: "/administration/sla" },
+      ],
+    },
+  ];
+
+  toggleGroup(item: NavItem): void {
+    if (this.expandedGroups.has(item.label)) {
+      this.expandedGroups.delete(item.label);
+    } else {
+      this.expandedGroups.add(item.label);
+    }
+  }
+
+  isGroupExpanded(item: NavItem): boolean {
+    return this.expandedGroups.has(item.label);
+  }
+
+  isGroupActive(item: NavItem): boolean {
+    return (
+      item.children?.some((child) =>
+        window.location.pathname.includes(child.route),
+      ) ?? false
+    );
+  }
+}
+
+
+
+==================================================
+FILE: src/app/layout/top-bar/top-bar.component.scss
+==================================================
+@use "../../../assets/scss/abstracts/variables" as *;
+.top-bar { padding: 0 $spacing-md; }
+
+
+
+==================================================
+FILE: src/app/layout/top-bar/top-bar.component.ts
+==================================================
+import { Component, EventEmitter, Output } from '@angular/core';
+
+@Component({
+  selector: 'app-top-bar',
+  standalone: true,
+  template: `
+    <header class="top-bar">
+      <div class="top-bar__left">
+        <button class="top-bar__menu-btn" (click)="toggleSidebar.emit()">
+          <span class="material-icons">menu</span>
+        </button>
+        <div class="top-bar__logo">
+          <span class="logo-icon">⚡</span>
+          <span class="logo-text">IncidentOps</span>
+        </div>
+      </div>
+      <div class="top-bar__center">
+        <div class="global-search">
+          <span class="material-icons">search</span>
+          <input type="text" placeholder="Search incidents, users, departments...">
+          <kbd>⌘K</kbd>
+        </div>
+      </div>
+      <div class="top-bar__right">
+        <button class="top-bar__action-btn">
+          <span class="material-icons">notifications</span>
+          <span class="notification-badge">3</span>
+        </button>
+        <button class="top-bar__action-btn">
+          <span class="material-icons">help_outline</span>
+        </button>
+        <div class="user-menu">
+          <div class="user-avatar">JD</div>
+          <span class="user-name">John Doe</span>
+          <span class="material-icons">expand_more</span>
+        </div>
+      </div>
+    </header>
+  `,
+  styleUrls: ['./top-bar.component.scss']
+})
+export class TopBarComponent {
+  @Output() toggleSidebar = new EventEmitter<void>();
+}
+
+
+
+==================================================
+FILE: src/app/shared/components/confirmation-dialog/confirmation-dialog.component.ts
+==================================================
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+
+@Component({
+  selector: 'app-confirmation-dialog',
+  standalone: true,
+  template: `
+    <div class="modal-overlay">
+      <div class="modal">
+        <h3>{{ title }}</h3>
+        <p>{{ message }}</p>
+        <button (click)="confirm.emit()">{{ confirmLabel }}</button>
+        <button (click)="cancel.emit()">{{ cancelLabel }}</button>
+      </div>
+    </div>`,
+  styles: [`.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center}.modal{background:white;padding:24px;border-radius:8px}`]
+})
+export class ConfirmationDialogComponent {
+  @Input() title = 'Confirm';
+  @Input() message = 'Are you sure?';
+  @Input() confirmLabel = 'Confirm';
+  @Input() cancelLabel = 'Cancel';
+  @Output() confirm = new EventEmitter<void>();
+  @Output() cancel = new EventEmitter<void>();
+}
+
+
+
+==================================================
+FILE: src/app/shared/components/empty-state/empty-state.component.ts
+==================================================
+import { CommonModule } from "@angular/common";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+
+@Component({
+  selector: "app-empty-state",
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <div class="empty-state">
+      <span class="material-icons icon">{{ icon }}</span>
+      <h3>{{ title }}</h3>
+      <p *ngIf="description">{{ description }}</p>
+      <button *ngIf="actionLabel" type="button" (click)="action.emit()">
+        {{ actionLabel }}
+      </button>
+    </div>
+  `,
+  styles: [
+    `
+      .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 48px 24px;
+        color: #5b6475;
+        text-align: center;
+      }
+      .icon {
+        font-size: 48px;
+        opacity: 0.3;
+      }
+      h3,
+      p {
+        margin: 0;
+      }
+      button {
+        margin-top: 8px;
+        border: 1px solid var(--border-color, #d1d5db);
+        background: var(--bg-primary, #ffffff);
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+    `,
+  ],
+})
+export class EmptyStateComponent {
+  @Input() icon = "inbox";
+  @Input() title = "No data";
+  @Input() description?: string;
+  @Input() actionLabel?: string;
+  @Output() action = new EventEmitter<void>();
+}
+
+
+
+==================================================
+FILE: src/app/shared/components/error-state/error-state.component.ts
+==================================================
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { ApiError } from "../../models/common.model";
+
+@Component({
+  selector: "app-error-state",
+  standalone: true,
+  template: `
+    <div class="error-state">
+      <span class="material-icons error-icon">error_outline</span>
+      <div class="error-content">
+        <h3>Something went wrong</h3>
+        <p>{{ errorMessage }}</p>
+        <button type="button" (click)="retry.emit()">Try Again</button>
+      </div>
+    </div>
+  `,
+  styles: [
+    `
+      .error-state {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 24px;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+      }
+      .error-icon {
+        color: #ef4444;
+        font-size: 2rem;
+      }
+      .error-content h3,
+      .error-content p {
+        margin: 0;
+      }
+      .error-content {
+        display: grid;
+        gap: 8px;
+      }
+      button {
+        justify-self: start;
+        background: #ef4444;
+        color: white;
+        border: 0;
+        padding: 10px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+    `,
+  ],
+})
+export class ErrorStateComponent {
+  @Input({ required: true }) error!: string | ApiError;
+  @Output() retry = new EventEmitter<void>();
+
+  get errorMessage(): string {
+    return typeof this.error === "string" ? this.error : this.error.message;
+  }
+}
+
+
+
+==================================================
+FILE: src/app/shared/components/filter-bar/filter-bar.component.ts
+==================================================
+import { CommonModule } from "@angular/common";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+
+export interface FilterOption {
+  label: string;
+  value: string;
+}
+
+export interface FilterConfig {
+  key: string;
+  label: string;
+  options: FilterOption[];
+}
+
+@Component({
+  selector: "app-filter-bar",
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <div class="filter-bar">
+      <label *ngFor="let filter of filters" class="filter-item">
+        <span>{{ filter.label }}</span>
+        <select
+          [value]="toSelectValue(activeFilters[filter.key])"
+          (change)="onFilterChange(filter.key, $event)"
+        >
+          <option value="">All</option>
+          <option *ngFor="let option of filter.options" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </label>
+    </div>
+  `,
+  styles: [
+    `
+      .filter-bar {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .filter-item {
+        display: grid;
+        gap: 4px;
+        font-size: 0.875rem;
+        color: #4b5563;
+      }
+      .filter-item select {
+        min-width: 140px;
+        border: 1px solid var(--border-color, #d1d5db);
+        border-radius: 8px;
+        padding: 6px 10px;
+        font: inherit;
+        background: var(--bg-primary, #ffffff);
+      }
+    `,
+  ],
+})
+export class FilterBarComponent {
+  @Input() filters: FilterConfig[] = [];
+  @Input() activeFilters: Record<string, string> = {};
+  @Output() activeFiltersChange = new EventEmitter<Record<string, string>>();
+
+  onFilterChange(key: string, event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const updated = { ...this.activeFilters };
+    if (select.value) {
+      updated[key] = select.value;
+    } else {
+      delete updated[key];
+    }
+    this.activeFiltersChange.emit(updated);
+  }
+
+  toSelectValue(value: string | undefined): string {
+    return value ?? "";
+  }
+}
+
+
+
+==================================================
+FILE: src/app/shared/components/loading-state/loading-state.component.ts
+==================================================
+import { Component, Input } from "@angular/core";
+
+@Component({
+  selector: "app-loading-state",
+  standalone: true,
+  template: `
+    <div class="loading-state" [class.loading-state--overlay]="overlay">
+      <div class="spinner"></div>
+      <p>{{ message }}</p>
+    </div>
+  `,
+  styles: [
+    `
+      .loading-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        padding: 32px;
+        color: #5b6475;
+      }
+      .loading-state--overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.75);
+        z-index: 10;
+        justify-content: center;
+      }
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--border-color, #d1d5db);
+        border-top-color: #3b82f6;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
+})
+export class LoadingStateComponent {
+  @Input() message = "Loading...";
+  @Input() overlay = false;
+}
+
+
+
+==================================================
+FILE: src/app/shared/components/priority-badge/priority-badge.component.ts
+==================================================
+import { CommonModule } from "@angular/common";
+import { Component, Input } from "@angular/core";
+import { Priority } from "../../models/common.model";
+
+@Component({
+  selector: "app-priority-badge",
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <span class="priority-badge" [class.compact]="compact" [ngClass]="priorityClass">
+      <span class="material-icons" *ngIf="priorityIcon">{{ priorityIcon }}</span>
+      {{ priority }}
+    </span>
+  `,
+  styles: [
+    `
+      .priority-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+      .priority-badge.compact {
+        padding: 2px 8px;
+      }
+      .priority-badge .material-icons {
+        font-size: 0.9rem;
+      }
+      .priority-badge.critical {
+        color: #dc2626;
+        background: #fee2e2;
+      }
+      .priority-badge.high {
+        color: #ef4444;
+        background: #fef2f2;
+      }
+      .priority-badge.medium {
+        color: #f59e0b;
+        background: #fffbeb;
+      }
+      .priority-badge.low {
+        color: #10b981;
+        background: #ecfdf5;
+      }
+    `,
+  ],
+})
+export class PriorityBadgeComponent {
+  @Input({ required: true }) priority!: Priority;
+  @Input() compact = false;
+
+  get priorityClass(): string {
+    return this.priority.toLowerCase();
+  }
+
+  get priorityIcon(): string | null {
+    if (this.priority === "CRITICAL") {
+      return "error";
+    }
+    if (this.priority === "HIGH") {
+      return "arrow_upward";
+    }
+    return null;
+  }
+}
+
+
+
+==================================================
+FILE: src/app/shared/components/search-input/search-input.component.ts
+==================================================
+import { CommonModule } from "@angular/common";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
+import { Subject, Subscription } from "rxjs";
+import { debounceTime, distinctUntilChanged } from "rxjs/operators";
+
+@Component({
+  selector: "app-search-input",
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <div class="search-input-wrapper">
+      <span class="material-icons">search</span>
+      <input
+        type="text"
+        [value]="currentValue"
+        [placeholder]="placeholder"
+        (input)="onInput($event)"
+      />
+      <button *ngIf="currentValue" type="button" (click)="clear()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+  `,
+  styles: [
+    `
+      .search-input-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--border-color, #d1d5db);
+        border-radius: 8px;
+        padding: 8px 12px;
+        background: var(--bg-primary, #ffffff);
+      }
+      .search-input-wrapper input {
+        flex: 1;
+        border: 0;
+        outline: none;
+        font: inherit;
+        background: transparent;
+      }
+      .search-input-wrapper button {
+        border: 0;
+        background: transparent;
+        display: inline-flex;
+        cursor: pointer;
+        padding: 0;
+      }
+      .material-icons {
+        color: #6b7280;
+        font-size: 1.125rem;
+      }
+    `,
+  ],
+})
+export class SearchInputComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() value = "";
+  @Input() placeholder = "Search...";
+  @Output() search = new EventEmitter<string>();
+
+  currentValue = "";
+
+  private readonly searchSubject = new Subject<string>();
+  private subscription = new Subscription();
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if ("value" in changes) {
+      this.currentValue = this.value;
+    }
+  }
+
+  ngOnInit(): void {
+    this.currentValue = this.value;
+    this.subscription = this.searchSubject
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((query) => this.search.emit(query));
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  onInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.currentValue = input.value;
+    this.searchSubject.next(this.currentValue);
+  }
+
+  clear(): void {
+    this.currentValue = "";
+    this.searchSubject.next("");
+  }
+}
+
+
+
+==================================================
+FILE: src/app/shared/components/sla-indicator/sla-indicator.component.ts
+==================================================
+import { Component, Input } from '@angular/core';
+@Component({
+  selector: 'app-sla-indicator',
+  standalone: true,
+  template: `<span>SLA</span>`,
+  styles: []
+})
+export class SlaIndicatorComponent {
+  @Input() incidentId = '';
+  @Input() compact = false;
+  @Input() showText = true;
+}
+
+
+
+==================================================
+FILE: src/app/shared/components/stat-card/stat-card.component.scss
+==================================================
+@use "../../../../assets/scss/abstracts/variables" as *;
+.stat-card { padding: $spacing-lg; }
+
+
+
+==================================================
+FILE: src/app/shared/components/stat-card/stat-card.component.ts
+==================================================
+import { Component, Input } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
+import { DashboardKpi } from '../../models/dashboard.model';
+
+@Component({
+  selector: 'app-stat-card',
+  standalone: true,
+  imports: [DecimalPipe],
+  template: `
+    <div class="stat-card">
+      <div class="stat-card__icon" [style.background]="'linear-gradient(135deg, ' + kpi.color + '20, ' + kpi.color + '40)'">
+        <span class="material-icons" [style.color]="kpi.color">{{ kpi.icon }}</span>
+      </div>
+      <div class="stat-card__content">
+        <span class="stat-card__label">{{ kpi.label }}</span>
+        <span class="stat-card__value">{{ kpi.value | number }}</span>
+        @if (kpi.change !== 0) {
+          <span class="stat-card__change">
+            {{ kpi.change }}%
+          </span>
+        }
+      </div>
+    </div>
+  `,
+  styleUrls: ['./stat-card.component.scss']
+})
+export class StatCardComponent {
+  @Input({ required: true }) kpi!: DashboardKpi;
+}
+
+
+
+==================================================
+FILE: src/app/shared/components/status-badge/status-badge.component.ts
+==================================================
+import { CommonModule } from "@angular/common";
+import { Component, Input } from "@angular/core";
+import { IncidentStatus } from "../../models/common.model";
+
+@Component({
+  selector: "app-status-badge",
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <span class="status-badge" [class.compact]="compact" [ngClass]="statusClass">
+      {{ statusLabel }}
+    </span>
+  `,
+  styles: [
+    `
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+      .status-badge.compact {
+        padding: 2px 8px;
+      }
+      .status-badge.open {
+        color: #6b7280;
+        background: #f3f4f6;
+      }
+      .status-badge.in-progress {
+        color: #3b82f6;
+        background: #dbeafe;
+      }
+      .status-badge.escalated {
+        color: #ef4444;
+        background: #fee2e2;
+      }
+      .status-badge.resolved {
+        color: #10b981;
+        background: #d1fae5;
+      }
+      .status-badge.closed {
+        color: #374151;
+        background: #e5e7eb;
+      }
+      .status-badge.default {
+        color: #6b7280;
+        background: #f3f4f6;
+      }
+    `,
+  ],
+})
+export class StatusBadgeComponent {
+  @Input({ required: true }) status!: IncidentStatus;
+  @Input() compact = false;
+
+  get statusLabel(): string {
+    return this.status.replace(/_/g, " ");
+  }
+
+  get statusClass(): string {
+    switch (this.status) {
+      case "OPEN":
+        return "open";
+      case "IN_PROGRESS":
+        return "in-progress";
+      case "ESCALATED":
+        return "escalated";
+      case "RESOLVED":
+        return "resolved";
+      case "CLOSED":
+        return "closed";
+      default:
+        return "default";
+    }
+  }
+}
+
+
+
+==================================================
+FILE: src/app/shared/components/user-avatar/user-avatar.component.ts
+==================================================
+import { CommonModule } from "@angular/common";
+import { Component, Input } from "@angular/core";
+import { User } from "../../models/user.model";
+
+type AvatarSize = "xsmall" | "small" | "medium" | "large";
+
+@Component({
+  selector: "app-user-avatar",
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <div class="user-avatar" [ngClass]="sizeClass">
+      <img
+        *ngIf="safeAvatarUrl; else initialsTpl"
+        [src]="safeAvatarUrl"
+        [alt]="user.displayName"
+      />
+      <ng-template #initialsTpl>{{ initials }}</ng-template>
+    </div>
+  `,
+  styles: [
+    `
+      .user-avatar {
+        border-radius: 50%;
+        background: #3b82f6;
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        overflow: hidden;
+      }
+      .user-avatar.xsmall {
+        width: 24px;
+        height: 24px;
+        font-size: 0.625rem;
+      }
+      .user-avatar.small {
+        width: 32px;
+        height: 32px;
+        font-size: 0.75rem;
+      }
+      .user-avatar.medium {
+        width: 40px;
+        height: 40px;
+        font-size: 0.875rem;
+      }
+      .user-avatar.large {
+        width: 48px;
+        height: 48px;
+        font-size: 1rem;
+      }
+      .user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    `,
+  ],
+})
+export class UserAvatarComponent {
+  @Input({ required: true }) user!: User;
+  @Input() size: AvatarSize = "medium";
+
+  get safeAvatarUrl(): string | null {
+    const avatar = this.user.avatar;
+    if (!avatar) {
+      return null;
+    }
+    const normalized = avatar.trim();
+    if (normalized.startsWith("data:image/")) {
+      return avatar;
+    }
+    if (normalized.startsWith("//")) {
+      return null;
+    }
+    const scheme = normalized.match(/^([a-zA-Z][a-zA-Z\d+\-.]*):/);
+    if (!scheme) {
+      return normalized;
+    }
+    return scheme[1] === "http" || scheme[1] === "https" ? normalized : null;
+  }
+
+  get initials(): string {
+    const parts = this.user.displayName.trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 0) {
+      return "?";
+    }
+    if (parts.length === 1) {
+      return parts[0].slice(0, 2).toUpperCase();
+    }
+    return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+  }
+
+  get sizeClass(): AvatarSize {
+    return this.size;
+  }
+}
+
+
+
+==================================================
+FILE: src/app/shared/directives/has-permission.directive.ts
+==================================================
+// src/app/shared/directives/has-role.directive.ts
+
+import {
+  Directive,
+  Input,
+  TemplateRef,
+  ViewContainerRef,
+  OnInit,
+  OnDestroy,
+  inject,
+} from "@angular/core";
+import { Subject, takeUntil } from "rxjs";
+import { PermissionsApiService } from "../../api/permissions-api.service";
+
+@Directive({
+  selector: "[hasRole]",
+  standalone: true,
+})
+export class HasRoleDirective implements OnInit, OnDestroy {
+  private readonly permissionsApi = inject(PermissionsApiService);
+  private readonly templateRef = inject(TemplateRef<any>);
+  private readonly viewContainer = inject(ViewContainerRef);
+  private readonly destroy$ = new Subject<void>();
+
+  private hasView = false;
+
+  @Input("hasRole") allowedRoles: string[] = [];
+  @Input("hasRoleDepartment") allowedDepartments: string[] = [];
+
+  ngOnInit(): void {
+    this.permissionsApi
+      .getUserPermissions()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (permissions) => {
+          const hasRole = this.checkRole(permissions);
+
+          if (hasRole && !this.hasView) {
+            this.viewContainer.createEmbeddedView(this.templateRef);
+            this.hasView = true;
+          } else if (!hasRole && this.hasView) {
+            this.viewContainer.clear();
+            this.hasView = false;
+          }
+        },
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private checkRole(permissions: any): boolean {
+    if (!this.allowedRoles.length) return true;
+
+    const hasRole = this.allowedRoles.includes(permissions.role);
+
+    if (!hasRole || !this.allowedDepartments.length) return hasRole;
+
+    return this.allowedDepartments.includes(permissions.departmentId);
+  }
+}
+
+
+
+==================================================
+FILE: src/app/shared/models/attachment.model.ts
+==================================================
+export interface Attachment {
+  id: string;
+  incidentId: string;
+  fileName: string;
+  fileType: string;
+  fileSize: number;
+  uploadedBy: string;
+  uploadedAt: string;
+  category: AttachmentCategory;
+  isProofOfUptime: boolean;
+  url: string;
+  thumbnailUrl?: string;
+  metadata: AttachmentMetadata;
+}
+
+export interface AttachmentMetadata {
+  uploadedFromDepartment: string;
+  chainStepId?: string;
+  checklistItemId?: string;
+  description?: string;
+  tags: string[];
+}
+
+export type AttachmentCategory =
+  | "EVIDENCE"
+  | "PROOF_OF_UPTIME"
+  | "SCREENSHOT"
+  | "DOCUMENT"
+  | "OTHER";
+
+export interface AttachmentUpload {
+  file: File;
+  incidentId: string;
+  category: AttachmentCategory;
+  isProofOfUptime: boolean;
+  metadata: Partial<AttachmentMetadata>;
+}
+
+
+
+==================================================
+FILE: src/app/shared/models/audit.model.ts
+==================================================
+export interface AuditEntry {
+  id: string;
+  incidentId: string;
+  timestamp: string;
+  userId: string;
+  userName: string;
+  departmentId: string;
+  departmentName: string;
+  action: AuditAction;
+  fromState?: string;
+  toState?: string;
+  details: string;
+  metadata: Record<string, any>;
+  ipAddress: string;
+}
+
+export type AuditAction =
+  | "CREATED"
+  | "UPDATED"
+  | "STATUS_CHANGED"
+  | "DEPARTMENT_TRANSITION"
+  | "CHECKLIST_ITEM_COMPLETED"
+  | "CHECKLIST_COMPLETED"
+  | "ATTACHMENT_ADDED"
+  | "ATTACHMENT_REMOVED"
+  | "ESCALATED"
+  | "DEESCALATED"
+  | "RESOLVED"
+  | "CLOSED"
+  | "REOPENED"
+  | "COMMENT_ADDED"
+  | "CUSTOM";
+
+
+
+==================================================
+FILE: src/app/shared/models/checklist.model.ts
+==================================================
+export interface ChecklistItem {
+  id: string;
+  description: string;
+  isCompleted: boolean;
+  isRequired: boolean;
+  completedAt?: string;
+  completedBy?: string;
+  order: number;
+  category: string;
+  evidenceRequired: boolean;
+  evidenceType?: 'ATTACHMENT' | 'NOTE' | 'CONFIRMATION';
+}
+
+export interface ChecklistTemplate {
+  id: string;
+  name: string;
+  items: ChecklistItem[];
+  departmentId: string;
+  incidentTypeId: string;
+}
+
+export interface Checklist {
+  id: string;
+  incidentId: string;
+  chainStepId: string;
+  departmentId: string;
+  items: ChecklistItem[];
+  completedAt?: string;
+  completedBy?: string;
+  status: ChecklistStatus;
+}
+
+export type ChecklistStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED' | 'SKIPPED';
+
+export interface ChecklistItemUpdatePayload {
+  isCompleted: boolean;
+  evidence?: string | null;
+}
+
+
+
+==================================================
+FILE: src/app/shared/models/common.model.ts
+==================================================
+export interface ApiResponse<T> {
+  data: T;
+  success: boolean;
+  message?: string;
+  timestamp: string;
+  correlationId: string;
+}
+
+export interface PaginatedResponse<T> extends ApiResponse<T[]> {
+  pagination: PaginationMetadata;
+}
+
+export interface PaginationMetadata {
+  currentPage: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface ApiError {
+  code: string;
+  message: string;
+  details?: unknown;
+  timestamp: string;
+  correlationId: string;
+}
+
+export interface UserAction {
+  userId: string;
+  departmentId: string;
+  action: string;
+  timestamp: string;
+  metadata?: Record<string, unknown>;
+}
+
+export type QueryParamPrimitive = string | number | boolean | Date;
+export type QueryParamValue =
+  | QueryParamPrimitive
+  | readonly QueryParamPrimitive[]
+  | null
+  | undefined;
+export type QueryParams = Record<string, QueryParamValue>;
+
+export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
+export interface RetryPolicy {
+  count?: number;
+  delayMs?: number;
+  excludedStatusCodes?: number[];
+  includedMethods?: HttpMethod[];
+}
+
+export interface RequestOptions {
+  params?: QueryParams;
+  headers?: Record<string, string>;
+  timeoutMs?: number;
+  retry?: boolean | RetryPolicy;
+  withCredentials?: boolean;
+}
+
+export interface CommandResponse {
+  acknowledged: boolean;
+  message?: string;
+}
+
+export type IncidentStatus =
+  | "OPEN"
+  | "IN_PROGRESS"
+  | "PENDING_CHECKLIST"
+  | "PENDING_TRANSITION"
+  | "ESCALATED"
+  | "RESOLVED"
+  | "CLOSED";
+
+export type Priority = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
+
+export type SlaStatus = "WITHIN_SLA" | "APPROACHING_BREACH" | "BREACHED";
+
+
+
+==================================================
+FILE: src/app/shared/models/dashboard.model.ts
+==================================================
+import { Incident } from "./incident.model";
+import { Department } from "./user.model";
+import { Priority } from "./common.model";
+
+export interface DashboardSummary {
+  kpis: DashboardKpi[];
+  workloadByDepartment: DepartmentWorkload[];
+  trends: IncidentTrends;
+  recentIncidents: Incident[];
+  slaCompliance: SlaCompliance;
+}
+
+export interface DashboardKpi {
+  id: string;
+  label: string;
+  value: number;
+  change: number;
+  changeType: "INCREASE" | "DECREASE" | "NEUTRAL";
+  icon: string;
+  color: string;
+}
+
+export interface DepartmentWorkload {
+  department: Department;
+  openIncidents: number;
+  inProgress: number;
+  escalated: number;
+  avgResolutionTime: number;
+  slaCompliance: number;
+}
+
+export interface IncidentTrends {
+  daily: TrendData[];
+  weekly: TrendData[];
+  monthly: TrendData[];
+}
+
+export interface TrendData {
+  date: string;
+  created: number;
+  resolved: number;
+  escalated: number;
+}
+
+export interface SlaCompliance {
+  overall: number;
+  byDepartment: { departmentId: string; compliance: number }[];
+  byPriority: { priority: Priority; compliance: number }[];
+}
+
+export interface AdminDashboardStats {
+  incidentTypes: number;
+  workflows: number;
+  slaRules: number;
+  roles: number;
+}
+
+
+
+==================================================
+FILE: src/app/shared/models/escalation.model.ts
+==================================================
+export interface Escalation {
+  id: string;
+  incidentId: string;
+  triggerType: EscalationTrigger;
+  triggerTime: string;
+  escalatedTo: string;
+  escalatedFrom: string;
+  reason: string;
+  status: EscalationStatus;
+  resolvedAt?: string;
+  resolvedBy?: string;
+  notes: string[];
+}
+
+export type EscalationStatus =
+  | "ACTIVE"
+  | "ACKNOWLEDGED"
+  | "RESOLVED"
+  | "CANCELLED";
+
+export type EscalationTrigger =
+  | "SLA_BREACH"
+  | "PENDING_CHECKLIST"
+  | "STALE_INCIDENT"
+  | "MANUAL";
+
+
+
+==================================================
+FILE: src/app/shared/models/incident.model.ts
+==================================================
+import { ChecklistTemplate } from "./checklist.model";
+import { Attachment } from "./attachment.model";
+import { AuditEntry } from "./audit.model";
+import { Escalation } from "./escalation.model";
+import { SlaState } from "./sla.model";
+import { Department, User } from "./user.model";
+import { Priority, IncidentStatus } from "./common.model";
+
+export interface Incident {
+  id: string;
+  referenceNumber: string;
+  title: string;
+  description: string;
+  type: IncidentType;
+  priority: Priority;
+  status: IncidentStatus;
+  currentDepartment: Department;
+  originDepartment: Department;
+  assignedTo?: User;
+  createdBy: User;
+  createdAt: string;
+  updatedAt: string;
+  resolvedAt?: string;
+  closedAt?: string;
+  tags: string[];
+  customFields: Record<string, unknown>;
+}
+
+export interface IncidentType {
+  id: string;
+  name: string;
+  code: string;
+  description: string;
+  departmentChain: DepartmentChain;
+  defaultChecklists: ChecklistTemplate[];
+  slaRules: SlaRule[];
+  escalationRules: EscalationRule[];
+  isActive: boolean;
+}
+
+export interface DepartmentChain {
+  id: string;
+  name: string;
+  steps: ChainStep[];
+  allowParallel: boolean;
+  requireStrictOrder: boolean;
+}
+
+export interface ChainStep {
+  order: number;
+  department: Department;
+  checklist: ChecklistTemplate;
+  expectedActions: string[];
+  sla: StepSla;
+  isOptional: boolean;
+}
+
+export interface StepSla {
+  responseTime: number;
+  resolutionTime: number;
+  escalationPoint: number;
+}
+
+export interface SlaRule {
+  id: string;
+  name: string;
+  metric: SlaMetric;
+  threshold: number;
+  unit: "MINUTES" | "HOURS" | "DAYS";
+  priority: Priority;
+}
+
+export type SlaMetric =
+  | "INITIAL_RESPONSE"
+  | "RESOLUTION"
+  | "ESCALATION_RESPONSE";
+
+export interface EscalationRule {
+  id: string;
+  name: string;
+  trigger: EscalationTrigger;
+  action: EscalationAction;
+  targetRole: string;
+  delay: number;
+}
+
+export type EscalationTrigger =
+  | "SLA_BREACH"
+  | "PENDING_CHECKLIST"
+  | "STALE_INCIDENT"
+  | "MANUAL";
+export type EscalationAction =
+  | "NOTIFY_MANAGER"
+  | "REASSIGN"
+  | "ESCALATE_DEPARTMENT";
+
+
+
+==================================================
+FILE: src/app/shared/models/sla.model.ts
+==================================================
+import { Priority, SlaStatus } from "./common.model";
+
+export interface SlaState {
+  incidentId: string;
+  metrics: SlaMetricState[];
+  overallStatus: SlaStatus;
+  nextBreach?: string;
+  breaches: SlaBreach[];
+}
+
+export interface SlaMetricState {
+  metric: SlaMetric;
+  target: number;
+  elapsed: number;
+  status: SlaStatus;
+  deadline: string;
+  breachAt: string;
+}
+
+export interface SlaBreach {
+  id: string;
+  metric: SlaMetric;
+  breachedAt: string;
+  severity: "WARNING" | "MAJOR" | "CRITICAL";
+  acknowledged: boolean;
+}
+
+export type SlaMetric =
+  | "INITIAL_RESPONSE"
+  | "RESOLUTION"
+  | "ESCALATION_RESPONSE";
+
+
+
+==================================================
+FILE: src/app/shared/models/user.model.ts
+==================================================
+export interface User {
+  id: string;
+  displayName: string;
+  email: string;
+  department: Department;
+  role: UserRole;
+  permissions: Permission[];
+  avatar?: string;
+}
+
+export interface Department {
+  id: string;
+  name: string;
+  code: string;
+  isActive: boolean;
+}
+
+export interface UserRole {
+  id: string;
+  name: string;
+  departmentId: string;
+  permissions: string[];
+}
+
+export interface Permission {
+  resource: string;
+  actions: ("CREATE" | "READ" | "UPDATE" | "DELETE" | "MANAGE")[];
+  scope: "OWN" | "DEPARTMENT" | "ALL";
+}
+
+export interface UserPermissions {
+  userId: string;
+  departmentId: string;
+  departmentName: string;
+  role: string;
+  permissions: Permission[];
+  allowedIncidentTypes: string[];
+  allowedActions: string[];
+}
+
+
+
+==================================================
+FILE: src/assets/scss/abstracts/_variables.scss
+==================================================
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+$border-color: #e2e8f0;
+$bg-primary: #ffffff;
+$bg-secondary: #f8fafc;
+$bg-tertiary: #f1f5f9;
+$bg-hover: #f0f9ff;
+$text-primary: #0f172a;
+$text-secondary: #64748b;
+
+
+
+==================================================
+FILE: src/environments/environment.prod.ts
+==================================================
+export const environment = {
+  production: true,
+  apiUrl: "/api",
+};
+
+
+
+==================================================
+FILE: src/environments/environment.ts
+==================================================
+export const environment = {
+  production: false,
+  apiUrl: "/api",
+  useMockApi: true,
+};
+
+
+
+==================================================
+FILE: src/index.html
+==================================================
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>IncidentOps</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>
+
+
+
+==================================================
+FILE: src/main.ts
+==================================================
+import { bootstrapApplication } from '@angular/platform-browser';
+import { AppComponent } from './app/app.component';
+import { appConfig } from './app/app.config';
+
+bootstrapApplication(AppComponent, appConfig)
+  .catch(err => console.error(err));
+
+
+
+==================================================
+FILE: src/styles.scss
+==================================================
+// Design System Variables
+:root {
+  // Colors
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --bg-hover: #f0f9ff;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --border-color: #e2e8f0;
+
+  // Dark theme
+  --dark-bg: #1a1a2e;
+  --dark-bg-secondary: #16213e;
+  --nav-bg: #1e293b;
+  --nav-text: #cbd5e1;
+
+  // Status colors
+  --status-open: #6b7280;
+  --status-progress: #3b82f6;
+  --status-escalated: #ef4444;
+  --status-resolved: #10b981;
+  --status-closed: #374151;
+
+  // Spacing
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  // Typography
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+}
+
+// Global Reset
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1rem; }
+
+a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+// Material Icons (ensure CDN is loaded in index.html)
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+}
+
+// Buttons
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--bg-hover);
+  }
+
+  &-primary {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+    &:hover { background: #2563eb; }
+  }
+
+  &-secondary {
+    background: var(--bg-secondary);
+  }
+
+  &-sm { padding: 4px 8px; font-size: 0.75rem; }
+  &-xs { padding: 2px 6px; font-size: 0.6875rem; }
+  &-icon { padding: 6px; border: none; background: transparent; }
+}
+
+// Cards
+.card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: var(--spacing-lg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  &__body {
+    // content area
+  }
+}
+
+// Table base styling (used in incident table, etc.)
+.table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th, td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  th {
+    background: var(--bg-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+  }
+}
+
+// Badge styles
+.status-badge, .priority-badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+// Common layout
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-xl);
+
+  .subtitle {
+    color: var(--text-secondary);
+    margin-top: var(--spacing-xs);
+    font-size: 0.875rem;
+  }
+}
+
+// Utility classes
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--spacing-md);
+}
+
+// Loading, empty, error states
+.loading-state, .empty-state, .error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+
+
+==================================================
+FILE: src/styles.scss.ts
+==================================================
+
+require("./styles.css");
+const styles = {
+
+};
+
+export default styles;
+
+
+
+==================================================
+FILE: angular.json
+==================================================
+{
+  "$schema": "https://json.schemastore.org/angular.json",
+  "version": 1,
+  "projects": {
+    "incident-operations-portal": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/incident-operations-portal",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "tsconfig.app.json",
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": ["src/styles.scss"],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "8kb",
+                  "maximumError": "16kb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "buildTarget": "incident-operations-portal:build"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "incident-operations-portal:build:production"
+            },
+            "development": {
+              "buildTarget": "incident-operations-portal:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": ["zone.js", "zone.js/testing"],
+            "tsConfig": "tsconfig.spec.json",
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": ["src/styles.scss"],
+            "scripts": []
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": false
+  }
+}
+
+
+
+==================================================
+FILE: package.json
+==================================================
+{
+  "name": "incident-operations-portal",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "dependencies": {
+    "@angular/animations": "^20.3.0",
+    "@angular/common": "^20.3.0",
+    "@angular/compiler": "^20.3.0",
+    "@angular/core": "^20.3.0",
+    "@angular/forms": "^20.3.0",
+    "@angular/platform-browser": "^20.3.0",
+    "@angular/platform-browser-dynamic": "^20.3.0",
+    "@angular/router": "^20.3.0",
+    "rxjs": "^7.8.1",
+    "tslib": "^2.8.1",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^20.3.0",
+    "@angular/cli": "^20.3.0",
+    "@angular/compiler-cli": "^20.3.0",
+    "@types/jasmine": "^5.1.4",
+    "jasmine-core": "^5.2.0",
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-coverage": "^2.2.1",
+    "karma-jasmine": "^5.1.0",
+    "karma-jasmine-html-reporter": "^2.1.0",
+    "typescript": "~5.8.3"
+  }
+}
+
+
+
+==================================================
+FILE: tsconfig.json
+==================================================
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "module": "es2022",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "es2022",
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2022", "dom"]
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  }
+}
+
+
+
+==================================================
+FILE: tsconfig.app.json
+==================================================
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/app",
+    "types": []
+  },
+  "files": ["src/main.ts"],
+  "include": ["src/**/*.d.ts"]
+}
+
+
+
+==================================================
+FILE: tsconfig.spec.json
+==================================================
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/spec",
+    "types": ["jasmine"]
+  },
+  "include": ["src/**/*.spec.ts", "src/**/*.d.ts"]
+}
+
+
+

@@ -1,341 +1,167 @@
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-  HttpParams,
-} from "@angular/common/http";
+// src/app/core/services/http-client.service.ts
+
 import { Injectable, inject } from "@angular/core";
 import {
-  MonoTypeOperatorFunction,
-  Observable,
-  TimeoutError,
-  catchError,
-  identity,
-  map,
-  retry,
-  throwError,
-  timeout,
-  timer,
-} from "rxjs";
+  HttpClient,
+  HttpHeaders,
+  HttpParams,
+  HttpErrorResponse,
+} from "@angular/common/http";
+import { Observable, throwError, timer } from "rxjs";
+import { retryWhen, mergeMap, catchError, timeout } from "rxjs/operators";
 import { environment } from "../../../environments/environment";
-import {
-  ApiError,
-  ApiResponse,
-  HttpMethod,
-  QueryParamPrimitive,
-  QueryParams,
-  RequestOptions,
-  RetryPolicy,
-} from "../../shared/models/common.model";
+import { ApiResponse, ApiError } from "../../shared/models/common.model";
 
 @Injectable({ providedIn: "root" })
 export class HttpClientService {
-  private static correlationSequence = 0;
-
   private readonly http = inject(HttpClient);
   private readonly baseUrl = environment.apiUrl;
   private readonly defaultTimeout = 30000;
-  private readonly defaultRetryPolicy: Required<RetryPolicy> = {
-    count: 2,
-    delayMs: 1000,
-    excludedStatusCodes: [400, 401, 403, 404, 409, 422],
-    includedMethods: ["GET", "PUT", "DELETE"],
-  };
+  private readonly maxRetries = 2;
 
-  get<T>(endpoint: string, options?: RequestOptions): Observable<T> {
-    return this.request<T>("GET", endpoint, undefined, options);
-  }
-
-  getResponse<T>(
+  get<T>(
     endpoint: string,
-    options?: RequestOptions,
+    params?: Record<string, any>,
   ): Observable<ApiResponse<T>> {
-    return this.requestResponse<T>("GET", endpoint, undefined, options);
-  }
-
-  post<T>(
-    endpoint: string,
-    body: unknown,
-    options?: RequestOptions,
-  ): Observable<T> {
-    return this.request<T>("POST", endpoint, body, options);
-  }
-
-  postResponse<T>(
-    endpoint: string,
-    body: unknown,
-    options?: RequestOptions,
-  ): Observable<ApiResponse<T>> {
-    return this.requestResponse<T>("POST", endpoint, body, options);
-  }
-
-  put<T>(
-    endpoint: string,
-    body: unknown,
-    options?: RequestOptions,
-  ): Observable<T> {
-    return this.request<T>("PUT", endpoint, body, options);
-  }
-
-  patch<T>(
-    endpoint: string,
-    body: unknown,
-    options?: RequestOptions,
-  ): Observable<T> {
-    return this.request<T>("PATCH", endpoint, body, options);
-  }
-
-  delete<T>(
-    endpoint: string,
-    options?: RequestOptions,
-    body?: unknown,
-  ): Observable<T> {
-    return this.request<T>("DELETE", endpoint, body, options);
-  }
-
-  private request<T>(
-    method: HttpMethod,
-    endpoint: string,
-    body?: unknown,
-    options?: RequestOptions,
-  ): Observable<T> {
-    return this.requestResponse<T>(method, endpoint, body, options).pipe(
-      map((response) => response.data),
-    );
-  }
-
-  private requestResponse<T>(
-    method: HttpMethod,
-    endpoint: string,
-    body?: unknown,
-    options: RequestOptions = {},
-  ): Observable<ApiResponse<T>> {
-    const hasJsonBody = this.shouldSendJsonContentType(body);
-
+    const httpParams = this.buildParams(params);
     return this.http
-      .request<ApiResponse<T>>(method, this.resolveUrl(endpoint), {
-        body,
-        headers: this.getHeaders(options.headers, hasJsonBody),
-        params: this.buildParams(options.params),
-        withCredentials: options.withCredentials ?? false,
+      .get<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, {
+        params: httpParams,
+        headers: this.getHeaders(),
       })
       .pipe(
-        timeout(options.timeoutMs ?? this.defaultTimeout),
-        this.getRetryOperator<ApiResponse<T>>(method, options.retry),
-        catchError((error) => this.handleError(error)),
+        timeout(this.defaultTimeout),
+        retryWhen(this.retryStrategy()),
+        catchError(this.handleError),
       );
   }
 
-  private getHeaders(
-    customHeaders?: Record<string, string>,
-    hasJsonBody = false,
-  ): HttpHeaders {
-    const headers: Record<string, string> = {
+  getPaginated<T>(
+    endpoint: string,
+    params?: Record<string, any>,
+  ): Observable<ApiResponse<T>> {
+    return this.get<T>(endpoint, params);
+  }
+
+  post<T>(endpoint: string, body: any): Observable<ApiResponse<T>> {
+    return this.http
+      .post<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, body, {
+        headers: this.getHeaders(),
+      })
+      .pipe(timeout(this.defaultTimeout), catchError(this.handleError));
+  }
+
+  put<T>(endpoint: string, body: any): Observable<ApiResponse<T>> {
+    return this.http
+      .put<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, body, {
+        headers: this.getHeaders(),
+      })
+      .pipe(timeout(this.defaultTimeout), catchError(this.handleError));
+  }
+
+  patch<T>(endpoint: string, body: any): Observable<ApiResponse<T>> {
+    return this.http
+      .patch<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, body, {
+        headers: this.getHeaders(),
+      })
+      .pipe(timeout(this.defaultTimeout), catchError(this.handleError));
+  }
+
+  delete<T>(endpoint: string): Observable<ApiResponse<T>> {
+    return this.http
+      .delete<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, {
+        headers: this.getHeaders(),
+      })
+      .pipe(timeout(this.defaultTimeout), catchError(this.handleError));
+  }
+
+  upload<T>(endpoint: string, formData: FormData): Observable<ApiResponse<T>> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.getToken()}`,
+    });
+    return this.http
+      .post<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, formData, {
+        headers,
+      })
+      .pipe(timeout(60000), catchError(this.handleError));
+  }
+
+  private getHeaders(): HttpHeaders {
+    let headers = new HttpHeaders({
+      "Content-Type": "application/json",
       Accept: "application/json",
       "X-Correlation-Id": this.generateCorrelationId(),
-      ...customHeaders,
-    };
-
-    if (hasJsonBody && !headers["Content-Type"]) {
-      headers["Content-Type"] = "application/json";
-    }
-
-    return new HttpHeaders(headers);
-  }
-
-  private buildParams(params?: QueryParams): HttpParams {
-    let httpParams = new HttpParams();
-
-    Object.entries(params ?? {}).forEach(([key, value]) => {
-      if (value === null || value === undefined) {
-        return;
-      }
-
-      if (Array.isArray(value)) {
-        value.forEach((item) => {
-          httpParams = httpParams.append(
-            key,
-            this.serializeParamValue(item as QueryParamPrimitive),
-          );
-        });
-        return;
-      }
-
-      httpParams = httpParams.set(
-        key,
-        this.serializeParamValue(value as QueryParamPrimitive),
-      );
     });
 
+    const token = this.getToken();
+    if (token) {
+      headers = headers.set("Authorization", `Bearer ${token}`);
+    }
+
+    return headers;
+  }
+
+  private buildParams(params?: Record<string, any>): HttpParams {
+    let httpParams = new HttpParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          httpParams = httpParams.set(key, value.toString());
+        }
+      });
+    }
     return httpParams;
   }
 
-  private serializeParamValue(value: QueryParamPrimitive): string {
-    return value instanceof Date ? value.toISOString() : String(value);
-  }
-
-  private getRetryOperator<T>(
-    method: HttpMethod,
-    retryOption?: boolean | RetryPolicy,
-  ): MonoTypeOperatorFunction<T> {
-    if (retryOption === false) {
-      return identity;
-    }
-
-    const policy = {
-      ...this.defaultRetryPolicy,
-      ...(retryOption === true || retryOption === undefined ? {} : retryOption),
-    };
-
-    if (!policy.includedMethods.includes(method)) {
-      return identity;
-    }
-
-    return retry({
-      count: policy.count,
-      delay: (error, retryCount) => {
-        const status = this.extractStatusCode(error);
-        if (
-          policy.excludedStatusCodes.includes(status) ||
-          !this.isRetriableStatus(status)
-        ) {
+  private retryStrategy() {
+    return (errors: Observable<any>) =>
+      errors.pipe(
+        mergeMap((error: HttpErrorResponse, index: number) => {
+          if (
+            index < this.maxRetries &&
+            error.status !== 400 &&
+            error.status !== 401 &&
+            error.status !== 403
+          ) {
+            return timer((index + 1) * 1000);
+          }
           return throwError(() => error);
-        }
-
-        return timer(retryCount * policy.delayMs);
-      },
-      resetOnSuccess: true,
-    });
+        }),
+      );
   }
 
-  private isRetriableStatus(status: number): boolean {
-    return status === 0 || status === 408 || status === 429 || status >= 500;
-  }
-
-  private extractStatusCode(error: unknown): number {
-    if (error instanceof HttpErrorResponse) {
-      return error.status;
-    }
-
-    return 0;
-  }
-
-  private handleError(error: unknown): Observable<never> {
-    if (error instanceof TimeoutError) {
-      return throwError(() => ({
-        code: "REQUEST_TIMEOUT",
-        message: "The request timed out before the backend responded.",
-        timestamp: new Date().toISOString(),
-        correlationId: this.generateCorrelationId(),
-      } satisfies ApiError));
-    }
-
-    if (error instanceof HttpErrorResponse) {
-      const errorPayload = this.extractApiError(error);
-      return throwError(() => errorPayload);
-    }
-
-    return throwError(() => ({
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    const apiError: ApiError = {
       code: "UNKNOWN_ERROR",
-      message: "An unexpected error occurred.",
+      message: "An unexpected error occurred",
       timestamp: new Date().toISOString(),
-      correlationId: this.generateCorrelationId(),
-      details: error,
-    } satisfies ApiError));
-  }
-
-  private extractApiError(httpError: HttpErrorResponse): ApiError {
-    const errorBody =
-      typeof httpError.error === "object" && httpError.error !== null
-        ? (httpError.error as Partial<ApiError>)
-        : undefined;
-
-    return {
-      code: errorBody?.code ?? this.mapErrorCode(httpError.status),
-      message:
-        errorBody?.message ??
-        this.mapErrorMessage(httpError.status) ??
-        httpError.message,
-      details: errorBody?.details,
-      timestamp: errorBody?.timestamp ?? new Date().toISOString(),
-      correlationId:
-        errorBody?.correlationId ??
-        httpError.headers.get("X-Correlation-Id") ??
-        this.generateCorrelationId(),
+      correlationId: "",
     };
-  }
 
-  private mapErrorCode(status: number): string {
-    switch (status) {
-      case 0:
-        return "NETWORK_ERROR";
-      case 400:
-        return "BAD_REQUEST";
-      case 401:
-        return "AUTHENTICATION_ERROR";
-      case 403:
-        return "AUTHORIZATION_ERROR";
-      case 404:
-        return "RESOURCE_NOT_FOUND";
-      case 409:
-        return "CONFLICT";
-      default:
-        return "UNKNOWN_ERROR";
-    }
-  }
-
-  private mapErrorMessage(status: number): string {
-    switch (status) {
-      case 0:
-        return "Unable to reach the incident platform backend.";
-      case 400:
-        return "The request payload was rejected by the backend.";
-      case 401:
-        return "Authentication is required to complete this request.";
-      case 403:
-        return "You do not have permission to perform this action.";
-      case 404:
-        return "The requested resource could not be found.";
-      case 409:
-        return "The backend rejected the change because the resource changed.";
-      default:
-        return "An unexpected backend error occurred.";
-    }
-  }
-
-  private shouldSendJsonContentType(body: unknown): boolean {
-    if (body === null || body === undefined || typeof body !== "object") {
-      return false;
+    if (error.error && error.error.code) {
+      apiError.code = error.error.code;
+      apiError.message = error.error.message;
+      apiError.details = error.error.details;
+      apiError.correlationId = error.error.correlationId;
+    } else if (error.status === 0) {
+      apiError.code = "NETWORK_ERROR";
+      apiError.message = "Network connectivity issue";
+    } else if (error.status === 401) {
+      apiError.code = "AUTHENTICATION_ERROR";
+      apiError.message = "Authentication required";
+    } else if (error.status === 403) {
+      apiError.code = "AUTHORIZATION_ERROR";
+      apiError.message = "Insufficient permissions";
     }
 
-    return !(
-      body instanceof FormData ||
-      body instanceof Blob ||
-      body instanceof ArrayBuffer ||
-      ArrayBuffer.isView(body) ||
-      body instanceof URLSearchParams
-    );
+    return throwError(() => apiError);
   }
 
-  private resolveUrl(endpoint: string): string {
-    if (/^https?:\/\//.test(endpoint)) {
-      return endpoint;
-    }
-
-    const normalizedBase = this.baseUrl.endsWith("/")
-      ? this.baseUrl.slice(0, -1)
-      : this.baseUrl;
-    const normalizedEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
-
-    return `${normalizedBase}${normalizedEndpoint}`;
+  private getToken(): string | null {
+    return localStorage.getItem("access_token");
   }
 
   private generateCorrelationId(): string {
-    if (globalThis.crypto?.randomUUID) {
-      return globalThis.crypto.randomUUID();
-    }
-
-    HttpClientService.correlationSequence += 1;
-    return `${Date.now()}-${HttpClientService.correlationSequence}`;
+    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
 }
