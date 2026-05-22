@@ -20,7 +20,7 @@ import { DashboardKpi } from "../../models/dashboard.model";
         <div class="stat-card__label">{{ kpi.label }}</div>
         <div class="stat-card__value">{{ kpi.value | number }}</div>
         <div
-          *ngIf="kpi.change !== 0"
+          *ngIf="kpi.change != null && kpi.change !== 0"
           class="stat-card__change"
           [class.positive]="kpi.change > 0"
           [class.negative]="kpi.change < 0"

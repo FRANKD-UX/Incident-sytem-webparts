@@ -1,5 +1,14 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
 import { Subject, Subscription } from "rxjs";
 import { debounceTime, distinctUntilChanged } from "rxjs/operators";
 
@@ -12,11 +21,11 @@ import { debounceTime, distinctUntilChanged } from "rxjs/operators";
       <span class="material-icons">search</span>
       <input
         type="text"
-        [value]="value"
+        [value]="currentValue"
         [placeholder]="placeholder"
         (input)="onInput($event)"
       />
-      <button *ngIf="value" type="button" (click)="clear()">
+      <button *ngIf="currentValue" type="button" (click)="clear()">
         <span class="material-icons">close</span>
       </button>
     </div>
@@ -53,15 +62,24 @@ import { debounceTime, distinctUntilChanged } from "rxjs/operators";
     `,
   ],
 })
-export class SearchInputComponent implements OnInit, OnDestroy {
+export class SearchInputComponent implements OnInit, OnDestroy, OnChanges {
   @Input() value = "";
   @Input() placeholder = "Search...";
   @Output() search = new EventEmitter<string>();
 
+  currentValue = "";
+
   private readonly searchSubject = new Subject<string>();
   private subscription?: Subscription;
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if ("value" in changes) {
+      this.currentValue = this.value;
+    }
+  }
+
   ngOnInit(): void {
+    this.currentValue = this.value;
     this.subscription = this.searchSubject
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((query) => this.search.emit(query));
@@ -73,12 +91,12 @@ export class SearchInputComponent implements OnInit, OnDestroy {
 
   onInput(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.value = input.value;
-    this.searchSubject.next(this.value);
+    this.currentValue = input.value;
+    this.searchSubject.next(this.currentValue);
   }
 
   clear(): void {
-    this.value = "";
+    this.currentValue = "";
     this.searchSubject.next("");
   }
 }

@@ -63,7 +63,13 @@ export class FilterBarComponent {
 
   onFilterChange(key: string, event: Event): void {
     const select = event.target as HTMLSelectElement;
-    this.activeFiltersChange.emit({ ...this.activeFilters, [key]: select.value });
+    const updated = { ...this.activeFilters };
+    if (select.value) {
+      updated[key] = select.value;
+    } else {
+      delete updated[key];
+    }
+    this.activeFiltersChange.emit(updated);
   }
 
   toSelectValue(value: string | undefined): string {
