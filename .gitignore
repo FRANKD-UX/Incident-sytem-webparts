@@ -1,9 +1,9 @@
-lib/
-dist/
-temp/
-release/
-sharepoint/
-solution/*.sppkg
 node_modules/
-*.log
-.rushstack/
+dist/
+out-tsc/
+.angular/
+coverage/
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

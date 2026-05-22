@@ -1,45 +1,37 @@
 {
-  "name": "incident-system-webparts",
-  "version": "1.0.0",
+  "name": "incident-operations-portal",
+  "version": "0.1.0",
   "private": true,
-  "engines": {
-    "node": ">=18.17.0 <19.0.0"
-  },
   "scripts": {
-    "build": "gulp bundle",
-    "clean": "gulp clean",
-    "serve": "gulp serve",
-    "package": "gulp package-solution",
-    "ship": "gulp bundle --ship && gulp package-solution --ship"
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
   },
   "dependencies": {
-    "@fluentui/react-components": "9.56.2",
-    "@fluentui/react-icons": "2.0.326",
-    "@microsoft/sp-core-library": "1.23.0",
-    "@microsoft/sp-lodash-subset": "1.23.0",
-    "@microsoft/sp-office-ui-fabric-core": "1.23.0",
-    "@microsoft/sp-property-pane": "1.23.0",
-    "@microsoft/sp-webpart-base": "1.23.0",
-    "@tanstack/react-query": "^4.36.1",
-    "@tanstack/react-table": "^8.20.5",
-    "axios": "^1.7.7",
-    "react": "17.0.1",
-    "react-dom": "17.0.1",
-    "tslib": "2.3.1"
+    "@angular/animations": "^20.3.0",
+    "@angular/common": "^20.3.0",
+    "@angular/compiler": "^20.3.0",
+    "@angular/core": "^20.3.0",
+    "@angular/forms": "^20.3.0",
+    "@angular/platform-browser": "^20.3.0",
+    "@angular/platform-browser-dynamic": "^20.3.0",
+    "@angular/router": "^20.3.0",
+    "rxjs": "^7.8.1",
+    "tslib": "^2.8.1",
+    "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@microsoft/eslint-config-spfx": "1.23.0",
-    "@microsoft/eslint-plugin-spfx": "1.23.0",
-    "@microsoft/rush-stack-compiler-5.3": "0.1.0",
-    "@microsoft/sp-build-web": "1.23.0",
-    "@microsoft/sp-module-interfaces": "1.23.0",
-    "@rushstack/eslint-config": "4.0.1",
-    "@types/react": "17.0.92",
-    "@types/react-dom": "17.0.26",
-    "@types/webpack-env": "~1.15.2",
-    "ajv": "^6.12.5",
-    "eslint": "8.57.0",
-    "gulp": "4.0.2",
-    "typescript": "~5.3.3"
+    "@angular-devkit/build-angular": "^20.3.0",
+    "@angular/cli": "^20.3.0",
+    "@angular/compiler-cli": "^20.3.0",
+    "@types/jasmine": "^5.1.4",
+    "jasmine-core": "^5.2.0",
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-coverage": "^2.2.1",
+    "karma-jasmine": "^5.1.0",
+    "karma-jasmine-html-reporter": "^2.1.0",
+    "typescript": "~5.8.3"
   }
 }
