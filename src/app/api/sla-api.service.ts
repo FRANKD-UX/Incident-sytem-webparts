@@ -1,7 +1,14 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { delay } from "rxjs/operators";
+import { Observable, of } from "rxjs";
+import { SlaState } from "../shared/models/sla.model";
+import { WorkflowStateService } from "./workflow-engine/workflow-state.service";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class SlaApiService {
-  getSlaState(incidentId: string): Observable<any> { return of({}); }
+  constructor(private readonly workflow: WorkflowStateService) {}
+
+  getSlaState(incidentId: string): Observable<SlaState> {
+    return of(this.workflow.getSlaState(incidentId)).pipe(delay(60));
+  }
 }

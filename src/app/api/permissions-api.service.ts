@@ -1,18 +1,13 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { UserPermissions } from '../shared/models/user.model';
+import { Injectable } from "@angular/core";
+import { Observable, of } from "rxjs";
+import { UserPermissions } from "../shared/models/user.model";
+import { AuthService } from "../core/auth/auth.service";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class PermissionsApiService {
+  constructor(private readonly auth: AuthService) {}
+
   getUserPermissions(): Observable<UserPermissions> {
-    return of({
-      userId: '1',
-      departmentId: '1',
-      departmentName: 'Support',
-      role: 'Agent',
-      permissions: [],
-      allowedIncidentTypes: ['1'],
-      allowedActions: ['VIEW_INCIDENTS', 'CREATE_INCIDENT', 'VIEW_BOARD']
-    });
+    return of(this.auth.getPermissions());
   }
 }

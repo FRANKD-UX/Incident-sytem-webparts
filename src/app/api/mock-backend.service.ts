@@ -14,6 +14,11 @@ export class MockBackendService {
 
   getDashboardSummary(): Observable<any> {
     const incidents = this.workflow.getIncidents();
+    const departments = [
+      { id: 'SUP', name: 'Support', code: 'SUP', isActive: true },
+      { id: 'ACC', name: 'Accounts', code: 'ACC', isActive: true },
+      { id: 'OPS', name: 'Operations', code: 'OPS', isActive: true },
+    ];
 
     return of({
       kpis: [
@@ -23,11 +28,19 @@ export class MockBackendService {
         { id: '4', label: 'Resolved Today', value: incidents.filter((i: any) => i.status === 'RESOLVED').length, change: 0, changeType: 'NEUTRAL', icon: 'check_circle', color: '#10b981' },
       ],
       recentIncidents: incidents.slice(0, 5) as any,
-      departmentSummary: [
-        { department: 'Support', openIncidents: incidents.filter((i: any) => i.currentDepartment.code === 'SUP').length, inProgress: 0, escalated: 0, avgResolutionTime: 0, slaCompliance: 90 },
-        { department: 'Accounts', openIncidents: incidents.filter((i: any) => i.currentDepartment.code === 'ACC').length, inProgress: 0, escalated: 0, avgResolutionTime: 0, slaCompliance: 90 },
-        { department: 'Operations', openIncidents: incidents.filter((i: any) => i.currentDepartment.code === 'OPS').length, inProgress: 0, escalated: 0, avgResolutionTime: 0, slaCompliance: 90 },
-      ],
+      workloadByDepartment: departments.map((department) => {
+        const departmentIncidents = incidents.filter((i: any) => i.currentDepartment.code === department.code);
+        return {
+          department,
+          openIncidents: departmentIncidents.filter((i: any) => i.status === 'OPEN').length,
+          inProgress: departmentIncidents.filter((i: any) => i.status === 'IN_PROGRESS').length,
+          escalated: departmentIncidents.filter((i: any) => i.status === 'ESCALATED').length,
+          avgResolutionTime: 0,
+          slaCompliance: department.code === 'OPS' ? 78 : 92,
+        };
+      }),
+      trends: { daily: [], weekly: [], monthly: [] },
+      slaCompliance: { overall: 87, byDepartment: [], byPriority: [] },
     } as any).pipe(delay(80));
   }
 

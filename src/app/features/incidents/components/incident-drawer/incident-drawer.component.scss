@@ -170,7 +170,42 @@
 .drawer-actions {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
+}
+
+.drawer-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: white;
+  color: #0f172a;
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.drawer-actions .btn-secondary {
+  background: #f8fafc;
+  color: #334155;
+}
+
+.drawer-actions .btn-primary {
+  border-color: #2f6fed;
+  background: #2f6fed;
+  color: white;
+}
+
+.drawer-actions .btn:hover {
+  transform: translateY(-1px);
 }
 
 @media (max-width: 900px) {
@@ -189,5 +224,13 @@
 
   .drawer__content {
     padding: 18px 16px;
+  }
+
+  .drawer-actions {
+    justify-content: stretch;
+  }
+
+  .drawer-actions .btn {
+    flex: 1 1 140px;
   }
 }

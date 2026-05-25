@@ -1,195 +1,256 @@
-// src/app/features/administration/pages/workflow-config.component.ts
-
-import { Component, OnInit, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { WorkflowApiService } from "../../../api/workflow-api.service";
-import {
-  DepartmentChain,
-  ChainStep,
-} from "../../../shared/models/incident.model";
-import { Department } from "../../../shared/models/user.model";
-import { LoadingStateComponent } from "../../../shared/components/loading-state/loading-state.component";
+import { Component, OnInit, computed, inject, signal } from "@angular/core";
+import { forkJoin } from "rxjs";
+import { WorkflowConfigurationService } from "../../../api/workflow-configuration.service";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { LoadingStateComponent } from "../../../shared/components/loading-state/loading-state.component";
+import { Department } from "../../../shared/models/user.model";
+import {
+  WorkflowChain,
+  WorkflowIncidentTypeOption,
+  cloneWorkflowChain,
+} from "../../../shared/models/workflow-configuration.model";
+import { WorkflowChainEditorComponent } from "./workflow-chain-editor.component";
+import { WorkflowChainListComponent } from "./workflow-chain-list.component";
 
 @Component({
   selector: "app-workflow-config",
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
     LoadingStateComponent,
     EmptyStateComponent,
+    WorkflowChainListComponent,
+    WorkflowChainEditorComponent,
   ],
   template: `
     <div class="workflow-config">
       <div class="page-header">
         <div>
+          <p class="eyebrow">Administration</p>
           <h1>Workflow Configuration</h1>
-          <p class="subtitle">Manage department chains and transition rules</p>
+          <p class="subtitle">
+            Configure alert-driven chains that update the UI automatically,
+            while final approval remains with the manager or CTO.
+          </p>
         </div>
-        <button class="btn btn-primary" (click)="createNewChain()">
-          <span class="material-icons">add</span>
-          New Chain
-        </button>
+
+        <div class="page-header__actions">
+          <button
+            class="btn btn-primary"
+            type="button"
+            (click)="createNewChain()"
+          >
+            <span class="material-icons">add</span>
+            New Chain
+          </button>
+        </div>
       </div>
 
       @if (loading()) {
-        <app-loading-state message="Loading workflows..." />
-      } @else if (chains().length === 0) {
-        <app-empty-state
-          icon="account_tree"
-          title="No workflow chains"
-          description="Define department chains for incident types"
-          actionLabel="Create First Chain"
-          (action)="createNewChain()"
-        />
+        <app-loading-state message="Loading workflow configuration..." />
       } @else {
-        <div class="chains-grid">
-          @for (chain of chains(); track chain.id) {
-            <div class="chain-card">
-              <div class="chain-header">
-                <div>
-                  <h3>{{ chain.name }}</h3>
-                  <div class="chain-meta">
-                    <span>{{ chain.steps.length }} steps</span>
-                    <span>{{
-                      chain.allowParallel ? "Parallel" : "Sequential"
-                    }}</span>
-                    <span>{{
-                      chain.requireStrictOrder ? "Strict Order" : "Flexible"
-                    }}</span>
-                  </div>
-                </div>
-                <div class="chain-actions">
-                  <button
-                    class="btn btn-secondary btn-sm"
-                    (click)="editChain(chain)"
-                  >
-                    <span class="material-icons">edit</span>
-                  </button>
-                  <button
-                    class="btn btn-secondary btn-sm"
-                    (click)="deleteChain(chain)"
-                  >
-                    <span class="material-icons">delete</span>
-                  </button>
-                </div>
-              </div>
+        @if (operationError()) {
+          <div class="error-banner">
+            <strong>Action failed</strong>
+            <p>{{ operationError() }}</p>
+          </div>
+        }
 
-              <!-- Chain Visualization -->
-              <div class="chain-visualization">
-                @for (
-                  step of chain.steps;
-                  track step.order;
-                  let isLast = $last
-                ) {
-                  <div class="chain-step">
-                    <div class="step-node" [class.optional]="step.isOptional">
-                      <span class="step-number">{{ step.order }}</span>
-                      <div class="step-info">
-                        <strong>{{ step.department.name }}</strong>
-                        @if (step.sla) {
-                          <span class="step-sla">
-                            Response: {{ step.sla.responseTime }}m | Resolution:
-                            {{ step.sla.resolutionTime }}m
-                          </span>
-                        }
-                      </div>
-                    </div>
-                    @if (!isLast) {
-                      <div class="step-connector">
-                        <span class="material-icons">arrow_forward</span>
-                      </div>
-                    }
-                  </div>
-                }
-              </div>
+        @if (chains().length === 0) {
+          <app-empty-state
+            icon="account_tree"
+            title="No workflow chains"
+            description="Create the first alert-triggered chain to configure UI updates, handover steps, and final approval routing."
+            actionLabel="Create First Chain"
+            (action)="createNewChain()"
+          />
+        } @else {
+          <app-workflow-chain-list
+            [chains]="chains()"
+            [selectedChainId]="selectedChainId()"
+            (select)="openChain($event)"
+            (edit)="openChain($event)"
+            (disable)="disableChain($event)"
+            (delete)="deleteChain($event)"
+          />
+        }
+      }
 
-              <!-- Checklist Summary -->
-              <div class="chain-checklist-summary">
-                <h4>Checklists</h4>
-                @for (step of chain.steps; track step.order) {
-                  <div class="step-checklist">
-                    <span class="department-label">{{
-                      step.department.code
-                    }}</span>
-                    <span>{{ step.checklist?.items?.length || 0 }} items</span>
-                  </div>
-                }
-              </div>
-            </div>
-          }
-        </div>
+      @if (editorVisible() && draftChain()) {
+        <app-workflow-chain-editor
+          [chain]="draftChain()"
+          [departments]="departments()"
+          [incidentTypes]="incidentTypes()"
+          [canDelete]="canDeleteSelectedChain()"
+          (close)="closeEditor()"
+          (saveDraftClicked)="saveDraft($event)"
+          (publishClicked)="publishChain($event)"
+          (disableClicked)="disableDraft($event)"
+          (deleteClicked)="deleteDraft($event)"
+        />
       }
     </div>
   `,
   styleUrls: ["./workflow-config.component.scss"],
 })
 export class WorkflowConfigComponent implements OnInit {
-  private readonly workflowApi = inject(WorkflowApiService);
-  private readonly fb = inject(FormBuilder);
+  private readonly workflowConfiguration = inject(WorkflowConfigurationService);
 
-  chains = signal<DepartmentChain[]>([]);
-  departments = signal<Department[]>([]);
-  loading = signal(false);
-  editingChain = signal<DepartmentChain | null>(null);
+  readonly loading = signal(true);
+  readonly operationError = signal<string | null>(null);
+  readonly chains = signal<WorkflowChain[]>([]);
+  readonly departments = signal<Department[]>([]);
+  readonly incidentTypes = signal<WorkflowIncidentTypeOption[]>([]);
+  readonly editorVisible = signal(false);
+  readonly selectedChainId = signal<string | null>(null);
+  readonly draftChain = signal<WorkflowChain | null>(null);
 
-  chainForm = this.fb.group({
-    name: ["", Validators.required],
-    allowParallel: [false],
-    requireStrictOrder: [true],
-    steps: this.fb.array([]),
+  readonly selectedChain = computed(
+    () =>
+      this.chains().find((chain) => chain.id === this.selectedChainId()) ??
+      null,
+  );
+
+  readonly canDeleteSelectedChain = computed(() => {
+    const draft = this.draftChain();
+    return draft ? this.workflowConfiguration.canDeleteChain(draft) : false;
   });
 
   ngOnInit(): void {
-    this.loadChains();
-    this.loadDepartments();
-  }
-
-  private loadChains(): void {
-    this.loading.set(true);
-    this.workflowApi.getDepartmentChains().subscribe({
-      next: (chains) => {
-        this.chains.set(chains);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        console.error("Failed to load chains:", err);
-        this.loading.set(false);
-      },
-    });
-  }
-
-  private loadDepartments(): void {
-    this.workflowApi.getDepartments().subscribe({
-      next: (departments) => {
-        this.departments.set(departments);
-      },
-    });
+    this.loadData();
   }
 
   createNewChain(): void {
-    // Open chain creation modal/form
-    this.editingChain.set({
-      id: "",
-      name: "New Chain",
-      steps: [],
-      allowParallel: false,
-      requireStrictOrder: true,
+    this.operationError.set(null);
+    const draft = this.workflowConfiguration.createDraftChain();
+    this.selectedChainId.set(draft.id);
+    this.draftChain.set(draft);
+    this.editorVisible.set(true);
+  }
+
+  openChain(chainId: string): void {
+    const chain = this.chains().find((item) => item.id === chainId);
+    if (!chain) {
+      return;
+    }
+
+    this.operationError.set(null);
+    this.selectedChainId.set(chain.id);
+    this.draftChain.set(cloneWorkflowChain(chain));
+    this.editorVisible.set(true);
+  }
+
+  closeEditor(): void {
+    this.editorVisible.set(false);
+    this.draftChain.set(null);
+  }
+
+  saveDraft(chain: WorkflowChain): void {
+    this.operationError.set(null);
+    this.workflowConfiguration.saveDraft(chain).subscribe({
+      next: (savedChain) => this.commitSavedChain(savedChain),
+      error: (error: unknown) => this.handleOperationError(error),
     });
   }
 
-  editChain(chain: DepartmentChain): void {
-    this.editingChain.set(chain);
+  publishChain(chain: WorkflowChain): void {
+    this.operationError.set(null);
+    this.workflowConfiguration.publishChain(chain).subscribe({
+      next: (savedChain) => this.commitSavedChain(savedChain),
+      error: (error: unknown) => this.handleOperationError(error),
+    });
   }
 
-  deleteChain(chain: DepartmentChain): void {
-    if (confirm(`Are you sure you want to delete "${chain.name}"?`)) {
-      this.workflowApi.deleteDepartmentChain(chain.id).subscribe({
-        next: () => this.loadChains(),
-        error: (err) => console.error("Failed to delete chain:", err),
-      });
+  disableDraft(chain: WorkflowChain): void {
+    this.disableChain(chain.id);
+  }
+
+  deleteDraft(chain: WorkflowChain): void {
+    this.deleteChain(chain.id);
+  }
+
+  disableChain(chainId: string): void {
+    this.operationError.set(null);
+    this.workflowConfiguration.disableChain(chainId).subscribe({
+      next: (savedChain) => this.commitSavedChain(savedChain),
+      error: (error: unknown) => this.handleOperationError(error),
+    });
+  }
+
+  deleteChain(chainId: string): void {
+    const selected = this.chains().find((chain) => chain.id === chainId);
+    if (!selected) {
+      return;
     }
+
+    if (!this.workflowConfiguration.canDeleteChain(selected)) {
+      this.operationError.set(
+        "Published chains must be disabled before deletion.",
+      );
+      return;
+    }
+
+    this.operationError.set(null);
+    this.workflowConfiguration.deleteChain(chainId).subscribe({
+      next: () => {
+        this.draftChain.set(null);
+        this.editorVisible.set(false);
+        this.selectedChainId.set(null);
+        this.chains.update((chains) =>
+          chains.filter((chain) => chain.id !== chainId),
+        );
+      },
+      error: (error: unknown) => this.handleOperationError(error),
+    });
+  }
+
+  private loadData(): void {
+    this.loading.set(true);
+    this.operationError.set(null);
+
+    forkJoin({
+      chains: this.workflowConfiguration.getChains(),
+      departments: this.workflowConfiguration.getDepartments(),
+      incidentTypes: this.workflowConfiguration.getIncidentTypes(),
+    }).subscribe({
+      next: ({ chains, departments, incidentTypes }) => {
+        this.chains.set(chains);
+        this.departments.set(departments);
+        this.incidentTypes.set(incidentTypes);
+        this.loading.set(false);
+      },
+      error: (error: unknown) => {
+        this.loading.set(false);
+        this.handleOperationError(error);
+      },
+    });
+  }
+
+  private loadChainsOnly(): void {
+    this.workflowConfiguration.getChains().subscribe({
+      next: (chains) => this.chains.set(chains),
+      error: (error: unknown) => this.handleOperationError(error),
+    });
+  }
+
+  private commitSavedChain(savedChain: WorkflowChain): void {
+    const clonedChain = cloneWorkflowChain(savedChain);
+    this.chains.update((chains) => {
+      const nextChains = chains.filter((chain) => chain.id !== clonedChain.id);
+      nextChains.unshift(clonedChain);
+      return nextChains;
+    });
+    this.draftChain.set(clonedChain);
+    this.selectedChainId.set(clonedChain.id);
+    this.editorVisible.set(true);
+  }
+
+  private handleOperationError(error: unknown): void {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Unexpected workflow configuration error.";
+    this.operationError.set(message);
   }
 }

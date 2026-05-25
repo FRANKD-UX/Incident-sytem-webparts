@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Output } from "@angular/core";
+import { Component } from "@angular/core";
 
 @Component({
   selector: "app-top-bar",
@@ -7,12 +7,6 @@ import { Component, EventEmitter, Output } from "@angular/core";
   imports: [CommonModule],
   template: `
     <header class="topbar">
-      <div class="topbar__left">
-        <button class="icon-btn" type="button" (click)="toggleSidebar.emit()">
-          <span class="material-icons">menu</span>
-        </button>
-      </div>
-
       <div class="topbar__center">
         <div class="search">
           <span class="material-icons search__icon">search</span>
@@ -33,20 +27,9 @@ import { Component, EventEmitter, Output } from "@angular/core";
         <button class="icon-btn" type="button">
           <span class="material-icons">help_outline</span>
         </button>
-
-        <div class="profile">
-          <div class="profile__avatar">JD</div>
-          <div class="profile__meta">
-            <strong>John Doe</strong>
-            <span>Administrator</span>
-          </div>
-          <span class="material-icons profile__caret">expand_more</span>
-        </div>
       </div>
     </header>
   `,
   styleUrls: ["./top-bar.component.scss"],
 })
-export class TopBarComponent {
-  @Output() toggleSidebar = new EventEmitter<void>();
-}
+export class TopBarComponent {}

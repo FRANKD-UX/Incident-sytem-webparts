@@ -9,6 +9,13 @@ export const routes: Routes = [
     redirectTo: "dashboard",
   },
   {
+    path: "login",
+    loadComponent: () =>
+      import("./features/auth/pages/login-page.component").then(
+        (m) => m.LoginPageComponent,
+      ),
+  },
+  {
     path: "dashboard",
     canActivate: [authGuard],
     loadComponent: () =>
@@ -19,6 +26,7 @@ export const routes: Routes = [
   {
     path: "incidents",
     canActivate: [authGuard],
+    canActivateChild: [roleGuard],
     children: [
       {
         path: "new",
@@ -48,7 +56,7 @@ export const routes: Routes = [
   },
   {
     path: "board",
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
     loadComponent: () =>
       import("./features/board/pages/board-page.component").then(
         (m) => m.BoardPageComponent,

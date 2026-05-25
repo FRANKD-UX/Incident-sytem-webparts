@@ -1,8 +1,0 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-
-@Injectable({ providedIn: 'root' })
-export class ChecklistApiService {
-  getChecklist(incidentId: string): Observable<any> { return of({ items: [] }); }
-  updateChecklistItem(incidentId: string, itemId: string, payload: any): Observable<any> { return of({}); }
-}

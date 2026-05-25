@@ -1,17 +1,16 @@
 import { Component } from "@angular/core";
-import { RouterOutlet } from "@angular/router";
 import { TopBarComponent } from "../top-bar/top-bar.component";
 import { SideNavComponent } from "../side-nav/side-nav.component";
 
 @Component({
   selector: "app-shell",
   standalone: true,
-  imports: [RouterOutlet, TopBarComponent, SideNavComponent],
+  imports: [TopBarComponent, SideNavComponent],
   template: `
     <div class="shell">
       <app-side-nav [collapsed]="collapsed" (toggle)="collapsed = !collapsed" />
       <div class="shell__main" [class.shell__main--collapsed]="collapsed">
-        <app-top-bar (toggleSidebar)="collapsed = !collapsed" />
+        <app-top-bar />
         <main class="shell__content">
           <ng-content />
         </main>

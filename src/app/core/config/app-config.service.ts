@@ -1,6 +1,6 @@
 // src/app/core/config/app-config.service.ts
 
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject, Observable } from "rxjs";
 import { tap } from "rxjs/operators";
@@ -38,7 +38,7 @@ export class AppConfigService {
   loadConfig(): Observable<AppConfig> {
     return this.http
       .get<AppConfig>("/api/config")
-      .pipe(tap((config) => this.configSubject.next(config)));
+      .pipe(tap((config: AppConfig) => this.configSubject.next(config)));
   }
 
   getConfig(): AppConfig | null {

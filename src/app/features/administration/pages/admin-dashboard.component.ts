@@ -3,22 +3,14 @@
 import { Component, OnInit, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
-import { PermissionsApiService } from "../../../api/permissions-api.service";
 import { DashboardApiService } from "../../../api/dashboard-api.service";
-import { StatCardComponent } from "../../../shared/components/stat-card/stat-card.component";
 import { LoadingStateComponent } from "../../../shared/components/loading-state/loading-state.component";
-import { HasPermissionDirective } from "../../../shared/directives/has-permission.directive";
+import { HasRoleDirective } from "../../../shared/directives/has-permission.directive";
 
 @Component({
   selector: "app-admin-dashboard",
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterLink,
-    StatCardComponent,
-    LoadingStateComponent,
-    HasPermissionDirective,
-  ],
+  imports: [CommonModule, RouterLink, LoadingStateComponent, HasRoleDirective],
   template: `
     <div class="admin-dashboard">
       <div class="page-header">
@@ -36,7 +28,7 @@ import { HasPermissionDirective } from "../../../shared/directives/has-permissio
           <a
             routerLink="incident-types"
             class="admin-card"
-            *hasPermission="'MANAGE_INCIDENT_TYPES'"
+            *hasRole="['ADMIN', 'SYSTEM_ADMIN']"
           >
             <div
               class="admin-card__icon"
@@ -58,7 +50,7 @@ import { HasPermissionDirective } from "../../../shared/directives/has-permissio
           <a
             routerLink="workflows"
             class="admin-card"
-            *hasPermission="'MANAGE_WORKFLOWS'"
+            *hasRole="['ADMIN', 'SYSTEM_ADMIN']"
           >
             <div
               class="admin-card__icon"
@@ -76,8 +68,35 @@ import { HasPermissionDirective } from "../../../shared/directives/has-permissio
             <span class="material-icons chevron">chevron_right</span>
           </a>
 
+          <!-- Agent Performance Card -->
+          <a
+            routerLink="agent-performance"
+            class="admin-card"
+            *hasRole="['ADMIN', 'SYSTEM_ADMIN']"
+          >
+            <div
+              class="admin-card__icon"
+              style="background: linear-gradient(135deg, #0ea5e9, #0369a1)"
+            >
+              <span class="material-icons">insights</span>
+            </div>
+            <div class="admin-card__content">
+              <h3>Agent Performance</h3>
+              <p>
+                Review ticket closures, close times, SLA compliance, and breach
+                rates by agent.
+              </p>
+              <span class="admin-card__count">Management view</span>
+            </div>
+            <span class="material-icons chevron">chevron_right</span>
+          </a>
+
           <!-- SLA Rules Card -->
-          <a routerLink="sla" class="admin-card" *hasPermission="'MANAGE_SLA'">
+          <a
+            routerLink="sla"
+            class="admin-card"
+            *hasRole="['ADMIN', 'SYSTEM_ADMIN']"
+          >
             <div
               class="admin-card__icon"
               style="background: linear-gradient(135deg, #f59e0b, #d97706)"
@@ -98,7 +117,7 @@ import { HasPermissionDirective } from "../../../shared/directives/has-permissio
           <a
             routerLink="roles"
             class="admin-card"
-            *hasPermission="'MANAGE_ROLES'"
+            *hasRole="['ADMIN', 'SYSTEM_ADMIN']"
           >
             <div
               class="admin-card__icon"
@@ -120,7 +139,7 @@ import { HasPermissionDirective } from "../../../shared/directives/has-permissio
           <a
             routerLink="settings"
             class="admin-card"
-            *hasPermission="'MANAGE_SETTINGS'"
+            *hasRole="['ADMIN', 'SYSTEM_ADMIN']"
           >
             <div
               class="admin-card__icon"
@@ -143,7 +162,6 @@ import { HasPermissionDirective } from "../../../shared/directives/has-permissio
 })
 export class AdminDashboardComponent implements OnInit {
   private readonly dashboardApi = inject(DashboardApiService);
-  private readonly permissionsApi = inject(PermissionsApiService);
 
   loading = signal(false);
   systemStats = signal({

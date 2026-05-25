@@ -11,6 +11,7 @@ import {
 } from "@angular/core";
 import { Subject, takeUntil } from "rxjs";
 import { PermissionsApiService } from "../../api/permissions-api.service";
+import { UserPermissions } from "../../shared/models/user.model";
 
 @Directive({
   selector: "[hasRole]",
@@ -51,7 +52,7 @@ export class HasRoleDirective implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private checkRole(permissions: any): boolean {
+  private checkRole(permissions: UserPermissions): boolean {
     if (!this.allowedRoles.length) return true;
 
     const hasRole = this.allowedRoles.includes(permissions.role);

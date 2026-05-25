@@ -1,0 +1,173 @@
+.workflow-config {
+  display: grid;
+  gap: 18px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  color: #475569;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: white;
+  color: #0f172a;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-primary {
+  border-color: #2f6fed;
+  background: #2f6fed;
+  color: white;
+}
+
+.btn-secondary {
+  background: #f8fafc;
+}
+
+.chains-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.chain-card {
+  padding: 18px;
+  border: 1px solid #dbe3ef;
+  border-radius: 18px;
+  background: white;
+}
+
+.chain-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.chain-header h3,
+.chain-checklist-summary h4 {
+  margin: 0;
+}
+
+.chain-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.chain-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-sm {
+  min-height: 32px;
+  width: 32px;
+  padding: 0;
+  justify-content: center;
+}
+
+.chain-visualization {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.chain-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.step-node {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1 1 auto;
+  padding: 12px 14px;
+  border: 1px solid #dbe3ef;
+  border-radius: 14px;
+  background: #f8fafc;
+}
+
+.step-node.optional {
+  background: #eff6ff;
+}
+
+.step-number {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #2f6fed;
+  color: white;
+  font-weight: 700;
+}
+
+.step-info {
+  display: grid;
+  gap: 4px;
+}
+
+.step-sla {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.step-connector {
+  color: #94a3b8;
+}
+
+.chain-checklist-summary {
+  display: grid;
+  gap: 10px;
+}
+
+.step-checklist {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #334155;
+}
+
+.department-label {
+  font-weight: 700;
+  color: #245bd1;
+}
+
+@media (max-width: 900px) {
+  .page-header,
+  .chain-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
