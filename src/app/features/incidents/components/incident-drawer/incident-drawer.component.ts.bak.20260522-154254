@@ -32,11 +32,6 @@ import { EscalationPanelComponent } from "../escalation-panel/escalation-panel.c
 import { SlaPanelComponent } from "../sla-panel/sla-panel.component";
 import { LoadingStateComponent } from "../../../../shared/components/loading-state/loading-state.component";
 import { WorkflowTimelineComponent } from "../workflow-timeline/workflow-timeline.component";
-import { CurrentSlaSummaryComponent } from "../current-sla-summary/current-sla-summary.component";
-import { ReworkHistoryComponent } from "../rework-history/rework-history.component";
-import { WorkflowActionPanelComponent } from "../workflow-action-panel/workflow-action-panel.component";
-import { WorkflowActionModalComponent } from "../workflow-action-modal/workflow-action-modal.component";
-import { AccountsProcessingPanelComponent } from "../accounts-processing-panel/accounts-processing-panel.component";
 
 type DetailTab =
   | "summary"
@@ -59,11 +54,6 @@ type DetailTab =
     SlaPanelComponent,
     LoadingStateComponent,
     WorkflowTimelineComponent,
-    CurrentSlaSummaryComponent,
-    ReworkHistoryComponent,
-    WorkflowActionPanelComponent,
-    WorkflowActionModalComponent,
-    AccountsProcessingPanelComponent,
   ],
   template: `
     <div class="drawer-overlay" [class.open]="isOpen" (click)="close.emit()">
@@ -141,7 +131,6 @@ type DetailTab =
                   [incidentId]="incident!.id"
                   [checklist]="checklist()"
                   [departmentName]="currentDepartmentName()"
-                  [readOnly]="incident?.status === 'RESOLVED' || incident?.status === 'CLOSED'"
                   (checklistUpdated)="loadChecklist()"
                 />
                 <div class="drawer-actions">
@@ -197,8 +186,6 @@ export class IncidentDrawerComponent implements OnInit, OnChanges {
   auditTrail = signal<AuditEntry[]>([]);
   escalations = signal<Escalation[]>([]);
   slaState = signal<SlaState | null>(null);
-  workflowModalOpen = signal(false);
-  selectedWorkflowAction = signal("");
 
   currentDepartmentName = computed(() => this.incident?.currentDepartment?.name ?? "");
 
@@ -278,28 +265,4 @@ export class IncidentDrawerComponent implements OnInit, OnChanges {
   setActiveTab(tab: DetailTab): void {
     this.activeTab = tab;
   }
-
-  
-
-handleWorkflowAction(action: string): void {
-    this.selectedWorkflowAction.set(action);
-    this.workflowModalOpen.set(true);
-  }
-
-  closeWorkflowModal(): void {
-    this.workflowModalOpen.set(false);
-    this.selectedWorkflowAction.set("");
-  }
-
-  confirmWorkflowAction(payload: any): void {
-    console.log("Workflow payload:", payload);
-
-    this.workflowModalOpen.set(false);
-    this.selectedWorkflowAction.set("");
-
-    alert("Workflow action captured successfully.");
-  }
-
-
-
 }

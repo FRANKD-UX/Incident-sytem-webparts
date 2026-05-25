@@ -1,21 +1,20 @@
-import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
-import { delay } from "rxjs";
-import { Incident, IncidentType, DepartmentChain } from "../shared/models/incident.model";
-import { PaginatedResponse } from "../shared/models/common.model";
-import { WorkflowStateService } from "./workflow-engine/workflow-state.service";
+import { Injectable } from '@angular/core';
+import { delay, of, Observable } from 'rxjs';
+import { WorkflowStateService } from './workflow-engine/workflow-state.service';
 
-@Injectable({ providedIn: "root" })
+@Injectable({
+  providedIn: 'root',
+})
 export class IncidentApiService {
   constructor(private readonly workflow: WorkflowStateService) {}
 
-  getIncidents(): Observable<PaginatedResponse<Incident>> {
+  getIncidents(): Observable<any> {
     const incidents = this.workflow.getIncidents();
     return of({
-      data: incidents,
+      data: incidents as any,
       pagination: {
         currentPage: 1,
-        pageSize: incidents.length || 10,
+        pageSize: incidents.length,
         totalItems: incidents.length,
         totalPages: 1,
         hasNextPage: false,
@@ -23,32 +22,24 @@ export class IncidentApiService {
       },
       success: true,
       timestamp: new Date().toISOString(),
-      correlationId: "demo",
-    }).pipe(delay(100));
+      correlationId: crypto.randomUUID?.() ?? String(Date.now()),
+    } as any).pipe(delay(60));
   }
 
-  getIncidentById(id: string): Observable<Incident> {
-    return of(this.workflow.getIncident(id)!).pipe(delay(60));
+  getIncident(id: string): Observable<any> {
+    return of(this.workflow.getIncident(id) as any).pipe(delay(60));
   }
 
-  createIncident(incident: Partial<Incident>): Observable<Incident> {
-    return of(this.workflow.createIncident(incident as any)).pipe(delay(120));
+  createIncident(incident: any): Observable<any> {
+    return of(this.workflow.createIncident(incident as any) as any).pipe(delay(120));
   }
 
-  updateIncident(id: string, updates: Partial<Incident>): Observable<Incident> {
+  updateIncident(id: string, updates: any): Observable<any> {
     const existing = this.workflow.getIncident(id);
-    return of({ ...(existing as Incident), ...updates }).pipe(delay(60));
+    return of({ ...(existing as any), ...(updates as any) } as any).pipe(delay(60));
   }
 
-  deleteIncident(id: string): Observable<void> {
-    return of(void 0).pipe(delay(20));
-  }
-
-  getIncidentTypes(): Observable<IncidentType[]> {
-    return of([]).pipe(delay(20));
-  }
-
-  getIncidentChain(incidentId: string): Observable<DepartmentChain> {
-    return of(this.workflow.getIncidentChain(incidentId)).pipe(delay(60));
+  getIncidentChain(incidentId: string): Observable<any> {
+    return of(this.workflow.getIncidentChain(incidentId) as any).pipe(delay(60));
   }
 }

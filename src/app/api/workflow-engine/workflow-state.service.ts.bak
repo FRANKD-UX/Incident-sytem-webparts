@@ -266,7 +266,7 @@ export class WorkflowStateService {
 
   updateAccountsProcessing(
     incidentId: string,
-    payload: { action?: string; actionType?: string; requestedValue?: string; approvedBy?: string; notes?: string; effectiveDate?: string; approved?: boolean } = {}
+    payload: { action?: string; actionType?: string; requestedValue?: string; notes?: string; effectiveDate?: string; approved?: boolean } = {}
   ): any {
     return this.applyWorkflowMutation(incidentId, {
       workflowState: payload.approved ? 'ACCOUNTS_APPROVED' : 'ACCOUNTS_REVIEW',

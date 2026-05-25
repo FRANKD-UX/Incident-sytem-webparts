@@ -8,10 +8,6 @@ import { WorkflowStateService } from './workflow-engine/workflow-state.service';
 export class MockBackendService {
   constructor(private readonly workflow: WorkflowStateService) {}
 
-  getMockDashboardSummary(): Observable<any> {
-    return this.getDashboardSummary();
-  }
-
   getDashboardSummary(): Observable<any> {
     const incidents = this.workflow.getIncidents();
 
