@@ -2,8 +2,10 @@ import { CommonModule } from "@angular/common";
 import { Component, OnInit, computed, inject, signal } from "@angular/core";
 import { forkJoin } from "rxjs";
 import { WorkflowConfigurationService } from "../../../api/workflow-configuration.service";
+import { NotificationService } from "../../../core/services/notification.service";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { LoadingStateComponent } from "../../../shared/components/loading-state/loading-state.component";
+import { ConfirmationDialogComponent } from "../../../shared/components/confirmation-dialog/confirmation-dialog.component";
 import { Department } from "../../../shared/models/user.model";
 import {
   WorkflowChain,
@@ -20,6 +22,7 @@ import { WorkflowChainListComponent } from "./workflow-chain-list.component";
     CommonModule,
     LoadingStateComponent,
     EmptyStateComponent,
+    ConfirmationDialogComponent,
     WorkflowChainListComponent,
     WorkflowChainEditorComponent,
   ],
@@ -37,8 +40,18 @@ import { WorkflowChainListComponent } from "./workflow-chain-list.component";
 
         <div class="page-header__actions">
           <button
+            class="btn btn-secondary"
+            type="button"
+            [disabled]="loading() || actionInProgress()"
+            (click)="refresh()"
+          >
+            <span class="material-icons">refresh</span>
+            Refresh
+          </button>
+          <button
             class="btn btn-primary"
             type="button"
+            [disabled]="actionInProgress()"
             (click)="createNewChain()"
           >
             <span class="material-icons">add</span>
@@ -78,6 +91,12 @@ import { WorkflowChainListComponent } from "./workflow-chain-list.component";
       }
 
       @if (editorVisible() && draftChain()) {
+        @if (actionInProgress()) {
+          <app-loading-state
+            [overlay]="true"
+            message="Saving workflow chain..."
+          />
+        }
         <app-workflow-chain-editor
           [chain]="draftChain()"
           [departments]="departments()"
@@ -90,14 +109,27 @@ import { WorkflowChainListComponent } from "./workflow-chain-list.component";
           (deleteClicked)="deleteDraft($event)"
         />
       }
+
+      @if (deleteConfirmationChainId()) {
+        <app-confirmation-dialog
+          title="Delete workflow chain?"
+          message="This action cannot be undone."
+          confirmLabel="Delete"
+          cancelLabel="Cancel"
+          (confirm)="confirmDelete()"
+          (cancel)="deleteConfirmationChainId.set(null)"
+        />
+      }
     </div>
   `,
   styleUrls: ["./workflow-config.component.scss"],
 })
 export class WorkflowConfigComponent implements OnInit {
   private readonly workflowConfiguration = inject(WorkflowConfigurationService);
+  private readonly notification = inject(NotificationService);
 
   readonly loading = signal(true);
+  readonly actionInProgress = signal(false);
   readonly operationError = signal<string | null>(null);
   readonly chains = signal<WorkflowChain[]>([]);
   readonly departments = signal<Department[]>([]);
@@ -105,6 +137,7 @@ export class WorkflowConfigComponent implements OnInit {
   readonly editorVisible = signal(false);
   readonly selectedChainId = signal<string | null>(null);
   readonly draftChain = signal<WorkflowChain | null>(null);
+  readonly deleteConfirmationChainId = signal<string | null>(null);
 
   readonly selectedChain = computed(
     () =>
@@ -118,6 +151,10 @@ export class WorkflowConfigComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.loadData();
+  }
+
+  refresh(): void {
     this.loadData();
   }
 
@@ -148,17 +185,27 @@ export class WorkflowConfigComponent implements OnInit {
 
   saveDraft(chain: WorkflowChain): void {
     this.operationError.set(null);
+    this.actionInProgress.set(true);
     this.workflowConfiguration.saveDraft(chain).subscribe({
-      next: (savedChain) => this.commitSavedChain(savedChain),
+      next: (savedChain) => {
+        this.commitSavedChain(savedChain);
+        this.notification.success("Workflow draft saved.");
+      },
       error: (error: unknown) => this.handleOperationError(error),
+      complete: () => this.actionInProgress.set(false),
     });
   }
 
   publishChain(chain: WorkflowChain): void {
     this.operationError.set(null);
+    this.actionInProgress.set(true);
     this.workflowConfiguration.publishChain(chain).subscribe({
-      next: (savedChain) => this.commitSavedChain(savedChain),
+      next: (savedChain) => {
+        this.commitSavedChain(savedChain);
+        this.notification.success("Workflow chain published.");
+      },
       error: (error: unknown) => this.handleOperationError(error),
+      complete: () => this.actionInProgress.set(false),
     });
   }
 
@@ -172,13 +219,28 @@ export class WorkflowConfigComponent implements OnInit {
 
   disableChain(chainId: string): void {
     this.operationError.set(null);
+    this.actionInProgress.set(true);
     this.workflowConfiguration.disableChain(chainId).subscribe({
-      next: (savedChain) => this.commitSavedChain(savedChain),
+      next: (savedChain) => {
+        this.commitSavedChain(savedChain);
+        this.notification.info("Workflow chain disabled.");
+      },
       error: (error: unknown) => this.handleOperationError(error),
+      complete: () => this.actionInProgress.set(false),
     });
   }
 
   deleteChain(chainId: string): void {
+    this.deleteConfirmationChainId.set(chainId);
+  }
+
+  confirmDelete(): void {
+    const chainId = this.deleteConfirmationChainId();
+    if (!chainId) {
+      return;
+    }
+
+    this.deleteConfirmationChainId.set(null);
     const selected = this.chains().find((chain) => chain.id === chainId);
     if (!selected) {
       return;
@@ -192,6 +254,7 @@ export class WorkflowConfigComponent implements OnInit {
     }
 
     this.operationError.set(null);
+    this.actionInProgress.set(true);
     this.workflowConfiguration.deleteChain(chainId).subscribe({
       next: () => {
         this.draftChain.set(null);
@@ -200,8 +263,10 @@ export class WorkflowConfigComponent implements OnInit {
         this.chains.update((chains) =>
           chains.filter((chain) => chain.id !== chainId),
         );
+        this.notification.success("Workflow chain deleted.");
       },
       error: (error: unknown) => this.handleOperationError(error),
+      complete: () => this.actionInProgress.set(false),
     });
   }
 
@@ -219,6 +284,7 @@ export class WorkflowConfigComponent implements OnInit {
         this.departments.set(departments);
         this.incidentTypes.set(incidentTypes);
         this.loading.set(false);
+        this.notification.info("Workflow data refreshed.");
       },
       error: (error: unknown) => {
         this.loading.set(false);
@@ -247,10 +313,12 @@ export class WorkflowConfigComponent implements OnInit {
   }
 
   private handleOperationError(error: unknown): void {
+    this.actionInProgress.set(false);
     const message =
       error instanceof Error
         ? error.message
         : "Unexpected workflow configuration error.";
     this.operationError.set(message);
+    this.notification.error(message);
   }
 }

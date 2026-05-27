@@ -1,14 +1,37 @@
 import { Injectable } from "@angular/core";
+import { signal } from "@angular/core";
+
+export type NotificationLevel = "success" | "error" | "info";
+
+export interface NotificationMessage {
+  id: string;
+  level: NotificationLevel;
+  text: string;
+}
 
 @Injectable({ providedIn: "root" })
 export class NotificationService {
+  readonly messages = signal<NotificationMessage[]>([]);
+
   success(message: string): void {
-    console.log("[success]", message);
+    this.push("success", message);
   }
   error(message: string): void {
-    console.error("[error]", message);
+    this.push("error", message);
   }
   info(message: string): void {
-    console.info("[info]", message);
+    this.push("info", message);
+  }
+
+  dismiss(id: string): void {
+    this.messages.update((messages) =>
+      messages.filter((message) => message.id !== id),
+    );
+  }
+
+  private push(level: NotificationLevel, text: string): void {
+    const id = crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
+    this.messages.update((messages) => [...messages, { id, level, text }]);
+    setTimeout(() => this.dismiss(id), 4000);
   }
 }

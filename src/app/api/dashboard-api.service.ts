@@ -7,5 +7,5 @@ import { MockBackendService } from './mock-backend.service';
 export class DashboardApiService {
   constructor(private mock: MockBackendService) {}
   getDashboardSummary(): Observable<DashboardSummary> { return this.mock.getMockDashboardSummary(); }
-  getAdminStats(): Observable<AdminDashboardStats> { return this.mock.getMockDashboardSummary() as any; }
+  getAdminStats(): Observable<AdminDashboardStats> { return this.mock.getMockAdminStats(); }
 }

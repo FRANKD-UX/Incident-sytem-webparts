@@ -15,6 +15,12 @@
   font-size: 28px;
 }
 
+.page-header__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .subtitle {
   margin: 6px 0 0;
   color: #475569;
@@ -42,6 +48,11 @@
 
 .btn-secondary {
   background: #f8fafc;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .chains-grid {

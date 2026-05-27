@@ -8,6 +8,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
+import { NonNullableFormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { Department } from "../../../shared/models/user.model";
 import {
   WorkflowChain,
@@ -22,7 +23,7 @@ import { WorkflowStepEditorComponent } from "./workflow-step-editor.component";
 @Component({
   selector: "app-workflow-chain-editor",
   standalone: true,
-  imports: [CommonModule, WorkflowStepEditorComponent],
+  imports: [CommonModule, ReactiveFormsModule, WorkflowStepEditorComponent],
   template: `
     @if (draft()) {
       <aside class="drawer">
@@ -64,23 +65,15 @@ import { WorkflowStepEditorComponent } from "./workflow-step-editor.component";
 
           <div class="drawer__body">
             <section class="editor-panel">
-              <div class="editor-grid">
+              <div class="editor-grid" [formGroup]="chainForm">
                 <label>
                   <span>Name</span>
-                  <input
-                    type="text"
-                    [value]="draft()!.name"
-                    (input)="updateName($event)"
-                    placeholder="Workflow chain name"
-                  />
+                  <input type="text" formControlName="name" placeholder="Workflow chain name" />
                 </label>
 
                 <label>
                   <span>Incident type</span>
-                  <select
-                    [value]="draft()!.incidentTypeId"
-                    (change)="updateIncidentType($event)"
-                  >
+                  <select formControlName="incidentTypeId">
                     <option value="">Select incident type</option>
                     @for (
                       incidentType of incidentTypes;
@@ -95,10 +88,7 @@ import { WorkflowStepEditorComponent } from "./workflow-step-editor.component";
 
                 <label>
                   <span>Owner department</span>
-                  <select
-                    [value]="draft()!.ownerDepartmentId"
-                    (change)="updateOwnerDepartment($event)"
-                  >
+                  <select formControlName="ownerDepartmentId">
                     <option value="">Select owner department</option>
                     @for (department of departments; track department.id) {
                       <option [value]="department.id">
@@ -110,10 +100,7 @@ import { WorkflowStepEditorComponent } from "./workflow-step-editor.component";
 
                 <label>
                   <span>Status</span>
-                  <select
-                    [value]="draft()!.status"
-                    (change)="updateStatus($event)"
-                  >
+                  <select formControlName="status">
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
                     <option value="inactive">Inactive</option>
@@ -129,8 +116,7 @@ import { WorkflowStepEditorComponent } from "./workflow-step-editor.component";
                   <span>Notes</span>
                   <textarea
                     rows="3"
-                    [value]="draft()!.notes"
-                    (input)="updateNotes($event)"
+                    formControlName="notes"
                     placeholder="Operational notes, approvals, or handover context"
                   ></textarea>
                 </label>
@@ -595,13 +581,57 @@ import { WorkflowStepEditorComponent } from "./workflow-step-editor.component";
 })
 export class WorkflowChainEditorComponent {
   private readonly workflowConfig = inject(WorkflowConfigurationService);
+  private readonly formBuilder = inject(NonNullableFormBuilder);
 
   readonly draft = signal<WorkflowChain | null>(null);
   readonly validationErrors = signal<string[]>([]);
+  readonly chainForm = this.formBuilder.group({
+    name: "",
+    incidentTypeId: "",
+    ownerDepartmentId: "",
+    status: "draft" as WorkflowChain["status"],
+    notes: "",
+  });
+
+  constructor() {
+    this.chainForm.valueChanges.subscribe((value) => {
+      const current = this.draft();
+      if (!current) {
+        return;
+      }
+
+      const incidentType = this.incidentTypes.find(
+        (item) => item.id === value.incidentTypeId,
+      );
+      const department = this.departments.find(
+        (item) => item.id === value.ownerDepartmentId,
+      );
+
+      this.patchDraft({
+        name: value.name,
+        incidentTypeId: value.incidentTypeId,
+        incidentTypeName: incidentType?.name ?? current.incidentTypeName,
+        ownerDepartmentId: value.ownerDepartmentId,
+        ownerDepartmentName: department?.name ?? current.ownerDepartmentName,
+        status: value.status,
+        notes: value.notes,
+      });
+    });
+  }
 
   @Input() set chain(value: WorkflowChain | null) {
     this.draft.set(value ? cloneWorkflowChain(value) : null);
     this.validationErrors.set([]);
+    this.chainForm.patchValue(
+      {
+        name: value?.name ?? "",
+        incidentTypeId: value?.incidentTypeId ?? "",
+        ownerDepartmentId: value?.ownerDepartmentId ?? "",
+        status: value?.status ?? "draft",
+        notes: value?.notes ?? "",
+      },
+      { emitEvent: false },
+    );
   }
 
   @Input() departments: Department[] = [];
@@ -631,20 +661,6 @@ export class WorkflowChainEditorComponent {
     );
   });
 
-  updateName(event: Event): void {
-    this.patchDraft({ name: this.readValue(event) });
-  }
-
-  updateNotes(event: Event): void {
-    this.patchDraft({ notes: this.readValue(event) });
-  }
-
-  updateStatus(event: Event): void {
-    this.patchDraft({
-      status: this.readValue(event) as WorkflowChain["status"],
-    });
-  }
-
   updateTriggerSource(event: Event): void {
     this.patchDraft({
       triggerSource: this.readValue(event) as WorkflowChain["triggerSource"],
@@ -658,30 +674,6 @@ export class WorkflowChainEditorComponent {
   updateAutoUpdateUi(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
     this.patchDraft({ autoUpdateUi: checked });
-  }
-
-  updateIncidentType(event: Event): void {
-    const incidentTypeId = this.readValue(event);
-    const incidentType = this.incidentTypes.find(
-      (item) => item.id === incidentTypeId,
-    );
-
-    this.patchDraft({
-      incidentTypeId,
-      incidentTypeName: incidentType?.name ?? incidentTypeId,
-    });
-  }
-
-  updateOwnerDepartment(event: Event): void {
-    const ownerDepartmentId = this.readValue(event);
-    const department = this.departments.find(
-      (item) => item.id === ownerDepartmentId,
-    );
-
-    this.patchDraft({
-      ownerDepartmentId,
-      ownerDepartmentName: department?.name ?? ownerDepartmentId,
-    });
   }
 
   addStep(): void {

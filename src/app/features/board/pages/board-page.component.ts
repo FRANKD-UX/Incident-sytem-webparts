@@ -2,11 +2,18 @@ import { CommonModule } from "@angular/common";
 import { Component, OnInit, computed, inject, signal } from "@angular/core";
 import { IncidentApiService } from "../../../api/incident-api.service";
 import { WorkflowApiService } from "../../../api/workflow-api.service";
+import { NotificationService } from "../../../core/services/notification.service";
 import { Incident } from "../../../shared/models/incident.model";
 import { LoadingStateComponent } from "../../../shared/components/loading-state/loading-state.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { ErrorStateComponent } from "../../../shared/components/error-state/error-state.component";
 import { KanbanColumnComponent } from "../components/kanban-column/kanban-column.component";
 import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
 import { IncidentDrawerComponent } from "../../incidents/components/incident-drawer/incident-drawer.component";
+import {
+  BoardFiltersComponent,
+  BoardFilterState,
+} from "../components/board-filters/board-filters.component";
 
 type BoardLane = "SUP" | "ACC" | "OPS" | "COMPLETED";
 
@@ -16,8 +23,11 @@ type BoardLane = "SUP" | "ACC" | "OPS" | "COMPLETED";
   imports: [
     CommonModule,
     LoadingStateComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
     KanbanColumnComponent,
     SearchInputComponent,
+    BoardFiltersComponent,
     IncidentDrawerComponent,
   ],
   template: `
@@ -34,8 +44,23 @@ type BoardLane = "SUP" | "ACC" | "OPS" | "COMPLETED";
         />
       </div>
 
+      <app-board-filters
+        [departments]="departmentFilterOptions()"
+        [assignees]="assigneeFilterOptions()"
+        [value]="filters()"
+        (filterChange)="filters.set($event)"
+      />
+
       @if (loading()) {
         <app-loading-state message="Loading board..." />
+      } @else if (error()) {
+        <app-error-state [error]="error()!" (retry)="loadIncidents()" />
+      } @else if (filtered().length === 0) {
+        <app-empty-state
+          icon="dashboard"
+          title="No incidents match the current filters"
+          description="Try clearing one or more filters."
+        />
       } @else {
         <div class="board-columns">
           <app-kanban-column
@@ -103,28 +128,70 @@ type BoardLane = "SUP" | "ACC" | "OPS" | "COMPLETED";
 export class BoardPageComponent implements OnInit {
   private readonly incidentApi = inject(IncidentApiService);
   private readonly workflowApi = inject(WorkflowApiService);
+  private readonly notification = inject(NotificationService);
 
   incidents = signal<Incident[]>([]);
   loading = signal(false);
+  error = signal<string | null>(null);
   searchTerm = signal("");
+  filters = signal<BoardFilterState>({
+    departmentCode: "",
+    assigneeId: "",
+    status: "",
+  });
   selectedIncident = signal<Incident | null>(null);
   drawerOpen = signal(false);
 
+  departmentFilterOptions = computed(() =>
+    Array.from(
+      new Map(
+        this.incidents().map((incident) => [
+          incident.currentDepartment.code,
+          {
+            id: incident.currentDepartment.code,
+            label: incident.currentDepartment.name,
+          },
+        ]),
+      ).values(),
+    ),
+  );
+
+  assigneeFilterOptions = computed(() =>
+    Array.from(
+      new Map(
+        this.incidents()
+          .filter((incident) => incident.assignedTo)
+          .map((incident) => [
+            incident.assignedTo!.id,
+            {
+              id: incident.assignedTo!.id,
+              label: incident.assignedTo!.displayName,
+            },
+          ]),
+      ).values(),
+    ),
+  );
+
   filtered = computed(() => {
     const term = this.searchTerm().toLowerCase().trim();
+    const filterState = this.filters();
     return this.incidents().filter(
       (i) =>
-        !term ||
-        [
-          i.referenceNumber,
-          i.title,
-          i.currentDepartment.name,
-          i.status,
-          ...i.tags,
-        ]
-          .join(" ")
-          .toLowerCase()
-          .includes(term),
+        (!term ||
+          [
+            i.referenceNumber,
+            i.title,
+            i.currentDepartment.name,
+            i.status,
+            ...i.tags,
+          ]
+            .join(" ")
+            .toLowerCase()
+            .includes(term)) &&
+        (!filterState.departmentCode ||
+          i.currentDepartment.code === filterState.departmentCode) &&
+        (!filterState.assigneeId || i.assignedTo?.id === filterState.assigneeId) &&
+        (!filterState.status || i.status === filterState.status),
     );
   });
 
@@ -144,12 +211,17 @@ export class BoardPageComponent implements OnInit {
 
   loadIncidents(): void {
     this.loading.set(true);
+    this.error.set(null);
     this.incidentApi.getIncidents().subscribe({
       next: (response) => {
         this.incidents.set(response.data);
         this.loading.set(false);
       },
-      error: () => this.loading.set(false),
+      error: () => {
+        this.error.set("Unable to load board data.");
+        this.loading.set(false);
+        this.notification.error("Failed to load board incidents.");
+      },
     });
   }
 
@@ -159,8 +231,14 @@ export class BoardPageComponent implements OnInit {
     toDepartmentCode: string;
   }): void {
     this.workflowApi.moveIncident(event.incidentId, event).subscribe({
-      next: () => this.loadIncidents(),
-      error: () => this.loadIncidents(),
+      next: () => {
+        this.notification.success("Incident moved.");
+        this.loadIncidents();
+      },
+      error: () => {
+        this.notification.error("Could not move incident.");
+        this.loadIncidents();
+      },
     });
   }
 
