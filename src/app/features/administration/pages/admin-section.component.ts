@@ -233,7 +233,7 @@ export class AdminSectionComponent implements OnInit {
           ]);
         } else if (path === "sla") {
           const allSteps = chains.flatMap((chain) => chain.steps);
-          const avgSla =
+          const avgSlaMinutes =
             allSteps.length > 0
               ? Math.round(
                   allSteps.reduce((total, step) => total + step.slaMinutes, 0) /
@@ -242,7 +242,7 @@ export class AdminSectionComponent implements OnInit {
               : 0;
           this.metrics.set([
             { label: "Workflow steps", value: String(allSteps.length) },
-            { label: "Average SLA (minutes)", value: String(avgSla) },
+            { label: "Average SLA (minutes)", value: String(avgSlaMinutes) },
             {
               label: "Active incidents",
               value: String(

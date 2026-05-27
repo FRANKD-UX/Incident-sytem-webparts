@@ -78,7 +78,7 @@ import { WorkflowTimelineComponent } from "../components/workflow-timeline/workf
 
           <app-chain-progress
             [chain]="chain()"
-            [currentDepartmentCode]="incident()!.currentDepartment.code"
+            [currentDepartmentIdentifier]="incident()!.currentDepartment.code"
           />
 
           <app-workflow-timeline

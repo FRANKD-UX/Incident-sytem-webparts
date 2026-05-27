@@ -90,12 +90,12 @@ import { ChainStep, DepartmentChain } from "../../../../shared/models/incident.m
 })
 export class ChainProgressComponent {
   @Input() chain: DepartmentChain | null = null;
-  @Input() currentDepartmentCode = "";
+  @Input() currentDepartmentIdentifier = "";
 
   isCurrent(step: ChainStep): boolean {
     return (
-      step.department.code === this.currentDepartmentCode ||
-      step.department.id === this.currentDepartmentCode
+      step.department.code === this.currentDepartmentIdentifier ||
+      step.department.id === this.currentDepartmentIdentifier
     );
   }
 

@@ -11,6 +11,7 @@ export interface NotificationMessage {
 
 @Injectable({ providedIn: "root" })
 export class NotificationService {
+  private counter = 0;
   readonly messages = signal<NotificationMessage[]>([]);
 
   success(message: string): void {
@@ -30,7 +31,7 @@ export class NotificationService {
   }
 
   private push(level: NotificationLevel, text: string): void {
-    const id = crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
+    const id = crypto.randomUUID?.() ?? `notification-${++this.counter}`;
     this.messages.update((messages) => [...messages, { id, level, text }]);
     setTimeout(() => this.dismiss(id), 4000);
   }

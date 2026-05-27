@@ -155,7 +155,7 @@ export class WorkflowConfigComponent implements OnInit {
   }
 
   refresh(): void {
-    this.loadData();
+    this.loadData(true);
   }
 
   createNewChain(): void {
@@ -270,7 +270,7 @@ export class WorkflowConfigComponent implements OnInit {
     });
   }
 
-  private loadData(): void {
+  private loadData(showNotification = false): void {
     this.loading.set(true);
     this.operationError.set(null);
 
@@ -284,7 +284,9 @@ export class WorkflowConfigComponent implements OnInit {
         this.departments.set(departments);
         this.incidentTypes.set(incidentTypes);
         this.loading.set(false);
-        this.notification.info("Workflow data refreshed.");
+        if (showNotification) {
+          this.notification.info("Workflow data refreshed.");
+        }
       },
       error: (error: unknown) => {
         this.loading.set(false);
