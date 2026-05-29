@@ -1,0 +1,39 @@
+# Visual Studio
+.vs/
+
+# Angular / Node
+node_modules/
+.angular/
+dist/
+.dist/
+out-tsc/
+
+# Build outputs
+lib/
+build/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary / backup files
+*.tmp
+*.bak
+*.bak.*
+*-Dev1.*
+
+# Generated dumps / debug exports
+codebase-dump*.txt
+project-structure*.txt
+build-output.txt
+
+# Environment files
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,5 @@
+export const environment = {
+  production: true,
+  apiUrl: "http://10.200.0.76:8085/api",
+  useMockApi: false,
+};

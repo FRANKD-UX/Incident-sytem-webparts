@@ -1,0 +1,275 @@
+.board-page {
+  display: grid;
+  gap: 16px;
+}
+
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.board-container {
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.board-columns {
+  display: flex;
+  gap: 16px;
+  min-width: max-content;
+}
+
+/* IncidentOps board density + queue styling */
+:host {
+  display: block;
+  min-height: 100%;
+}
+
+.board-page,
+.board-view,
+.kanban-view,
+.workflow-board {
+  min-height: calc(100vh - 160px);
+}
+
+.board-page,
+.board-view,
+.kanban-view,
+.workflow-board,
+.board-container,
+.board-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.board-columns,
+.board-lanes,
+.kanban-columns,
+.workflow-columns {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(320px, 1fr);
+  gap: 16px;
+  align-items: stretch;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 8px;
+  min-height: 72vh;
+}
+
+.board-column,
+.board-lane,
+.kanban-column,
+.workflow-column {
+  display: flex;
+  flex-direction: column;
+  min-height: 72vh;
+  border: 1px solid rgba(128, 128, 128, 0.18);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  overflow: hidden;
+}
+
+.board-column-header,
+.board-lane-header,
+.kanban-column-header,
+.workflow-column-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.18);
+  backdrop-filter: blur(10px);
+  background: rgba(20, 20, 24, 0.72);
+  font-weight: 600;
+}
+
+.board-column-title,
+.board-lane-title,
+.kanban-column-title,
+.workflow-column-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.board-count,
+.lane-count,
+.queue-count,
+.workflow-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(59, 130, 246, 0.18);
+  color: #93c5fd;
+}
+
+.board-column-body,
+.board-lane-body,
+.kanban-column-body,
+.workflow-column-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  min-height: 0;
+}
+
+.incident-card,
+.board-card,
+.kanban-card,
+.workflow-card {
+  border-radius: 14px;
+  padding: 12px;
+  border: 1px solid rgba(128, 128, 128, 0.16);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: none;
+}
+
+.incident-card:hover,
+.board-card:hover,
+.kanban-card:hover,
+.workflow-card:hover {
+  border-color: rgba(96, 165, 250, 0.45);
+  background: rgba(59, 130, 246, 0.06);
+}
+
+.card-title,
+.incident-title,
+.board-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  margin-bottom: 6px;
+}
+
+.card-meta,
+.incident-meta,
+.board-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12px;
+  opacity: 0.84;
+}
+
+.workflow-chip,
+.status-chip,
+.sla-chip,
+.department-chip,
+.queue-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.empty-state,
+.queue-empty,
+.board-empty,
+.kanban-empty,
+.workflow-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  margin: 8px 0;
+  padding: 24px;
+  border: 1px dashed rgba(148, 163, 184, 0.35);
+  border-radius: 14px;
+  color: rgba(148, 163, 184, 0.9);
+  text-align: center;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.empty-state-title,
+.queue-empty-title,
+.board-empty-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: rgba(226, 232, 240, 0.95);
+}
+
+.empty-state-subtitle,
+.queue-empty-subtitle,
+.board-empty-subtitle {
+  font-size: 12px;
+  opacity: 0.82;
+}
+
+.board-columns::-webkit-scrollbar,
+.board-lanes::-webkit-scrollbar,
+.kanban-columns::-webkit-scrollbar,
+.workflow-columns::-webkit-scrollbar {
+  height: 10px;
+}
+
+.board-columns::-webkit-scrollbar-thumb,
+.board-lanes::-webkit-scrollbar-thumb,
+.kanban-columns::-webkit-scrollbar-thumb,
+.workflow-columns::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.28);
+}
+
+.board-columns::-webkit-scrollbar-track,
+.board-lanes::-webkit-scrollbar-track,
+.kanban-columns::-webkit-scrollbar-track,
+.workflow-columns::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+/* Queue empty-state handling */
+
+.queue-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  margin-top: 12px;
+  border: 1px dashed rgba(148,163,184,0.35);
+  border-radius: 12px;
+  color: rgba(148,163,184,0.9);
+  text-align: center;
+  padding: 24px;
+}
+
+.queue-empty-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.queue-empty-subtitle {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.board-column-body:has(.incident-card) .queue-empty {
+  display: none;
+}
+

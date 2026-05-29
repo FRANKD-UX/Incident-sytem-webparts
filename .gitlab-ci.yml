@@ -1,0 +1,61 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  DEPLOY_PATH: 'C:\Apps\AngularApp'
+  APP_POOL_NAME: 'AngularAppPool'
+
+build:
+  stage: build
+
+  tags:
+    - docker
+
+  image: node:22
+
+  script:
+    - npm ci
+    - npx ng build --configuration production --output-path dist/app
+
+  artifacts:
+    paths:
+      - dist/
+
+  only:
+    - main
+
+deploy:
+  stage: deploy
+
+  tags:
+    - windows-iis
+
+  dependencies:
+    - build
+
+  script:
+    - Import-Module WebAdministration
+    - Write-Host "CURRENT DIRECTORY"
+    - Get-Location
+    - Write-Host "DIST EXISTS?"
+    - Test-Path "dist"
+    - Write-Host "APP EXISTS?"
+    - Test-Path "dist\app"
+    - Write-Host "BROWSER EXISTS?"
+    - Test-Path "dist\app\browser"
+    - Write-Host "WORKSPACE FILES"
+    - Get-ChildItem -Path . -Recurse
+    - Write-Host "Stopping IIS Pool"
+    - Stop-WebAppPool -Name $env:APP_POOL_NAME
+    - Start-Sleep -Seconds 5
+    - Write-Host "Cleaning deployment folder"
+    - Remove-Item "$env:DEPLOY_PATH\*" -Recurse -Force
+    - Write-Host "Copying build files"
+    - Copy-Item "dist\app\*" "$env:DEPLOY_PATH" -Recurse -Force
+    - Write-Host "Starting IIS Pool"
+    - Start-WebAppPool -Name $env:APP_POOL_NAME
+    - Write-Host "Deployment complete"
+
+  only:
+    - main

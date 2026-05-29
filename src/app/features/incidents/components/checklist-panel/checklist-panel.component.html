@@ -1,0 +1,29 @@
+﻿<div *ngIf="activeStep; else noChecklist">
+  <div class="mb-3">
+    <h4 class="text-sm font-semibold">
+      {{ activeStep.departmentName }} · Step {{ activeStep.stepOrder }}
+    </h4>
+  </div>
+
+  <div *ngIf="checklistItems?.length > 0; else noItems">
+    <div *ngFor="let item of checklistItems" class="flex items-start gap-2 py-2">
+      <input
+        type="checkbox"
+        [checked]="item.isCompleted"
+        [disabled]="item.isCompleted"
+      />
+      <div>
+        <div class="font-medium">{{ item.itemText }}</div>
+        <div class="text-xs opacity-70" *ngIf="item.isRequired">Required</div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noItems>
+    <div class="text-sm opacity-70">No checklist items found for this step</div>
+  </ng-template>
+</div>
+
+<ng-template #noChecklist>
+  <div class="text-sm opacity-70">No checklist loaded</div>
+</ng-template>

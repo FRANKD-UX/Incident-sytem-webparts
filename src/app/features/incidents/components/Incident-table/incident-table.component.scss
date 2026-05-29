@@ -1,0 +1,184 @@
+// src/app/features/incidents/components/incident-table/incident-table.component.scss
+
+.incident-table-container {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.incident-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    background: var(--bg-secondary);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--text-primary);
+      background: var(--bg-tertiary);
+    }
+  }
+
+  .sort-icon {
+    margin-left: 4px;
+    font-size: 0.75rem;
+    opacity: 0.5;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.875rem;
+    vertical-align: middle;
+  }
+
+  .incident-row {
+    cursor: pointer;
+    transition: background-color 0.15s;
+
+    &:hover {
+      background: var(--bg-hover);
+    }
+
+    &.selected {
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    &:last-child td {
+      border-bottom: none;
+    }
+  }
+
+  .col-checkbox {
+    width: 48px;
+    text-align: center;
+
+    input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+  }
+
+  .col-ref {
+    width: 130px;
+
+    .ref-number {
+      font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+      font-size: 0.8125rem;
+      color: #3b82f6;
+      font-weight: 500;
+    }
+  }
+
+  .col-title {
+    min-width: 250px;
+
+    .incident-title {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .title-text {
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+
+    .tags {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      padding: 2px 6px;
+      background: var(--bg-tertiary);
+      border-radius: 3px;
+      font-size: 0.6875rem;
+      color: var(--text-secondary);
+
+      &.more {
+        background: #3b82f6;
+        color: white;
+      }
+    }
+  }
+
+  .col-status {
+    width: 140px;
+  }
+
+  .col-priority {
+    width: 100px;
+  }
+
+  .col-department {
+    width: 160px;
+
+    .department-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .department-name {
+      font-weight: 500;
+    }
+
+    .origin-dept {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+  }
+
+  .col-assignee {
+    width: 140px;
+
+    .unassigned {
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+  }
+
+  .col-sla {
+    width: 100px;
+  }
+
+  .col-created {
+    width: 120px;
+
+    .date-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .date {
+      font-size: 0.8125rem;
+    }
+
+    .time {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+  }
+
+  .col-actions {
+    width: 60px;
+    text-align: center;
+  }
+}
